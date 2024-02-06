@@ -1,14 +1,22 @@
 <style>
 .wrapper {
-  padding-top: 335px;
+  padding-top: 370px;
   /* padding-left: 15px; */
 }
 
-#preview {
-  top: 15px;
+.preview-settings {
   position: fixed;
-  background-color: var(--figma-color-bg);
   z-index: 100;
+  display: flex;
+  flex-direction: column;
+  top: 0;
+  background-color: var(--figma-color-bg);
+}
+
+#preview {
+  margin-top: 10px;
+  top: 15px;
+  background-color: var(--figma-color-bg);
   border: solid 1px var(--figma-color-border);
   border-radius: 5px;
 }
@@ -18,6 +26,7 @@
   width: 100%;
   position: relative;
   z-index: 1;
+  margin-top: 10px;
   font-size: 12px;
   border: 1px solid var(--figma-color-border-brand);
   border-radius: 15px;
@@ -35,7 +44,7 @@
   text-align: center;
   cursor: pointer;
   background-color: var(--figma-color-bg);
-  color: #000;
+  color: var(--figma-color-text);
   border: 1px solid var(--figma-color-bg);
   border-radius: 3px;
   transition: background-color 0.3s;
@@ -93,35 +102,31 @@
 import { GlobalCSS } from "figma-plugin-ds-svelte";
 import { Button, Input, Label, SelectMenu } from "figma-plugin-ds-svelte";
 
-//import Global CSS from the svelte boilerplate
-//contains Figma color vars, spacing vars, utility classes and more
-
-//import some Svelte Figma UI components
-
 var disabled = true;
 
-var d = 900;
-var c = 800;
-var p = 900;
-var q = 700;
-var r = 300;
-var A = 10; // convert toRadians
-var B = 10; // convert toRadians
-var u = 0;
-var v = 0;
-var R = 0.001;
-var S = 0.001;
-var f = 0.3;
-var g = 0.302;
-var h = 0.0008;
-var w = 0.2;
+var currentHarmonograph;
 
-var scale = 1;
-var pathData = "";
+// var d = 900;
+// var c = 800;
+// var p = 900;
+// var q = 700;
+// var r = 300;
+// var A = 10; // convert toRadians
+// var B = 10; // convert toRadians
+// var u = 0;
+// var v = 0;
+// var R = 0.001;
+// var S = 0.001;
+// var f = 0.3;
+// var g = 0.302;
+// var h = 0.0008;
+// var w = 0.2;
 
-var diameter = 320;
-var steps = 320;
-var segments = 32;
+var currentPathData = "";
+
+// var diameter = 320;
+// var steps = 900;
+// var segments = 32;
 
 var svg = "";
 
@@ -129,94 +134,108 @@ var selectedPaenel = 0;
 
 $: disabled = false; // isNaN(d) || isNaN(c) || isNaN(p) || isNaN(q) || isNaN(r) || isNaN(A) || isNaN(B) || isNaN(u) || isNaN(v) || isNaN(R) || isNaN(S) || isNaN(f) || isNaN(g) || isNaN(h) || isNaN(w);
 
-function createHarmonograph() {
+addEventListener("message", function handleMessage(msg) {
+  console.log("got message: ", msg);
+  if (msg.data.pluginMessage.type === "update-harmonograph") {
+    currentHarmonograph = msg.data.pluginMessage.harmonograph;
+
+    console.log("have harmonograph: ", msg.data);
+
+    drawHarmonographSVG(currentHarmonograph);
+  }
+});
+
+function insertHarmonograph() {
   parent.postMessage(
     {
       pluginMessage: {
-        type: "create-harmonograph",
-        height: r,
-        width: r,
-        scale: scale,
-        stroke: w,
-        data: pathData,
+        type: "insert-harmonograph",
+        harmonograph: currentHarmonograph,
+        data: currentPathData,
       },
     },
     "*",
   );
 }
 
-function drawHarmonographSVG() {
-  var data = createPathData();
+function drawHarmonographSVG(harmonograph) {
+  var data = createPathData(harmonograph);
 
   svg = document.getElementById("preview");
   svg.innerHTML = "";
-  svg.setAttribute("viewBox", `0 0 ${r} ${r}`);
-  var width = r;
-  var height = r;
+  svg.setAttribute("viewBox", `0 0 ${harmonograph.r} ${harmonograph.r}`);
+  var width = harmonograph.r;
+  var height = harmonograph.r;
 
   var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
   path.setAttribute("fill", "none");
   path.setAttribute("stroke", "black");
-  path.setAttribute("stroke-width", w);
+  path.setAttribute("stroke-width", harmonograph.w);
   path.setAttribute("stroke-linecap", "round");
   path.setAttribute(
     "transform",
     `scale(0.5, 0.5) translate(${width}, ${height})`,
   );
 
-  pathData = data.join(" ");
+  currentPathData = data.join(" ");
   path.setAttribute("d", data.join(" "));
 
   svg.appendChild(path);
 }
 
-function getXY(t) {
+function getXY(harmonograph, step) {
   var alpha =
-    toRadians(A) *
-    Math.sin(2.0 * Math.PI * (f * t + parseFloat(u))) *
-    Math.exp(-R * t);
+    toRadians(harmonograph.A) *
+    Math.sin(
+      2.0 * Math.PI * (harmonograph.f * step + parseFloat(harmonograph.u)),
+    ) *
+    Math.exp(-harmonograph.R * step);
   var beta =
-    toRadians(B) *
-    Math.sin(2.0 * Math.PI * (g * t + parseFloat(v))) *
-    Math.exp(-S * t);
-  var gamma = 2.0 * Math.PI * h * t;
+    toRadians(harmonograph.B) *
+    Math.sin(
+      2.0 * Math.PI * (harmonograph.g * step + parseFloat(harmonograph.v)),
+    ) *
+    Math.exp(-harmonograph.S * step);
+  var gamma = 2.0 * Math.PI * harmonograph.h * step;
 
-  var xa = p * Math.cos(alpha) + q * Math.sin(alpha) - d;
-  var ya = q * Math.cos(alpha) - p * Math.sin(alpha);
+  var xa =
+    harmonograph.p * Math.cos(alpha) +
+    harmonograph.q * Math.sin(alpha) -
+    harmonograph.d;
+  var ya = harmonograph.q * Math.cos(alpha) - harmonograph.p * Math.sin(alpha);
   var xb = xa * Math.cos(beta) - ya * Math.sin(beta);
-  var yb = ya * Math.cos(beta) + xa * Math.sin(beta) - c;
+  var yb = ya * Math.cos(beta) + xa * Math.sin(beta) - harmonograph.c;
   var x = xb * Math.cos(gamma) - yb * Math.sin(gamma);
   var y = yb * Math.cos(gamma) + xb * Math.sin(gamma);
-
-  console.log("time: ", t, " x: ", x, " y: ", y);
 
   return { x: x, y: y };
 }
 
-function createPathData() {
-  var startCoords = getXY(0);
-  console.log("start coords: ", startCoords);
+function createPathData(harmonograph) {
+  var step = 0;
+
+  var startCoords = getXY(harmonograph, step);
   var xs = [startCoords.x];
   var ys = [startCoords.y];
 
-  var t = 0;
-
-  for (var i = 0; i < steps; ++i) {
-    for (var j = 0; j < segments; ++j) {
-      t += 0.1;
-      var coords = getXY(t);
+  // Calculate the location of each point in the bezier path
+  for (var i = 0; i < harmonograph.steps; ++i) {
+    for (var j = 0; j < harmonograph.segments; ++j) {
+      step += 1 / harmonograph.segments;
+      var coords = getXY(harmonograph, step);
       xs.push(coords.x);
       ys.push(coords.y);
     }
   }
 
   var n = xs.length;
-  var factor = 0.5 / 3;
+  var factor = 0.5 / 3; // Magic number
   var rxs = [];
   var rys = [];
   var cxs = [];
   var cys = [];
 
+  // Add control points for each path point
   for (var i = 0; i < n; i += 1) {
     var prev = Math.max(0, i - 1);
     var next = Math.min(n - 1, i + 1);
@@ -228,6 +247,8 @@ function createPathData() {
 
   var rn = rxs.length;
 
+  // M = Move explicitly to the first point
+  // C = Create curve explicitly from x0,y0 ending at x1,y1 (with control points)
   var data = [
     "M",
     round(rxs[0]),
@@ -242,6 +263,7 @@ function createPathData() {
   ];
 
   if (rn > 2) {
+    // S = Severial Bezier paths, continuing where the last one left off to the next x,y (with control points)
     data.push("S");
     for (var i = 2; i < rn; i++) {
       data.push(round(rxs[i] - cxs[i]));
@@ -254,6 +276,7 @@ function createPathData() {
   return data;
 }
 
+// Could possibly be replaced by the built in rounding function
 function round(x) {
   return Math.round(x * 1000) / 1000;
 }
@@ -268,193 +291,193 @@ function cancel() {
 </script>
 
 <div class="wrapper p-xxsmall">
-  <svg
-    id="preview"
-    xmlns="http://www.w3.org/2000/svg"
-    width="320"
-    height="320"
-    version="1.1"
-  ></svg>
+  <div class="preview-settings">
+    <svg
+      id="preview"
+      xmlns="http://www.w3.org/2000/svg"
+      width="320"
+      height="320"
+      version="1.1"
+    ></svg>
 
-  <div class="{`harmono-panel-settings`}">
-    <input
-      type="radio"
-      name="setting-type"
-      value="pendulums"
-      id="pendulums"
-      on:click="{() => {
-        selectedPaenel = 0;
-        console.log(selectedPaenel);
-      }}"
-      checked
-    />
-    <label for="pendulums"> Pendulums </label>
+    <div class="{`harmono-panel-settings`}">
+      <input
+        type="radio"
+        name="setting-type"
+        value="pendulums"
+        id="pendulums"
+        on:click="{() => {
+          selectedPaenel = 0;
+        }}"
+        checked
+      />
+      <label for="pendulums"> Pendulums </label>
 
-    <input
-      type="radio"
-      name="setting-type"
-      value="paper"
-      id="paper"
-      on:click="{() => {
-        selectedPaenel = 1;
-        console.log(selectedPaenel);
-      }}"
-    />
-    <label for="paper"> Paper </label>
+      <input
+        type="radio"
+        name="setting-type"
+        value="paper"
+        id="paper"
+        on:click="{() => {
+          selectedPaenel = 1;
+        }}"
+      />
+      <label for="paper"> Paper </label>
 
-    <input
-      type="radio"
-      name="setting-type"
-      value="drawing"
-      id="drawing"
-      on:click="{() => {
-        selectedPaenel = 2;
-        console.log(selectedPaenel);
-      }}"
-    />
-    <label for="drawing"> Drawing </label>
+      <input
+        type="radio"
+        name="setting-type"
+        value="drawing"
+        id="drawing"
+        on:click="{() => {
+          selectedPaenel = 2;
+        }}"
+      />
+      <label for="drawing"> Drawing </label>
+    </div>
   </div>
+  {#if currentHarmonograph !== undefined}
+    <div class="{`harmono-panel${selectedPaenel === 0 ? '' : ' hidden'}`}">
+      <Label>Left pendulum frequency</Label>
+      <Input
+        iconText="Hz"
+        bind:value="{currentHarmonograph.f}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-  <div class="{`harmono-panel${selectedPaenel === 0 ? '' : ' hidden'}`}">
-    <Label>Left pendulum frequency</Label>
-    <Input
-      iconText="Hz"
-      bind:value="{f}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Right pendulum frequency</Label>
+      <Input
+        iconText="Hz"
+        bind:value="{currentHarmonograph.g}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-    <Label>Right pendulum frequency</Label>
-    <Input
-      iconText="Hz"
-      bind:value="{g}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Pendulum left amplitude</Label>
+      <Input
+        iconText="°"
+        bind:value="{currentHarmonograph.A}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-    <Label>Pendulum left amplitude</Label>
-    <Input
-      iconText="°"
-      bind:value="{A}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Pendulum right amplitude</Label>
+      <Input
+        iconText="°"
+        bind:value="{currentHarmonograph.B}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-    <Label>Pendulum right amplitude</Label>
-    <Input
-      iconText="°"
-      bind:value="{B}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Distance between pendulums</Label>
+      <Input
+        iconText="mm"
+        bind:value="{currentHarmonograph.d}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-    <Label>Distance between pendulums</Label>
-    <Input
-      iconText="mm"
-      bind:value="{d}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Left pendulum phase</Label>
+      <Input
+        bind:value="{currentHarmonograph.u}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-    <Label>Left pendulum phase</Label>
-    <Input
-      bind:value="{u}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Right pendulum phase</Label>
+      <Input
+        bind:value="{currentHarmonograph.v}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-    <Label>Right pendulum phase</Label>
-    <Input
-      bind:value="{v}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Left pendulum damping</Label>
+      <Input
+        bind:value="{currentHarmonograph.R}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-    <Label>Left pendulum damping</Label>
-    <Input
-      bind:value="{R}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Right pendulum damping</Label>
+      <Input
+        bind:value="{currentHarmonograph.S}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
+    </div>
 
-    <Label>Right pendulum damping</Label>
-    <Input
-      bind:value="{S}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
-  </div>
+    <div class="{`harmono-panel${selectedPaenel === 1 ? '' : ' hidden'}`}">
+      <Label>Paper Center</Label>
+      <Input
+        iconText="mm"
+        bind:value="{currentHarmonograph.c}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-  <div class="{`harmono-panel${selectedPaenel === 1 ? '' : ' hidden'}`}">
-    <Label>Paper Center</Label>
-    <Input
-      iconText="mm"
-      bind:value="{c}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Length of pen arm</Label>
+      <Input
+        iconText="mm"
+        bind:value="{currentHarmonograph.p}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-    <Label>Length of pen arm</Label>
-    <Input
-      iconText="mm"
-      bind:value="{p}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Position of pen arm</Label>
+      <Input
+        iconText="mm"
+        bind:value="{currentHarmonograph.q}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-    <Label>Position of pen arm</Label>
-    <Input
-      iconText="mm"
-      bind:value="{q}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Paper Radius</Label>
+      <Input
+        iconText="mm"
+        bind:value="{currentHarmonograph.r}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-    <Label>Paper Radius</Label>
-    <Input
-      iconText="mm"
-      bind:value="{r}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Frequency of paper rotation</Label>
+      <Input
+        iconText="Hz"
+        bind:value="{currentHarmonograph.h}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-    <Label>Frequency of paper rotation</Label>
-    <Input
-      iconText="Hz"
-      bind:value="{h}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Pen thickness (stroke)</Label>
+      <Input
+        iconText="mm"
+        bind:value="{currentHarmonograph.w}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
+    </div>
 
-    <Label>Pen thickness (stroke)</Label>
-    <Input
-      iconText="mm"
-      bind:value="{w}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
-  </div>
+    <div class="{`harmono-panel${selectedPaenel === 2 ? '' : ' hidden'}`}">
+      <Label>Steps</Label>
+      <Input
+        iconText="#"
+        bind:value="{currentHarmonograph.steps}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        class="mb-xxsmall"
+      />
 
-  <div class="{`harmono-panel${selectedPaenel === 2 ? '' : ' hidden'}`}">
-    <Label>Steps</Label>
-    <Input
-      iconText="#"
-      bind:value="{steps}"
-      on:change="{() => drawHarmonographSVG()}"
-      class="mb-xxsmall"
-    />
+      <Label>Segments per Step</Label>
+      <Input
+        iconText="#"
+        bind:value="{currentHarmonograph.segments}"
+        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
+        on:key
+        class="mb-xxsmall"
+      />
+    </div>
 
-    <Label>Segments per Step</Label>
-    <Input
-      iconText="#"
-      bind:value="{segments}"
-      on:change="{() => drawHarmonographSVG()}"
-      on:key
-      class="mb-xxsmall"
-    />
-  </div>
-
-  <Button on:click="{createHarmonograph}" bind:disabled="{disabled}"
-    >Create harmonograph</Button
-  >
+    <Button on:click="{insertHarmonograph}" bind:disabled="{disabled}"
+      >Create harmonograph</Button
+    >
+  {/if}
 </div>
