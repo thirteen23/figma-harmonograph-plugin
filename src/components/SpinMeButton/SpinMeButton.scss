@@ -1,0 +1,51 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
+
+.spin-me-button {
+  display: flex;
+  position: absolute;
+  top: 248px;
+  right: 24px;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000000;
+  cursor: pointer;
+
+  box-shadow: var(--figma-color-bg) 0px 0px 30px;
+  border: 1px solid var(--figma-color-text-hover);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #f8a390 10%,
+    #fff380 20%,
+    #f49cd4 40%,
+    #b6b9f6 58%,
+    #8ddfc3 80%,
+    #8bcffd 94%
+  );
+  background-position: 100% 100%;
+  background-size: 200% 200%;
+  width: 90px;
+  height: 90px;
+
+  &__text {
+    transform: rotate(18deg);
+    z-index: 10000000;
+    color: var(--figma-color-text-hover);
+    font-size: 16px;
+    font-family: "Roboto Mono";
+    text-align: center;
+  }
+
+  &--rotate {
+    animation: rotate 0.5s linear;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(2deg);
+  }
+  to {
+    transform: rotate(362deg);
+  }
+}

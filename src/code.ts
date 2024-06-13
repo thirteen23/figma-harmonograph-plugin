@@ -1,6 +1,6 @@
 import { Harmonograph } from "./Harmonograph";
 
-figma.showUI(__html__, { themeColors: true, width: 335, height: 800 });
+figma.showUI(__html__, { themeColors: true, width: 500, height: 800 });
 
 figma.clientStorage.getAsync("last-harmonograph").then((last) => {
   console.log("last one made is this one: ", last);
@@ -31,10 +31,6 @@ figma.clientStorage.getAsync("last-harmonograph").then((last) => {
     figma.ui.postMessage({ type: "update-harmonograph", harmonograph });
   }
 });
-
-// TODO pull list of saved harmonographs
-// TODO send last edited harmonograph
-// figma.ui.postMessage("");
 
 figma.ui.onmessage = (msg) => {
   switch (msg.type) {

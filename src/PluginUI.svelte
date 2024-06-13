@@ -1,138 +1,30 @@
-<style>
-.wrapper {
-  padding-top: 370px;
-  /* padding-left: 15px; */
-}
-
-.preview-settings {
-  position: fixed;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  top: 0;
-  background-color: var(--figma-color-bg);
-}
-
-#preview {
-  margin-top: 10px;
-  top: 15px;
-  background-color: var(--figma-color-bg);
-  border: solid 1px var(--figma-color-border);
-  border-radius: 5px;
-}
-
-.harmono-panel-settings {
-  display: flex;
-  width: 100%;
-  position: relative;
-  z-index: 1;
-  margin-top: 10px;
-  font-size: 12px;
-  border: 1px solid var(--figma-color-border-brand);
-  border-radius: 15px;
-  color: var(--figma-color-bg);
-}
-
-.harmono-panel-settings > input {
-  display: none;
-}
-
-.harmono-panel-settings > label {
-  display: block;
-  width: 100%;
-  padding: 10px 0;
-  text-align: center;
-  cursor: pointer;
-  background-color: var(--figma-color-bg);
-  color: var(--figma-color-text);
-  border: 1px solid var(--figma-color-bg);
-  border-radius: 3px;
-  transition: background-color 0.3s;
-}
-
-.harmono-panel-settings > input:checked + label {
-  color: var(--figma-color-text-onbrand);
-  background-color: var(--figma-color-border-oncomponent);
-  border: 1px solid var(--figma-color-border-oncomponent);
-}
-
-.harmono-panel-settings label:before {
-  background: var(--figma-color-bg);
-  transition: all 250ms cubic-bezier(0, 0.95, 0.38, 0.98);
-}
-
-.harmono-panel-settings label {
-  border-radius: 15px;
-
-  flex: 1;
-  text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-  background-color: var(--figma-color-bg);
-}
-
-.harmono-panel-settings > label:hover {
-  color: var(--figma-color-text-hover);
-  background-color: var(--figma-color-bg);
-  border: 1px solid var(--figma-color-border-component-hover);
-}
-
-.harmono-panel-settings > input:checked + label:hover {
-  color: var(--figma-color-text-hover);
-  border: 1px solid var(--figma-color-border-selected-strong);
-}
-
-.harmono-panel-settings label {
-  padding: 6px 3px;
-  transition: color 250ms cubic-bezier(0, 0.95, 0.38, 0.98);
-}
-
-.harmono-panel-settings
-  > input:nth-of-type(3):checked
-  ~ label:last-of-type:before {
-  transform: translateX(calc(100% + 0px));
-}
-
-/* Add additional global or scoped styles here */
-</style>
-
 <script>
 import { GlobalCSS } from "figma-plugin-ds-svelte";
-import { Button, Input, Label, SelectMenu } from "figma-plugin-ds-svelte";
 
-var disabled = true;
+import Input from "./components/Input/Input.svelte";
+import Slider from "./components/Slider/Slider.svelte";
+import InformationHeader from "./components/InformationHeader/InformationHeader.svelte";
+import SpinMeButton from "./components/SpinMeButton/SpinMeButton.svelte";
+
+import {
+  inputRanges,
+  randomizeInputs,
+  getDefaultInputs,
+} from "./HarmonographParams.js";
+
+import "./PluginUI.scss";
 
 var currentHarmonograph;
 
-// var d = 900;
-// var c = 800;
-// var p = 900;
-// var q = 700;
-// var r = 300;
-// var A = 10; // convert toRadians
-// var B = 10; // convert toRadians
-// var u = 0;
-// var v = 0;
-// var R = 0.001;
-// var S = 0.001;
-// var f = 0.3;
-// var g = 0.302;
-// var h = 0.0008;
-// var w = 0.2;
-
 var currentPathData = "";
-
-// var diameter = 320;
-// var steps = 900;
-// var segments = 32;
 
 var svg = "";
 
-var selectedPaenel = 0;
+var selectedPanel = 0;
+let activeMode = "simple";
+let checkbox = false;
 
-$: disabled = false; // isNaN(d) || isNaN(c) || isNaN(p) || isNaN(q) || isNaN(r) || isNaN(A) || isNaN(B) || isNaN(u) || isNaN(v) || isNaN(R) || isNaN(S) || isNaN(f) || isNaN(g) || isNaN(h) || isNaN(w);
+$: activeMode = checkbox ? "advanced" : "simple";
 
 addEventListener("message", function handleMessage(msg) {
   console.log("got message: ", msg);
@@ -140,10 +32,37 @@ addEventListener("message", function handleMessage(msg) {
     currentHarmonograph = msg.data.pluginMessage.harmonograph;
 
     console.log("have harmonograph: ", msg.data);
+    console.log(currentHarmonograph);
 
     drawHarmonographSVG(currentHarmonograph);
   }
 });
+
+function randomizeAllInputs() {
+  currentHarmonograph = randomizeInputs(activeMode, currentHarmonograph);
+  drawHarmonographSVG(currentHarmonograph);
+}
+
+function resetToDefaults() {
+  currentHarmonograph = getDefaultInputs(activeMode);
+  drawHarmonographSVG(currentHarmonograph);
+}
+
+function toggleMenu() {
+  const menu = document.getElementById("menu");
+  menu.style.display = menu.style.display === "none" ? "flex" : "none";
+}
+
+function openWebsite() {
+  window.open("https://example.com", "_blank");
+}
+
+function toggleInfoPanel() {
+  const infoPanel = document.getElementById("infoPanel");
+  infoPanel.style.display =
+    infoPanel.style.display === "none" ? "block" : "none";
+  document.getElementById("menu").style.display = "none";
+}
 
 function insertHarmonograph() {
   parent.postMessage(
@@ -158,6 +77,11 @@ function insertHarmonograph() {
   );
 }
 
+function updateHarmonograph(property, value) {
+  currentHarmonograph[property] = value;
+  drawHarmonographSVG(currentHarmonograph);
+}
+
 function drawHarmonographSVG(harmonograph) {
   var data = createPathData(harmonograph);
 
@@ -169,9 +93,10 @@ function drawHarmonographSVG(harmonograph) {
 
   var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
   path.setAttribute("fill", "none");
-  path.setAttribute("stroke", "black");
+  path.setAttribute("stroke", "currentColor");
   path.setAttribute("stroke-width", harmonograph.w);
   path.setAttribute("stroke-linecap", "round");
+  path.setAttribute("z-index", 1);
   path.setAttribute(
     "transform",
     `scale(0.5, 0.5) translate(${width}, ${height})`,
@@ -291,193 +216,413 @@ function cancel() {
 </script>
 
 <div class="wrapper p-xxsmall">
+  <SpinMeButton on:click="{randomizeAllInputs}" />
+
   <div class="preview-settings">
     <svg
       id="preview"
       xmlns="http://www.w3.org/2000/svg"
       width="320"
       height="320"
-      version="1.1"
-    ></svg>
+      version="1.1"></svg>
+  </div>
 
-    <div class="{`harmono-panel-settings`}">
-      <input
-        type="radio"
-        name="setting-type"
-        value="pendulums"
-        id="pendulums"
-        on:click="{() => {
-          selectedPaenel = 0;
-        }}"
-        checked
-      />
-      <label for="pendulums"> Pendulums </label>
+  <div class="advanced-mode">
+    <div class="advanced-mode__wrapper">
+      <div class="advanced-mode__row-one">
+        <div class="advanced-mode__title">ADVANCED MODE</div>
+        <div class="advanced-mode__toggle">
+          <label class="switch">
+            <input type="checkbox" bind:checked="{checkbox}" />
+            <span class="switch__toggle switch__toggle--round"></span>
+          </label>
+        </div>
+      </div>
 
-      <input
-        type="radio"
-        name="setting-type"
-        value="paper"
-        id="paper"
-        on:click="{() => {
-          selectedPaenel = 1;
-        }}"
-      />
-      <label for="paper"> Paper </label>
+      <div class="advanced-mode__description">
+        Harmonographs use swinging pendulums to draw pictures. In advanced mode,
+        set values for the pendulums, paper, and drawing.
+      </div>
 
-      <input
-        type="radio"
-        name="setting-type"
-        value="drawing"
-        id="drawing"
-        on:click="{() => {
-          selectedPaenel = 2;
-        }}"
-      />
-      <label for="drawing"> Drawing </label>
+      <div class="advanced-mode__panel-settings">
+        <button
+          type="button"
+          class="{`advanced-mode__panel-button ${selectedPanel === 0 ? 'advanced-mode__panel-button--active' : ''} ${activeMode === 'simple' ? 'advanced-mode__panel-button--disabled' : ''}`}"
+          on:click="{() => {
+            if (activeMode !== 'simple') {
+              selectedPanel = 0;
+            }
+          }}">
+          Pendulums
+        </button>
+
+        <button
+          type="button"
+          class="{`advanced-mode__panel-button ${selectedPanel === 1 ? 'advanced-mode__panel-button--active' : ''} ${activeMode === 'simple' ? 'advanced-mode__panel-button--disabled' : ''}`}"
+          on:click="{() => {
+            if (activeMode !== 'simple') {
+              selectedPanel = 1;
+            }
+          }}">
+          Paper
+        </button>
+
+        <button
+          type="button"
+          class="{`advanced-mode__panel-button ${selectedPanel === 2 ? 'advanced-mode__panel-button--active' : ''} ${activeMode === 'simple' ? 'advanced-mode__panel-button--disabled' : ''}`}"
+          on:click="{() => {
+            if (activeMode !== 'simple') {
+              selectedPanel = 2;
+            }
+          }}">
+          Drawing
+        </button>
+      </div>
     </div>
   </div>
+
   {#if currentHarmonograph !== undefined}
-    <div class="{`harmono-panel${selectedPaenel === 0 ? '' : ' hidden'}`}">
-      <Label>Left pendulum frequency</Label>
-      <Input
-        iconText="Hz"
-        bind:value="{currentHarmonograph.f}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
+    <div class="options">
+      <div class="options__wrapper">
+        {#if activeMode === "simple"}
+          <InformationHeader
+            text="{'Frequency'}"
+            info="{'This is how many times it moves'}" />
 
-      <Label>Right pendulum frequency</Label>
-      <Input
-        iconText="Hz"
-        bind:value="{currentHarmonograph.g}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
+          <Input
+            value="{currentHarmonograph.f}"
+            onValueChange="{(value) => updateHarmonograph('f', value)}"
+            minValue="{inputRanges.f.min}"
+            maxValue="{inputRanges.f.max}"
+            decimalPlaces="{inputRanges.f.decimalPlaces}"
+            inputData="{'left_pendulum_frequency'}"
+            unit="{'Hz'}"
+            labelFieldText="{'Left pendulum frequency'}" />
 
-      <Label>Pendulum left amplitude</Label>
-      <Input
-        iconText="°"
-        bind:value="{currentHarmonograph.A}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
+          <Input
+            value="{currentHarmonograph.g}"
+            onValueChange="{(value) => updateHarmonograph('g', value)}"
+            minValue="{inputRanges.g.min}"
+            maxValue="{inputRanges.g.max}"
+            decimalPlaces="{inputRanges.g.decimalPlaces}"
+            inputData="{'right_pendulum_frequency'}"
+            unit="{'Hz'}"
+            labelFieldText="{'Right pendulum frequency'}" />
 
-      <Label>Pendulum right amplitude</Label>
-      <Input
-        iconText="°"
-        bind:value="{currentHarmonograph.B}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
+          <InformationHeader
+            text="{'Amplitude'}"
+            info="{'This is how many long it be'}" />
 
-      <Label>Distance between pendulums</Label>
-      <Input
-        iconText="mm"
-        bind:value="{currentHarmonograph.d}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
+          <Input
+            value="{currentHarmonograph.A}"
+            onValueChange="{(value) => updateHarmonograph('A', value)}"
+            minValue="{inputRanges.A.min}"
+            maxValue="{inputRanges.A.max}"
+            decimalPlaces="{inputRanges.A.decimalPlaces}"
+            inputData="{'pendulum_left_amplitude'}"
+            unit="{'degrees'}"
+            labelFieldText="{'Pendulum left amplitude'}" />
 
-      <Label>Left pendulum phase</Label>
-      <Input
-        bind:value="{currentHarmonograph.u}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
+          <Input
+            value="{currentHarmonograph.B}"
+            onValueChange="{(value) => updateHarmonograph('B', value)}"
+            minValue="{inputRanges.B.min}"
+            maxValue="{inputRanges.B.max}"
+            decimalPlaces="{inputRanges.B.decimalPlaces}"
+            inputData="{'pendulum_right_amplitude'}"
+            unit="{'degrees'}"
+            labelFieldText="{'Pendulum right amplitude'}" />
 
-      <Label>Right pendulum phase</Label>
-      <Input
-        bind:value="{currentHarmonograph.v}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
+          <InformationHeader
+            text="{'Steps'}"
+            info="{'This is how many times it steps'}" />
 
-      <Label>Left pendulum damping</Label>
-      <Input
-        bind:value="{currentHarmonograph.R}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
+          <Slider
+            value="{currentHarmonograph.steps}"
+            onValueChange="{(value) => updateHarmonograph('steps', value)}" />
+        {:else}
+          <div class="{`harmono-panel${selectedPanel === 0 ? '' : ' hidden'}`}">
+            <InformationHeader
+              text="{'Frequency'}"
+              info="{'This is how many times it moves'}" />
 
-      <Label>Right pendulum damping</Label>
-      <Input
-        bind:value="{currentHarmonograph.S}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
+            <div class="two-col-layout">
+              <Input
+                value="{currentHarmonograph.f}"
+                onValueChange="{(value) => updateHarmonograph('f', value)}"
+                minValue="{inputRanges.f.min}"
+                maxValue="{inputRanges.f.max}"
+                decimalPlaces="{inputRanges.f.decimalPlaces}"
+                inputData="{'left_pendulum_frequency'}"
+                hideRandomizeButton="{true}"
+                unit="{'Hz'}"
+                labelFieldText="{'Left pendulum frequency'}" />
+
+              <Input
+                value="{currentHarmonograph.g}"
+                onValueChange="{(value) => updateHarmonograph('g', value)}"
+                minValue="{inputRanges.g.min}"
+                maxValue="{inputRanges.g.max}"
+                decimalPlaces="{inputRanges.g.decimalPlaces}"
+                inputData="{'right_pendulum_frequency'}"
+                hideRandomizeButton="{true}"
+                unit="{'Hz'}"
+                labelFieldText="{'Right pendulum frequency'}" />
+            </div>
+
+            <InformationHeader
+              text="{'Amplitude'}"
+              info="{'This is how many long it be'}" />
+
+            <div class="two-col-layout">
+              <Input
+                value="{currentHarmonograph.A}"
+                onValueChange="{(value) => updateHarmonograph('A', value)}"
+                minValue="{inputRanges.A.min}"
+                maxValue="{inputRanges.A.max}"
+                decimalPlaces="{inputRanges.A.decimalPlaces}"
+                inputData="{'pendulum_left_amplitude'}"
+                hideRandomizeButton="{true}"
+                unit="{'degrees'}"
+                labelFieldText="{'Pendulum left amplitude'}" />
+
+              <Input
+                value="{currentHarmonograph.B}"
+                onValueChange="{(value) => updateHarmonograph('B', value)}"
+                minValue="{inputRanges.B.min}"
+                maxValue="{inputRanges.B.max}"
+                decimalPlaces="{inputRanges.B.decimalPlaces}"
+                inputData="{'pendulum_right_amplitude'}"
+                hideRandomizeButton="{true}"
+                unit="{'degrees'}"
+                labelFieldText="{'Pendulum right amplitude'}" />
+            </div>
+
+            <InformationHeader
+              text="{'Damping'}"
+              info="{'This is how damping'}" />
+
+            <div class="two-col-layout">
+              <Input
+                value="{currentHarmonograph.R}"
+                onValueChange="{(value) => updateHarmonograph('R', value)}"
+                minValue="{inputRanges.R.min}"
+                maxValue="{inputRanges.R.max}"
+                decimalPlaces="{inputRanges.R.decimalPlaces}"
+                inputData="{'left_pendulum_damping'}"
+                hideRandomizeButton="{true}"
+                unit="{'degrees'}"
+                labelFieldText="{'Left pendulum'}" />
+
+              <Input
+                value="{currentHarmonograph.S}"
+                onValueChange="{(value) => updateHarmonograph('S', value)}"
+                minValue="{inputRanges.S.min}"
+                maxValue="{inputRanges.S.max}"
+                decimalPlaces="{inputRanges.S.decimalPlaces}"
+                inputData="{'right_pendulum_damping'}"
+                hideRandomizeButton="{true}"
+                unit="{'degrees'}"
+                labelFieldText="{'Right pendulum'}" />
+            </div>
+
+            <InformationHeader
+              text="{'Phase'}"
+              info="{'This is how phasing bro'}" />
+
+            <div class="two-col-layout">
+              <Input
+                value="{currentHarmonograph.u}"
+                onValueChange="{(value) => updateHarmonograph('u', value)}"
+                minValue="{inputRanges.u.min}"
+                maxValue="{inputRanges.u.max}"
+                decimalPlaces="{inputRanges.u.decimalPlaces}"
+                inputData="{'left_pendulum_phase'}"
+                hideRandomizeButton="{true}"
+                hideUnits="{true}"
+                unit="{'degrees'}"
+                labelFieldText="{'Left pendulum'}" />
+
+              <Input
+                value="{currentHarmonograph.v}"
+                onValueChange="{(value) => updateHarmonograph('v', value)}"
+                minValue="{inputRanges.v.min}"
+                maxValue="{inputRanges.v.max}"
+                decimalPlaces="{inputRanges.v.decimalPlaces}"
+                inputData="{'right_pendulum_phase'}"
+                hideRandomizeButton="{true}"
+                hideUnits="{true}"
+                unit="{'degrees'}"
+                labelFieldText="{'Right pendulum'}" />
+            </div>
+
+            <InformationHeader
+              text="{'Distance between pendulums'}"
+              info="{'This is how distance bro'}" />
+
+            <Input
+              value="{currentHarmonograph.d}"
+              onValueChange="{(value) => updateHarmonograph('d', value)}"
+              minValue="{inputRanges.d.min}"
+              maxValue="{inputRanges.d.max}"
+              decimalPlaces="{inputRanges.d.decimalPlaces}"
+              inputData="{'distance_between_pendulums'}"
+              hideRandomizeButton="{true}"
+              hideUnits="{true}"
+              labelFieldText="{'Distance'}" />
+          </div>
+
+          <div class="{`harmono-panel${selectedPanel === 1 ? '' : ' hidden'}`}">
+            <InformationHeader
+              text="{'Paper Center'}"
+              info="{'This is how paper center bro'}" />
+
+            <Input
+              value="{currentHarmonograph.c}"
+              onValueChange="{(value) => updateHarmonograph('c', value)}"
+              minValue="{inputRanges.c.min}"
+              maxValue="{inputRanges.c.max}"
+              decimalPlaces="{inputRanges.c.decimalPlaces}"
+              inputData="{'paper_center'}"
+              hideRandomizeButton="{true}"
+              hideUnits="{true}"
+              labelFieldText="{'Location'}" />
+
+            <InformationHeader
+              text="{'Length of pen arm'}"
+              info="{'This is how paper length bro'}" />
+
+            <Input
+              value="{currentHarmonograph.p}"
+              onValueChange="{(value) => updateHarmonograph('p', value)}"
+              minValue="{inputRanges.p.min}"
+              maxValue="{inputRanges.p.max}"
+              decimalPlaces="{inputRanges.p.decimalPlaces}"
+              inputData="{'length_of_pen_arm'}"
+              hideRandomizeButton="{true}"
+              hideUnits="{true}"
+              labelFieldText="{'Length'}" />
+
+            <InformationHeader
+              text="{'Position of pen arm'}"
+              info="{'This is how position pen bro'}" />
+
+            <Input
+              value="{currentHarmonograph.q}"
+              onValueChange="{(value) => updateHarmonograph('q', value)}"
+              minValue="{inputRanges.q.min}"
+              maxValue="{inputRanges.q.max}"
+              decimalPlaces="{inputRanges.q.decimalPlaces}"
+              inputData="{'position_of_pen_arm'}"
+              hideRandomizeButton="{true}"
+              hideUnits="{true}"
+              labelFieldText="{'Position'}" />
+
+            <InformationHeader
+              text="{'Paper Radius'}"
+              info="{'This is how paper radius bro'}" />
+
+            <Input
+              value="{currentHarmonograph.r}"
+              onValueChange="{(value) => updateHarmonograph('r', value)}"
+              minValue="{inputRanges.r.min}"
+              maxValue="{inputRanges.r.max}"
+              decimalPlaces="{inputRanges.r.decimalPlaces}"
+              inputData="{'paper_radius'}"
+              hideRandomizeButton="{true}"
+              hideUnits="{true}"
+              unit="{'degrees'}"
+              labelFieldText="{'Length'}" />
+
+            <InformationHeader
+              text="{'Frequency of paper rotation'}"
+              info="{'This is how paper rotaion frequency bro'}" />
+
+            <Input
+              value="{currentHarmonograph.h}"
+              onValueChange="{(value) => updateHarmonograph('h', value)}"
+              minValue="{inputRanges.h.min}"
+              maxValue="{inputRanges.h.max}"
+              decimalPlaces="{inputRanges.h.decimalPlaces}"
+              inputData="{'frequency_of_paper_rotation'}"
+              hideRandomizeButton="{true}"
+              hideUnits="{true}"
+              unit="{'degrees'}"
+              labelFieldText="{'Frequency'}" />
+
+            <InformationHeader
+              text="{'Pen thickness (stroke)'}"
+              info="{'This is how pen thickness bro'}" />
+
+            <Input
+              value="{currentHarmonograph.w}"
+              onValueChange="{(value) => updateHarmonograph('w', value)}"
+              minValue="{inputRanges.w.min}"
+              maxValue="{inputRanges.w.max}"
+              decimalPlaces="{inputRanges.w.decimalPlaces}"
+              inputData="{'pen_thickness'}"
+              hideRandomizeButton="{true}"
+              hideUnits="{true}"
+              unit="{'degrees'}"
+              labelFieldText="{'Thickness'}" />
+          </div>
+
+          <div class="{`harmono-panel${selectedPanel === 2 ? '' : ' hidden'}`}">
+            <InformationHeader
+              text="{'Segments per Step'}"
+              info="{'This is how segments bro'}" />
+
+            <Input
+              value="{currentHarmonograph.segments}"
+              onValueChange="{(value) => updateHarmonograph('segments', value)}"
+              minValue="{inputRanges.segments.min}"
+              maxValue="{inputRanges.segments.max}"
+              decimalPlaces="{inputRanges.segments.decimalPlaces}"
+              inputData="{'segments_per_step'}"
+              hideRandomizeButton="{true}"
+              hideUnits="{true}"
+              unit="{'degrees'}"
+              labelFieldText="{'Segments'}" />
+          </div>
+        {/if}
+      </div>
     </div>
-
-    <div class="{`harmono-panel${selectedPaenel === 1 ? '' : ' hidden'}`}">
-      <Label>Paper Center</Label>
-      <Input
-        iconText="mm"
-        bind:value="{currentHarmonograph.c}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
-
-      <Label>Length of pen arm</Label>
-      <Input
-        iconText="mm"
-        bind:value="{currentHarmonograph.p}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
-
-      <Label>Position of pen arm</Label>
-      <Input
-        iconText="mm"
-        bind:value="{currentHarmonograph.q}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
-
-      <Label>Paper Radius</Label>
-      <Input
-        iconText="mm"
-        bind:value="{currentHarmonograph.r}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
-
-      <Label>Frequency of paper rotation</Label>
-      <Input
-        iconText="Hz"
-        bind:value="{currentHarmonograph.h}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
-
-      <Label>Pen thickness (stroke)</Label>
-      <Input
-        iconText="mm"
-        bind:value="{currentHarmonograph.w}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
-    </div>
-
-    <div class="{`harmono-panel${selectedPaenel === 2 ? '' : ' hidden'}`}">
-      <Label>Steps</Label>
-      <Input
-        iconText="#"
-        bind:value="{currentHarmonograph.steps}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        class="mb-xxsmall"
-      />
-
-      <Label>Segments per Step</Label>
-      <Input
-        iconText="#"
-        bind:value="{currentHarmonograph.segments}"
-        on:change="{() => drawHarmonographSVG(currentHarmonograph)}"
-        on:key
-        class="mb-xxsmall"
-      />
-    </div>
-
-    <Button on:click="{insertHarmonograph}" bind:disabled="{disabled}"
-      >Create harmonograph</Button
-    >
   {/if}
+
+  <footer class="footer">
+    <div class="footer__content">
+      <button
+        class="footer__button footer__button--primary"
+        on:click="{insertHarmonograph}">
+        Add to canvas
+      </button>
+      <div class="ellipsis-menu" aria-label="More options">
+        <div class="ellipsis-menu__dots" on:click="{toggleMenu}">
+          <span class="ellipsis-menu__dot"></span>
+          <span class="ellipsis-menu__dot"></span>
+          <span class="ellipsis-menu__dot"></span>
+        </div>
+
+        <div id="menu" class="ellipsis-menu__dropdown" style="display: none;">
+          <button class="ellipsis-menu__option" on:click="{resetToDefaults}"
+            >Reset params</button>
+          <div class="ellipsis-menu__divider"></div>
+          <button class="ellipsis-menu__option" on:click="{openWebsite}"
+            >About this plugin</button>
+          <div class="ellipsis-menu__divider"></div>
+          <button class="ellipsis-menu__option" on:click="{toggleInfoPanel}"
+            >@thirteen23</button>
+        </div>
+      </div>
+
+      <div id="infoPanel" class="info-panel" style="display: none;">
+        <h2 class="info-panel__title">Information Panel</h2>
+        <p class="info-panel__content">
+          This is the larger information panel you requested.
+        </p>
+        <button class="info-panel__close-btn" on:click="{toggleInfoPanel}"
+          >Close</button>
+      </div>
+    </div>
+  </footer>
 </div>

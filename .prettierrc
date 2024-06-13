@@ -4,6 +4,6 @@
   "svelteBracketNewLine": false,
   "svelteAllowShorthand": false,
   "svelteIndentScriptAndStyle": false,
-  "plugins": ["prettier-plugin-svelte"],
+  "plugins": ["prettier-plugin-svelte", "prettier-plugin-css-order"],
   "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }]
 }

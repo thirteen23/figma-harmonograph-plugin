@@ -1,0 +1,50 @@
+.information-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+
+  &__title {
+    margin: 0;
+    color: var(--figma-color-text);
+    font-weight: 500;
+    font-size: 14px;
+  }
+
+  &__icon-container {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__info-panel {
+    position: absolute;
+    top: 36px;
+    left: -12px;
+    z-index: 20;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    background-color: var(--figma-color-bg-inverse);
+    padding: 0.5rem;
+    color: var(--figma-color-text-oninverse);
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  &__info-panel-triangle {
+    position: absolute;
+    top: -8px;
+    left: 12px;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid var(--figma-color-bg-inverse);
+    border-left: 8px solid transparent;
+    width: 0;
+    height: 0;
+    content: "";
+  }
+}
+
+.svg {
+  color: var(--figma-color-bg-inverse);
+}

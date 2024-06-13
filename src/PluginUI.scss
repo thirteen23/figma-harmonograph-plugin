@@ -1,0 +1,336 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
+
+:root {
+  --accent-middlesage: #8faca9;
+  --accent-brightgreen: #89bc4a;
+  --accent-lightsage: #d2dfde;
+  --base-blue: #18a0fb;
+  --base-blue-hovered: #096bad;
+}
+
+button {
+  outline: none;
+  border: none;
+}
+
+path {
+  z-index: 1;
+  color: var(--figma-color-bg-inverse);
+}
+
+h2 {
+  margin-bottom: 0;
+  color: var(--figma-color-text);
+  font-weight: 500;
+  font-size: 14px;
+}
+
+label {
+  display: inline-block;
+  margin-top: 18px;
+  color: var(--figma-color-text-secondary);
+  font-size: 12px;
+}
+
+.two-col-layout {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.wrapper {
+  position: relative;
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.preview-settings {
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  background-color: var(--figma-color-bg);
+  overflow: hidden;
+}
+
+#preview {
+  position: relative;
+  z-index: 10;
+  border: 1px solid;
+  border-image: linear-gradient(
+    120deg,
+    #f8a390 10%,
+    #fff380 20%,
+    #f49cd4 40%,
+    #b6b9f6 58%,
+    #8ddfc3 80%,
+    #8bcffd 94%
+  );
+  border-image-slice: 1;
+  background-color: var(--figma-color-bg);
+  width: 100%;
+  height: 360px;
+  color: var(--figma-color-text);
+}
+
+.options {
+  z-index: 100;
+  box-sizing: border-box;
+  width: 100%;
+  max-height: 400px;
+  overflow-y: scroll;
+
+  &__wrapper {
+    box-sizing: border-box;
+    padding: 0px 24px 238px 24px;
+    height: fit-content;
+  }
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  border-top: 1px solid var(--figma-color-border);
+  background-color: var(--figma-color-bg);
+  width: 100%;
+  height: 74px;
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+    height: 100%;
+  }
+
+  &__button {
+    transition: background-color 0.1s ease-in-out;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    padding: 0 12px;
+    height: 38px;
+    font-size: 14px;
+
+    &--primary {
+      background-color: var(--figma-color-bg-selected-strong);
+      color: var(--figma-color-text-onbrand);
+
+      &:hover,
+      &:focus {
+        background-color: var(--figma-color-icon-brand-secondary);
+      }
+    }
+  }
+}
+
+.ellipsis-menu {
+  position: relative;
+
+  &__dots {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+  }
+
+  &__dot {
+    margin: 0 2px;
+    border-radius: 50%;
+    background-color: var(--figma-color-bg-tertiary);
+    width: 4px;
+    height: 4px;
+  }
+
+  &__dropdown {
+    display: flex;
+    position: absolute;
+    top: -120px;
+    right: 0;
+    flex-direction: column;
+    z-index: 10;
+    box-shadow: var(--figma-color-bg-inverse) 0px 0px 3px;
+    border-radius: 3px;
+    background-color: var(--figma-color-bg-inverse);
+    width: 184px;
+  }
+
+  &__divider {
+    background-color: var(--figma-color-border);
+    width: 100%;
+    height: 1px;
+  }
+
+  &__option {
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 12px 28px;
+    color: var(--figma-color-bg);
+    font-size: 12px;
+    text-align: left;
+
+    &:hover {
+      background-color: var(--figma-color-bg-disabled-secondary);
+      color: var(--figma-color-bg);
+    }
+  }
+}
+
+.info-panel {
+  position: fixed;
+  top: -50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  padding: 16px;
+  max-width: 80%;
+  max-height: 80%;
+  overflow-y: auto;
+
+  &__title {
+    margin-top: 0;
+  }
+
+  &__content {
+    margin-bottom: 16px;
+  }
+
+  &__close-btn {
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #f0f0f0;
+    padding: 8px 16px;
+
+    &:hover {
+      background-color: #e0e0e0;
+    }
+  }
+}
+
+.advanced-mode {
+  z-index: 100;
+  padding: 24px 24px 12px 24px;
+  color: var(--figma-color-bg-inverse);
+
+  &__row-one {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-family: "Roboto Mono";
+  }
+
+  &__description {
+    font-size: 14px;
+  }
+
+  &__toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__panel-settings {
+    display: flex;
+    position: relative;
+    justify-content: flex-start;
+    align-items: left;
+    gap: 16px;
+    z-index: 1;
+    margin-top: 8px;
+    border-bottom: 1px solid var(--figma-color-border);
+    width: 100%;
+    color: var(--figma-color-bg);
+    font-size: 14px;
+  }
+
+  &__panel-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    background: transparent;
+    padding: 16px 0px;
+    color: var(--figma-color-text-disabled);
+
+    &--active {
+      color: var(--figma-color-text);
+      font-weight: 600;
+    }
+
+    &--disabled {
+      pointer-events: none;
+      color: var(--figma-color-text-disabled);
+    }
+  }
+}
+
+.switch {
+  display: inline-block;
+  position: relative;
+  margin: 0;
+  width: 24px;
+  height: 12px;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  &__toggle {
+    position: absolute;
+    top: 0;
+    right: -2px;
+    bottom: -2px;
+    left: 0;
+    transition: 0.4s;
+    cursor: pointer;
+    border: 1px solid var(--figma-color-bg-inverse);
+    border-radius: 34px;
+    background-color: var(--figma-color-bg);
+
+    &:before {
+      position: absolute;
+      top: 0px;
+      bottom: 24px;
+      transition: 0.4s;
+      border: 1px solid var(--figma-color-bg-inverse);
+      border-radius: 50%;
+      background-color: var(--figma-color-bg);
+      width: 10px;
+      height: 10px;
+      content: "";
+    }
+
+    &--round {
+      border-radius: 34px;
+    }
+  }
+
+  input:checked + &__toggle {
+    background-color: var(--figma-color-bg-inverse);
+
+    &:before {
+      transform: translateX(11px);
+      background-color: var(--figma-color-bg);
+    }
+  }
+}

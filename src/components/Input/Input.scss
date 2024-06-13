@@ -1,0 +1,53 @@
+.input {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: left;
+  width: 100%;
+
+  &__label {
+    display: inline-block;
+    margin-top: 18px;
+    color: var(--figma-color-text-onselected);
+    font-size: 14px;
+  }
+
+  &__wrapper {
+    display: flex;
+    position: relative;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+  }
+
+  &__field {
+    margin-top: 6px;
+    border: 1px solid var(--figma-color-border);
+    background-color: var(--figma-color-bg);
+    padding: 12px 16px;
+    width: 100%;
+    color: var(--figma-color-bg-inverse);
+  }
+
+  &__unit {
+    position: absolute;
+    top: 40%;
+    right: 12%;
+    z-index: 10;
+    color: var(--figma-color-bg-inverse);
+    font-size: 12px;
+
+    &--right {
+      right: 7%;
+    }
+
+    &--hidden {
+      display: none;
+    }
+  }
+}
+
+.svg {
+  color: var(--figma-color-bg-inverse);
+}

@@ -1,21 +1,33 @@
 export interface Harmonograph {
-  d: Number;
-  c: Number;
-  p: Number;
-  q: Number;
-  r: Number;
-  A: Number;
-  B: Number;
-  u: Number;
-  v: Number;
-  R: Number;
-  S: Number;
-  f: Number;
-  g: Number;
-  h: Number;
-  w: Number;
-
-  diameter: Number;
-  steps: Number;
-  segments: Number;
+  d: number;
+  c: number;
+  p: number;
+  q: number;
+  r: number;
+  A: number;
+  B: number;
+  u: number;
+  v: number;
+  R: number;
+  S: number;
+  f: number;
+  g: number;
+  h: number;
+  w: number;
+  diameter: number;
+  steps: number;
+  segments: number;
 }
+
+export interface HarmonographInputConfig {
+  minValue: number;
+  maxValue: number;
+  decimalPlaces: number;
+}
+
+export type HarmonographWithInputConfig = {
+  [K in keyof Harmonograph]: {
+    value: Harmonograph[K];
+    config: HarmonographInputConfig;
+  };
+};
