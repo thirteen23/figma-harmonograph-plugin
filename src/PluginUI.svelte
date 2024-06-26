@@ -5,6 +5,7 @@ import Input from "./components/Input/Input.svelte";
 import Slider from "./components/Slider/Slider.svelte";
 import InformationHeader from "./components/InformationHeader/InformationHeader.svelte";
 import SpinMeButton from "./components/SpinMeButton/SpinMeButton.svelte";
+import { onMount } from "svelte";
 
 import {
   inputRanges,
@@ -53,8 +54,25 @@ function toggleMenu() {
   menu.style.display = menu.style.display === "none" ? "flex" : "none";
 }
 
+onMount(() => {
+  document.addEventListener("click", handleOutsideClick);
+
+  return () => {
+    document.removeEventListener("click", handleOutsideClick);
+  };
+});
+
+function handleOutsideClick(event) {
+  const menu = document.getElementById("menu");
+  const ellipsisMenu = document.querySelector(".ellipsis-menu");
+
+  if (!ellipsisMenu.contains(event.target) && menu.style.display !== "none") {
+    menu.style.display = "none";
+  }
+}
+
 function openWebsite() {
-  window.open("https://example.com", "_blank");
+  window.open("https://www.thirteen23.com/", "_blank");
 }
 
 function toggleInfoPanel() {
@@ -597,21 +615,35 @@ function cancel() {
         Add to canvas
       </button>
       <div class="ellipsis-menu" aria-label="More options">
-        <div class="ellipsis-menu__dots" on:click="{toggleMenu}">
+        <div
+          class="ellipsis-menu__dots"
+          on:click|stopPropagation="{toggleMenu}">
           <span class="ellipsis-menu__dot"></span>
           <span class="ellipsis-menu__dot"></span>
           <span class="ellipsis-menu__dot"></span>
         </div>
 
         <div id="menu" class="ellipsis-menu__dropdown" style="display: none;">
-          <button class="ellipsis-menu__option" on:click="{resetToDefaults}"
-            >Reset params</button>
+          <button
+            class="ellipsis-menu__option"
+            on:click="{() => {
+              resetToDefaults();
+              toggleMenu();
+            }}">Reset params</button>
           <div class="ellipsis-menu__divider"></div>
-          <button class="ellipsis-menu__option" on:click="{openWebsite}"
-            >About this plugin</button>
+          <button
+            class="ellipsis-menu__option"
+            on:click="{() => {
+              toggleInfoPanel();
+              toggleMenu();
+            }}">About this plugin</button>
           <div class="ellipsis-menu__divider"></div>
-          <button class="ellipsis-menu__option" on:click="{toggleInfoPanel}"
-            >@thirteen23</button>
+          <button
+            class="ellipsis-menu__option"
+            on:click="{() => {
+              openWebsite();
+              toggleMenu();
+            }}">@thirteen23</button>
         </div>
       </div>
 

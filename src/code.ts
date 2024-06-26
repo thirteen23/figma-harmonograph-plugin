@@ -1,4 +1,5 @@
 import { Harmonograph } from "./Harmonograph";
+import { inputRanges } from "./HarmonographParams";
 
 figma.showUI(__html__, { themeColors: true, width: 500, height: 800 });
 
@@ -7,25 +8,25 @@ figma.clientStorage.getAsync("last-harmonograph").then((last) => {
   if (last === undefined) {
     console.log("sending default one");
 
+    // TODO get default from HarmonographParams - get default inputs once it returns a Harmonograph
     let harmonograph: Harmonograph = {
-      d: 900,
-      c: 800,
-      p: 900,
-      q: 700,
-      r: 300,
-      A: 10, // Convert to radians later
-      B: 10, // Convert to radians later
-      u: 0,
-      v: 0,
-      R: 0.001,
-      S: 0.001,
-      f: 0.3,
-      g: 0.302,
-      h: 0.0008,
-      w: 0.2,
-      diameter: 320,
-      steps: 900,
-      segments: 32,
+      d: inputRanges.d.default,
+      c: inputRanges.c.default,
+      p: inputRanges.p.default,
+      q: inputRanges.q.default,
+      r: inputRanges.r.default,
+      A: inputRanges.A.default, // Convert to radians later
+      B: inputRanges.B.default, // Convert to radians later
+      u: inputRanges.u.default,
+      v: inputRanges.v.default,
+      R: inputRanges.R.default,
+      S: inputRanges.S.default,
+      f: inputRanges.f.default,
+      g: inputRanges.g.default,
+      h: inputRanges.h.default,
+      w: inputRanges.w.default,
+      steps: inputRanges.steps.default,
+      segments: inputRanges.segments.default,
     };
 
     figma.ui.postMessage({ type: "update-harmonograph", harmonograph });

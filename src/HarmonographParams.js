@@ -1,16 +1,8 @@
 export const inputRanges = {
-  //both
-  diameter: {
-    min: 320,
-    max: 320,
-    decimalPlaces: 0,
-    default: 320,
-    mode: "both",
-  },
 
   // Simple mode params
-  f: { min: 0.01, max: 1, decimalPlaces: 2, default: 0.3, mode: "simple" },
-  g: { min: 0.01, max: 1, decimalPlaces: 2, default: 0.302, mode: "simple" },
+  f: { min: -0.5, max: 0.5, decimalPlaces: 3, default: 0.3, mode: "simple" },
+  g: { min: -0.5, max: 0.5, decimalPlaces: 3, default: 0.302, mode: "simple" },
   A: { min: 1, max: 50, decimalPlaces: 0, default: 10, mode: "simple" },
   B: { min: 1, max: 50, decimalPlaces: 0, default: 10, mode: "simple" },
   steps: { min: 0, max: 5000, decimalPlaces: 0, default: 900, mode: "simple" },
@@ -24,7 +16,7 @@ export const inputRanges = {
   c: { min: 200, max: 1000, decimalPlaces: 0, default: 800, mode: "advanced" },
   p: { min: 200, max: 1000, decimalPlaces: 0, default: 900, mode: "advanced" },
   q: { min: 200, max: 1000, decimalPlaces: 0, default: 700, mode: "advanced" },
-  r: { min: 100, max: 1000, decimalPlaces: 0, default: 300, mode: "advanced" },
+  r: { min: 200, max: 900, decimalPlaces: 0, default: 300, mode: "advanced" },
   h: {
     min: 0,
     max: 0.001,
@@ -55,16 +47,6 @@ export function randomizeInputs(currentMode, currentValues) {
   }
   return randomized;
 }
-
-// export function getDefaultInputs(mode) {
-//   const defaults = {};
-//   for (const [key, range] of Object.entries(inputRanges)) {
-//     if (range.mode === mode || range.mode === "both") {
-//       defaults[key] = range.default;
-//     }
-//   }
-//   return defaults;
-// }
 
 export function getDefaultInputs() {
   const defaults = {};
