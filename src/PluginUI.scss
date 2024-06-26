@@ -334,3 +334,15 @@ label {
     }
   }
 }
+
+#edge_bottom {
+  z-index: 100000;
+  height: 3px;
+  width: 100%;
+
+  background-color: transparent;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  cursor: ns-resize;
+}

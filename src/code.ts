@@ -1,15 +1,18 @@
 import { Harmonograph } from "./Harmonograph";
-import { inputRanges } from "./HarmonographParams";
+import { inputRanges } from "./HarmonographParams"
 
 figma.showUI(__html__, { themeColors: true, width: 500, height: 800 });
 
-figma.clientStorage.getAsync("last-harmonograph").then((last) => {
-  console.log("last one made is this one: ", last);
-  if (last === undefined) {
+figma.clientStorage.getAsync("last-harmonograph").then((savedHarmonograph) => {
+  console.log("Loaded last inserted harmonograph: ", savedHarmonograph);
+
+  let harmonograph: Harmonograph = savedHarmonograph;
+
+  if (harmonograph === undefined) {
     console.log("sending default one");
 
     // TODO get default from HarmonographParams - get default inputs once it returns a Harmonograph
-    let harmonograph: Harmonograph = {
+    harmonograph = {
       d: inputRanges.d.default,
       c: inputRanges.c.default,
       p: inputRanges.p.default,
@@ -28,9 +31,9 @@ figma.clientStorage.getAsync("last-harmonograph").then((last) => {
       steps: inputRanges.steps.default,
       segments: inputRanges.segments.default,
     };
-
-    figma.ui.postMessage({ type: "update-harmonograph", harmonograph });
   }
+
+  figma.ui.postMessage({ type: "update-harmonograph", harmonograph });
 });
 
 figma.ui.onmessage = (msg) => {
@@ -58,7 +61,16 @@ figma.ui.onmessage = (msg) => {
       figma.closePlugin();
 
       break;
+    case "save-harmonograph":
+      var harmonograph = msg.harmonograph;
+      console.log("saving this one: ", harmonograph);
+
+      figma.clientStorage.setAsync("last-harmonograph", harmonograph);
+
+      break;
     case "resize-window":
-      figma.ui.resize(msg.size.w, msg.size.h);
+      const windowHeight = msg.height > 700 ? msg.height : 700;
+
+      figma.ui.resize(500, windowHeight);
   }
 };

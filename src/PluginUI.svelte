@@ -47,6 +47,7 @@ function randomizeAllInputs() {
 function resetToDefaults() {
   currentHarmonograph = getDefaultInputs(activeMode);
   drawHarmonographSVG(currentHarmonograph);
+  saveHarmonograph();
 }
 
 function toggleMenu() {
@@ -56,6 +57,16 @@ function toggleMenu() {
 
 onMount(() => {
   document.addEventListener("click", handleOutsideClick);
+  const edge = document.getElementById("edge_bottom");
+
+  edge.onpointerdown = (e)=>{
+    edge.onpointermove = resizeWindow;
+    edge.setPointerCapture(e.pointerId);
+  };
+  edge.onpointerup = (e)=>{
+    edge.onpointermove = null;
+    edge.releasePointerCapture(e.pointerId);
+  };
 
   return () => {
     document.removeEventListener("click", handleOutsideClick);
@@ -83,6 +94,8 @@ function toggleInfoPanel() {
 }
 
 function insertHarmonograph() {
+  saveHarmonograph();
+
   parent.postMessage(
     {
       pluginMessage: {
@@ -93,6 +106,24 @@ function insertHarmonograph() {
     },
     "*",
   );
+}
+
+function saveHarmonograph() {
+  parent.postMessage(
+    {
+      pluginMessage: {
+        type: "save-harmonograph",
+        harmonograph: currentHarmonograph,
+        data: currentPathData,
+      },
+    },
+    "*",
+  );
+}
+
+function resizeWindow(e) {
+  const height = Math.max(50,Math.floor(e.clientY+5));
+  parent.postMessage( { pluginMessage: { type: 'resize-window', height: height }}, '*');
 }
 
 function updateHarmonograph(property, value) {
@@ -657,4 +688,5 @@ function cancel() {
       </div>
     </div>
   </footer>
+  <div id="edge_bottom"></div>
 </div>
