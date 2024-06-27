@@ -1,14 +1,14 @@
+@import "../../App.scss";
+
 .information-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 24px;
+  gap: 0.75em;
+  margin-top: 1.5em;
 
   &__title {
+    @include information-header-component-font;
     margin: 0;
-    color: var(--figma-color-text);
-    font-weight: 500;
-    font-size: 14px;
   }
 
   &__icon-container {
@@ -18,27 +18,33 @@
     align-items: center;
   }
 
+  &__icon {
+    width: 0.75em;
+    height: 0.75em;
+  }
+
   &__info-panel {
+    @include body-text-p-font;
+
     position: absolute;
-    top: 36px;
-    left: -12px;
+    top: 2.25em;
+    left: -0.75em;
     z-index: 20;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 2px;
-    background-color: var(--figma-color-bg-inverse);
-    padding: 0.5rem;
-    color: var(--figma-color-text-oninverse);
-    font-size: 14px;
+    box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.1);
+    border-radius: 0.125em;
+    background-color: $--figma-black-no-change;
+    padding: 0.3125em;
+    color: $--figma-white-no-change;
     white-space: nowrap;
   }
 
   &__info-panel-triangle {
     position: absolute;
-    top: -8px;
-    left: 12px;
-    border-right: 8px solid transparent;
-    border-bottom: 8px solid var(--figma-color-bg-inverse);
-    border-left: 8px solid transparent;
+    top: -0.5em;
+    left: 0.75em;
+    border-right: 0.5em solid transparent;
+    border-bottom: 0.5em solid var(--figma-color-bg-inverse);
+    border-left: 0.5em solid transparent;
     width: 0;
     height: 0;
     content: "";

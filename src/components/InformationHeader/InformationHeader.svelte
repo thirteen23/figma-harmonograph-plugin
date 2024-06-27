@@ -15,6 +15,7 @@ let showInfo = false;
       on:mouseleave="{() => (showInfo = false)}"
       width="17"
       height="17"
+      class="information-header__icon"
       viewBox="0 0 17 17"
       fill="currentColor"
       xmlns="http://www.w3.org/2000/svg">

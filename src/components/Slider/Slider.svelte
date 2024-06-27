@@ -3,6 +3,8 @@ import "./Slider.scss";
 
 export let value;
 export let onValueChange;
+export let min = 0;
+export let max = 5000;
 
 function handleInput(event) {
   value = event.target.value;
@@ -15,22 +17,22 @@ function handleInput(event) {
     <input
       class="slider__range"
       type="range"
-      min="0"
-      max="5000"
+      min="{min}"
+      max="{max}"
       step="0"
       bind:value="{value}"
       on:input="{handleInput}" />
     <div class="slider__value-range">
-      <div class="slider__lowest-value">0</div>
-      <div class="slider__highest-value">5000</div>
+      <div class="slider__lowest-value">{min}</div>
+      <div class="slider__highest-value">{max}</div>
     </div>
   </div>
 
   <input
     class="slider__input"
     type="text"
-    min="0"
-    max="5000"
+    min="{min}"
+    max="{max}"
     bind:value="{value}"
     on:input="{handleInput}" />
 </div>

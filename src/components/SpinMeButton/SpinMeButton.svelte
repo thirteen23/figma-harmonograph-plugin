@@ -1,7 +1,14 @@
 <script>
 import "./SpinMeButton.scss";
-
 import { createEventDispatcher } from "svelte";
+
+export let fontSize = "11px";
+export let width = "70px";
+export let height = "70px";
+export let position = "absolute";
+export let right = "24px";
+export let top = "248px";
+export let zIndex = "100000";
 
 const dispatch = createEventDispatcher();
 
@@ -15,6 +22,9 @@ function spinCircle() {
 }
 </script>
 
-<div class="spin-me-button" on:click="{spinCircle}">
-  <div class="spin-me-button__text">SPIN ME</div>
+<div
+  class="spin-me-button"
+  on:click="{spinCircle}"
+  style="z-index:{zIndex}; width: {width}; height: {height}; position:{position}; right:{right}; top:{top};">
+  <div class="spin-me-button__text" style="font-size: {fontSize};">SPIN ME</div>
 </div>

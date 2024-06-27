@@ -1,12 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
-
-:root {
-  --accent-middlesage: #8faca9;
-  --accent-brightgreen: #89bc4a;
-  --accent-lightsage: #d2dfde;
-  --base-blue: #18a0fb;
-  --base-blue-hovered: #096bad;
-}
+@import "../../App.scss";
 
 button {
   outline: none;
@@ -18,18 +10,16 @@ path {
   color: var(--figma-color-bg-inverse);
 }
 
-h2 {
-  margin-bottom: 0;
-  color: var(--figma-color-text);
-  font-weight: 500;
-  font-size: 14px;
+label {
+  @include text-input-label-font;
+  display: inline-block;
+  margin-top: 1.125em;
+  color: var(--figma-color-text-secondary);
 }
 
-label {
-  display: inline-block;
-  margin-top: 18px;
-  color: var(--figma-color-text-secondary);
-  font-size: 12px;
+input[type="text"]:focus {
+  outline: var(--figma-color-border-selected);
+  border: 2px solid var(--figma-color-border-selected);
 }
 
 .two-col-layout {
@@ -37,13 +27,13 @@ label {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 0.5em;
 }
 
 .wrapper {
   position: relative;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -73,7 +63,7 @@ label {
   border-image-slice: 1;
   background-color: var(--figma-color-bg);
   width: 100%;
-  height: 360px;
+  height: 22.5em;
   color: var(--figma-color-text);
 }
 
@@ -81,12 +71,12 @@ label {
   z-index: 100;
   box-sizing: border-box;
   width: 100%;
-  max-height: 400px;
+  max-height: 25em;
   overflow-y: scroll;
 
   &__wrapper {
     box-sizing: border-box;
-    padding: 0px 24px 238px 24px;
+    padding: 0 1.5em 14.875em 1.5em;
     height: fit-content;
   }
 }
@@ -99,27 +89,27 @@ label {
   border-top: 1px solid var(--figma-color-border);
   background-color: var(--figma-color-bg);
   width: 100%;
-  height: 74px;
+  height: 2.625em;
 
   &__content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 24px;
+    padding: 0 1.5em;
     height: 100%;
   }
 
   &__button {
+    @include body-text-p-font;
+
     transition: background-color 0.1s ease-in-out;
     cursor: pointer;
     border: none;
-    border-radius: 6px;
-    padding: 0 12px;
-    height: 38px;
-    font-size: 14px;
+    border-radius: 0.3125em;
+    padding: 0.25em 0.75em;
 
     &--primary {
-      background-color: var(--figma-color-bg-selected-strong);
+      background-color: var(--figma-color-bg-brand);
       color: var(--figma-color-text-onbrand);
 
       &:hover,
@@ -138,103 +128,69 @@ label {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    width: 24px;
-    height: 24px;
+    width: 1.5em;
+    height: 1.5em;
   }
 
   &__dot {
-    margin: 0 2px;
+    margin: 0 0.125em;
     border-radius: 50%;
     background-color: var(--figma-color-bg-inverse);
-    width: 4px;
-    height: 4px;
+    width: 0.1875em;
+    height: 0.1875em;
   }
 
   &__dropdown {
     display: flex;
     position: absolute;
-    top: -120px;
+    top: -5.9375em;
     right: 0;
     flex-direction: column;
     z-index: 10;
-    box-shadow: var(--figma-color-bg-inverse) 0px 0px 3px;
-    border-radius: 3px;
-    background-color: var(--figma-color-bg-inverse);
-    width: 184px;
+    box-shadow: var(--figma-color-bg) 0px 0px 0.625em;
+    border-radius: 0.1875em;
+    background-color: $--figma-black-no-change;
+    padding: 0.375em 0;
+    width: 11.5em;
   }
 
   &__divider {
-    background-color: var(--figma-color-border);
+    background-color: transparent;
     width: 100%;
-    height: 1px;
+    height: 0.0625em;
   }
 
   &__option {
+    @include body-text-p-font;
     cursor: pointer;
     border: none;
     background: none;
-    padding: 12px 28px;
-    color: var(--figma-color-bg);
-    font-size: 12px;
+    padding: 0.375em 1.75em;
+    color: $--figma-white-no-change;
     text-align: left;
 
     &:hover {
-      background-color: var(--figma-color-bg-disabled-secondary);
-      color: var(--figma-color-bg);
-    }
-  }
-}
-
-.info-panel {
-  position: fixed;
-  top: -50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 20;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: white;
-  padding: 16px;
-  max-width: 80%;
-  max-height: 80%;
-  overflow-y: auto;
-
-  &__title {
-    margin-top: 0;
-  }
-
-  &__content {
-    margin-bottom: 16px;
-  }
-
-  &__close-btn {
-    cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    background-color: #f0f0f0;
-    padding: 8px 16px;
-
-    &:hover {
-      background-color: #e0e0e0;
+      background-color: var(--figma-color-bg-brand);
     }
   }
 }
 
 .advanced-mode {
   z-index: 100;
-  padding: 24px 24px 12px 24px;
+  padding: 1.5em 1.5em 0 1.5em;
   color: var(--figma-color-bg-inverse);
 
   &__row-one {
+    @include description-h2-font;
+
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
-    font-family: "Roboto Mono";
+    margin-bottom: 0.625em;
   }
 
   &__description {
-    font-size: 14px;
+    @include body-text-p-font;
   }
 
   &__toggle {
@@ -249,16 +205,18 @@ label {
     position: relative;
     justify-content: flex-start;
     align-items: left;
-    gap: 16px;
+    gap: 1em;
     z-index: 1;
-    margin-top: 8px;
+    margin-top: 0.5em;
     border-bottom: 1px solid var(--figma-color-border);
+    padding-left: 8px;
     width: 100%;
     color: var(--figma-color-bg);
-    font-size: 14px;
   }
 
   &__panel-button {
+    @include body-text-p-font;
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -267,7 +225,8 @@ label {
     outline: none;
     border: none;
     background: transparent;
-    padding: 16px 0px;
+    padding: 1em 0;
+    width: 45px;
     color: var(--figma-color-text-disabled);
 
     &--active {
@@ -286,8 +245,8 @@ label {
   display: inline-block;
   position: relative;
   margin: 0;
-  width: 24px;
-  height: 12px;
+  width: 1.5em;
+  height: 0.75em;
 
   input {
     opacity: 0;
@@ -298,30 +257,31 @@ label {
   &__toggle {
     position: absolute;
     top: 0;
-    right: -2px;
-    bottom: -2px;
-    left: 0;
+    right: -0.125em;
+    bottom: -0.125em;
+    left: -0.125em;
     transition: 0.4s;
     cursor: pointer;
     border: 1px solid var(--figma-color-bg-inverse);
-    border-radius: 34px;
+    border-radius: 50%;
     background-color: var(--figma-color-bg);
 
     &:before {
       position: absolute;
-      top: 0px;
-      bottom: 24px;
+      top: -0.0625em;
+      bottom: 0.9375em;
+      left: -0.1em;
       transition: 0.4s;
       border: 1px solid var(--figma-color-bg-inverse);
       border-radius: 50%;
       background-color: var(--figma-color-bg);
-      width: 10px;
-      height: 10px;
+      width: 0.625em;
+      height: 0.625em;
       content: "";
     }
 
     &--round {
-      border-radius: 34px;
+      border-radius: 0.4125em;
     }
   }
 
@@ -329,20 +289,20 @@ label {
     background-color: var(--figma-color-bg-inverse);
 
     &:before {
-      transform: translateX(11px);
+      transform: translateX(0.95em);
       background-color: var(--figma-color-bg);
     }
   }
 }
 
 #edge_bottom {
-  z-index: 100000;
-  height: 3px;
-  width: 100%;
-
-  background-color: transparent;
   position: absolute;
   bottom: 0px;
   left: 0px;
+  z-index: 100000;
   cursor: ns-resize;
+
+  background-color: transparent;
+  width: 100%;
+  height: 0.1875em;
 }

@@ -1,0 +1,229 @@
+@import "../../App.scss";
+
+.about {
+  position: relative;
+  overflow: hidden;
+
+  &__harmonograph-information-title {
+    @include description-h1-font;
+    margin-top: 2em;
+  }
+
+  &__instructions-title,
+  &__tips-title {
+    @include description-h2-font;
+
+    display: flex;
+    flex-direction: row;
+    margin-top: 1.5em;
+    border-bottom: 1px solid var(--figma-color-border);
+    padding-top: 0.75em;
+    padding-bottom: 0.75em;
+  }
+
+  &__tips-description {
+    @include body-text-p-font;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 0.313em;
+    margin-top: 0.75em;
+  }
+
+  &__harmonograph-information-description,
+  &__instructions-step {
+    @include body-text-p-font;
+  }
+
+  &__instructions-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: start;
+    gap: 0.688em;
+    padding-left: 0.875em;
+  }
+
+  &__content {
+    padding: 0 1.5em;
+    max-height: 25em;
+    overflow-y: scroll;
+  }
+
+  &__content-wrapper {
+    padding-bottom: 0;
+    height: fit-content;
+  }
+
+  &__image {
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    border: 1px solid;
+    border-image: linear-gradient(
+      120deg,
+      #f8a390 10%,
+      #fff380 20%,
+      #f49cd4 40%,
+      #b6b9f6 58%,
+      #8ddfc3 80%,
+      #8bcffd 94%
+    );
+    border-image-slice: 1;
+    background-color: var(--figma-color-bg);
+    height: 22.5em;
+    overflow: hidden;
+
+    &-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__credits-text {
+    @include body-text-p-font;
+
+    margin-top: 6em;
+  }
+
+  &__credits-link {
+    color: var(--figma-color-bg-inverse);
+    text-decoration: underline;
+  }
+
+  &__footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    border-top: 1px solid var(--figma-color-border);
+    background-color: var(--figma-color-bg);
+    width: 100%;
+    height: 2.625em;
+
+    &-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5em;
+      padding: 0 1.5em;
+      height: 100%;
+    }
+
+    &-button {
+      @include body-text-p-font;
+
+      transition: background-color 0.1s ease-in-out;
+      cursor: pointer;
+      border: none;
+      border-radius: 0.3125em;
+      padding: 0.25em 0.75em;
+
+      &--primary {
+        background-color: var(--figma-color-bg-selected-strong);
+
+        &:hover,
+        &:focus {
+          background-color: var(--figma-color-icon-brand-secondary);
+        }
+      }
+    }
+  }
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  border-top: 1px solid var(--figma-color-border);
+  background-color: var(--figma-color-bg);
+  width: 100%;
+  height: 2.625em;
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5em;
+    height: 100%;
+  }
+
+  &__button {
+    @include body-text-p-font;
+
+    transition: background-color 0.1s ease-in-out;
+    cursor: pointer;
+    border: none;
+    border-radius: 0.3125em;
+    padding: 0.25em 0.75em;
+
+    &--primary {
+      background-color: var(--figma-color-bg-brand);
+      color: var(--figma-color-text-onbrand);
+
+      &:hover,
+      &:focus {
+        background-color: var(--figma-color-icon-brand-secondary);
+      }
+    }
+  }
+}
+
+.ellipsis-menu {
+  position: relative;
+
+  &__dots {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    width: 1.5em;
+    height: 1.5em;
+  }
+
+  &__dot {
+    margin: 0 0.125em;
+    border-radius: 50%;
+    background-color: var(--figma-color-bg-inverse);
+    width: 0.1875em;
+    height: 0.1875em;
+  }
+
+  &__dropdown {
+    display: flex;
+    position: absolute;
+    top: -7.5em;
+    right: 0;
+    flex-direction: column;
+    z-index: 10;
+    box-shadow: var(--figma-color-bg) 0px 0px 0.625em;
+    border-radius: 0.1875em;
+    background-color: $--figma-black-no-change;
+    padding: 0.375em 0;
+    width: 11.5em;
+  }
+
+  &__divider {
+    background-color: transparent;
+    width: 100%;
+    height: 0.0625em;
+  }
+
+  &__option {
+    @include body-text-p-font;
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0.375em 1.75em;
+    color: $--figma-white-no-change;
+    text-align: left;
+
+    &:hover {
+      background-color: var(--figma-color-bg-brand);
+    }
+  }
+}

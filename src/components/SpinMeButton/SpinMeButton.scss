@@ -1,17 +1,17 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
+@import "../../App.scss";
 
 .spin-me-button {
   display: flex;
   position: absolute;
-  top: 248px;
-  right: 24px;
+  top: 15.5em;
+  right: 1.5em;
   justify-content: center;
   align-items: center;
   z-index: 10000000;
   cursor: pointer;
 
-  box-shadow: var(--figma-color-bg) 0px 0px 30px;
-  border: 1px solid var(--figma-color-text-hover);
+  box-shadow: var(--figma-color-bg) 0px 0px 1.875em;
+  border: 1px solid $--figma-black-no-change;
   border-radius: 50%;
   background: radial-gradient(
     circle,
@@ -24,14 +24,12 @@
   );
   background-position: 100% 100%;
   background-size: 200% 200%;
-  width: 90px;
-  height: 90px;
+  width: 5.625em;
+  height: 5.625em;
 
   &__text {
     transform: rotate(18deg);
-    z-index: 10000000;
-    color: var(--figma-color-text-hover);
-    font-size: 16px;
+    color: $--figma-black-no-change;
     font-family: "Roboto Mono";
     text-align: center;
   }

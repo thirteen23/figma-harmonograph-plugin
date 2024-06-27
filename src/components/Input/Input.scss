@@ -1,3 +1,5 @@
+@import "../../App.scss";
+
 .input {
   display: flex;
   flex-direction: column;
@@ -6,10 +8,9 @@
   width: 100%;
 
   &__label {
+    @include text-input-label-font;
     display: inline-block;
-    margin-top: 18px;
-    color: var(--figma-color-text-onselected);
-    font-size: 14px;
+    margin-top: 1.125em;
   }
 
   &__wrapper {
@@ -18,25 +19,45 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 24px;
+    gap: 1em;
   }
 
   &__field {
-    margin-top: 6px;
-    border: 1px solid var(--figma-color-border);
+    @include text-input-font;
+    margin-top: 0.375em;
+    outline: 1px solid var(--figma-color-border);
+    border: 2px solid var(--figma-color-bg);
     background-color: var(--figma-color-bg);
-    padding: 12px 16px;
+    padding: 0.75em 1em;
     width: 100%;
     color: var(--figma-color-bg-inverse);
   }
 
+  &__svg-container {
+    display: inline-block;
+    cursor: pointer;
+    margin-top: 0.375em;
+    border-radius: 0.25em;
+    padding: 0.5em;
+
+    &:hover {
+      background-color: var(--figma-color-bg-hover);
+    }
+  }
+
+  &__randomize {
+    vertical-align: middle;
+    width: 0.75em;
+    height: 0.75em;
+  }
+
   &__unit {
+    @include text-input-font;
     position: absolute;
     top: 40%;
-    right: 12%;
+    right: 16%;
     z-index: 10;
     color: var(--figma-color-bg-inverse);
-    font-size: 12px;
 
     &--right {
       right: 7%;

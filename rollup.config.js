@@ -5,7 +5,7 @@ import livereload from "rollup-plugin-livereload";
 import { terser } from "rollup-plugin-terser";
 import svg from "rollup-plugin-svg";
 import typescript from "rollup-plugin-typescript";
-
+import image from "@rollup/plugin-image";
 /* Post CSS */
 import postcss from "rollup-plugin-postcss";
 import cssnano from "cssnano";
@@ -63,6 +63,7 @@ export default [
       // If we're building for production (npm run build
       // instead of npm run dev), minify
       production && terser(),
+      image(),
     ],
     watch: {
       clearScreen: false,

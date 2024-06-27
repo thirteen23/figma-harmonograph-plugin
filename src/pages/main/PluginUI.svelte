@@ -1,17 +1,27 @@
 <script>
 import { GlobalCSS } from "figma-plugin-ds-svelte";
 
-import Input from "./components/Input/Input.svelte";
-import Slider from "./components/Slider/Slider.svelte";
-import InformationHeader from "./components/InformationHeader/InformationHeader.svelte";
-import SpinMeButton from "./components/SpinMeButton/SpinMeButton.svelte";
-import { onMount } from "svelte";
+import Input from "../../components/Input/Input.svelte";
+import Slider from "../../components/Slider/Slider.svelte";
+import InformationHeader from "../../components/InformationHeader/InformationHeader.svelte";
+import SpinMeButton from "../../components/SpinMeButton/SpinMeButton.svelte";
+import { onMount, createEventDispatcher } from "svelte";
 
 import {
   inputRanges,
   randomizeInputs,
   getDefaultInputs,
-} from "./HarmonographParams.js";
+} from "../../HarmonographParams.js";
+
+const dispatch = createEventDispatcher();
+
+function switchToAboutPage() {
+  window.parent.postMessage(
+    { pluginMessage: { type: "ui-switched-to-AboutPage" } },
+    "*",
+  );
+  dispatch("switch", 1);
+}
 
 import "./PluginUI.scss";
 
@@ -59,11 +69,11 @@ onMount(() => {
   document.addEventListener("click", handleOutsideClick);
   const edge = document.getElementById("edge_bottom");
 
-  edge.onpointerdown = (e)=>{
+  edge.onpointerdown = (e) => {
     edge.onpointermove = resizeWindow;
     edge.setPointerCapture(e.pointerId);
   };
-  edge.onpointerup = (e)=>{
+  edge.onpointerup = (e) => {
     edge.onpointermove = null;
     edge.releasePointerCapture(e.pointerId);
   };
@@ -84,13 +94,6 @@ function handleOutsideClick(event) {
 
 function openWebsite() {
   window.open("https://www.thirteen23.com/", "_blank");
-}
-
-function toggleInfoPanel() {
-  const infoPanel = document.getElementById("infoPanel");
-  infoPanel.style.display =
-    infoPanel.style.display === "none" ? "block" : "none";
-  document.getElementById("menu").style.display = "none";
 }
 
 function insertHarmonograph() {
@@ -122,8 +125,11 @@ function saveHarmonograph() {
 }
 
 function resizeWindow(e) {
-  const height = Math.max(50,Math.floor(e.clientY+5));
-  parent.postMessage( { pluginMessage: { type: 'resize-window', height: height }}, '*');
+  const height = Math.max(50, Math.floor(e.clientY + 5));
+  parent.postMessage(
+    { pluginMessage: { type: "resize-window", height: height } },
+    "*",
+  );
 }
 
 function updateHarmonograph(property, value) {
@@ -387,6 +393,8 @@ function cancel() {
             info="{'This is how many times it steps'}" />
 
           <Slider
+            min="{0}"
+            max="{5000}"
             value="{currentHarmonograph.steps}"
             onValueChange="{(value) => updateHarmonograph('steps', value)}" />
         {:else}
@@ -618,20 +626,25 @@ function cancel() {
 
           <div class="{`harmono-panel${selectedPanel === 2 ? '' : ' hidden'}`}">
             <InformationHeader
+              text="{'Steps'}"
+              info="{'This is how many times it steps'}" />
+
+            <Slider
+              value="{currentHarmonograph.steps}"
+              min="{0}"
+              max="{5000}"
+              onValueChange="{(value) => updateHarmonograph('steps', value)}" />
+
+            <InformationHeader
               text="{'Segments per Step'}"
               info="{'This is how segments bro'}" />
 
-            <Input
+            <Slider
               value="{currentHarmonograph.segments}"
-              onValueChange="{(value) => updateHarmonograph('segments', value)}"
-              minValue="{inputRanges.segments.min}"
-              maxValue="{inputRanges.segments.max}"
-              decimalPlaces="{inputRanges.segments.decimalPlaces}"
-              inputData="{'segments_per_step'}"
-              hideRandomizeButton="{true}"
-              hideUnits="{true}"
-              unit="{'degrees'}"
-              labelFieldText="{'Segments'}" />
+              min="{1}"
+              max="{50}"
+              onValueChange="{(value) =>
+                updateHarmonograph('segments', value)}" />
           </div>
         {/if}
       </div>
@@ -665,7 +678,7 @@ function cancel() {
           <button
             class="ellipsis-menu__option"
             on:click="{() => {
-              toggleInfoPanel();
+              switchToAboutPage();
               toggleMenu();
             }}">About this plugin</button>
           <div class="ellipsis-menu__divider"></div>
@@ -676,15 +689,6 @@ function cancel() {
               toggleMenu();
             }}">@thirteen23</button>
         </div>
-      </div>
-
-      <div id="infoPanel" class="info-panel" style="display: none;">
-        <h2 class="info-panel__title">Information Panel</h2>
-        <p class="info-panel__content">
-          This is the larger information panel you requested.
-        </p>
-        <button class="info-panel__close-btn" on:click="{toggleInfoPanel}"
-          >Close</button>
       </div>
     </div>
   </footer>
