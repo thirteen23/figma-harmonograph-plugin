@@ -35,7 +35,8 @@ function handleChange(event) {
       iconText="°"
       type="text"
       bind:value="{value}"
-      on:input="{handleChange}" />
+      on:input="{handleChange}"
+    />
 
     {#if !hideRandomizeButton}
       <div class="input__unit {!hideUnits ? '' : 'input__unit--hidden'}">
@@ -62,7 +63,8 @@ function handleChange(event) {
       <div
         class="input__unit input__unit--right {!hideUnits
           ? ''
-          : 'input__unit--hidden'}">
+          : 'input__unit--hidden'}"
+      >
         {unit}
       </div>
     {/if}

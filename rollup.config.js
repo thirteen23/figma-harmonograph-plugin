@@ -38,9 +38,10 @@ export default [
         browser: true,
         dedupe: (importee) =>
           importee === "svelte" || importee.startsWith("svelte/"),
-        extensions: [".svelte", ".mjs", ".js", ".json", ".node"],
+        extensions: [".svelte", ".mjs", ".js", ".ts", ".json", ".node"],
       }),
       commonjs(),
+      typescript(),
       svg(),
       postcss({
         extensions: [".css"],

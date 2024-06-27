@@ -5,53 +5,18 @@ import { onMount, createEventDispatcher } from "svelte";
 
 import SpinMeButton from "../../components/SpinMeButton/SpinMeButton.svelte";
 
-import {
-  inputRanges,
-  randomizeInputs,
-  getDefaultInputs,
-} from "../../HarmonographParams.js";
-
 import "./About.scss";
 
-const dispatch = createEventDispatcher();
+export let openWebsite = () => console.log("not implemented!");
+export let navigateToHarmonograph = () => console.log("not implemented!");
 
 onMount(() => {
   document.addEventListener("click", handleOutsideClick);
-  const edge = document.querySelector(".about__edge-bottom");
-
-  edge.onpointerdown = (e) => {
-    edge.onpointermove = resizeWindow;
-    edge.setPointerCapture(e.pointerId);
-  };
-  edge.onpointerup = (e) => {
-    edge.onpointermove = null;
-    edge.releasePointerCapture(e.pointerId);
-  };
 
   return () => {
     document.removeEventListener("click", handleOutsideClick);
   };
 });
-
-function switchToPluginUIPage() {
-  window.parent.postMessage(
-    { pluginMessage: { type: "ui-switched-to-PluginUIPage" } },
-    "*",
-  );
-  dispatch("switch", 0);
-}
-
-function resizeWindow(e) {
-  const height = Math.max(50, Math.floor(e.clientY + 5));
-  parent.postMessage(
-    { pluginMessage: { type: "resize-window", height: height } },
-    "*",
-  );
-}
-
-function openWebsite() {
-  window.open("https://www.thirteen23.com/", "_blank");
-}
 
 function toggleMenu() {
   const menu = document.getElementById("menu");
@@ -65,12 +30,6 @@ function handleOutsideClick(event) {
   if (!ellipsisMenu.contains(event.target) && menu.style.display !== "none") {
     menu.style.display = "none";
   }
-}
-
-function resetToDefaults() {
-  currentHarmonograph = getDefaultInputs(activeMode);
-  drawHarmonographSVG(currentHarmonograph);
-  saveHarmonograph();
 }
 </script>
 
@@ -132,7 +91,8 @@ function resetToDefaults() {
           <a
             class="about__credits-link"
             href="https://ttencate.github.io/harmonograph/"
-            >Harmonograph in JavaScript</a>
+            >Harmonograph in JavaScript</a
+          >
         </p>
       </div>
     </div>
@@ -141,7 +101,7 @@ function resetToDefaults() {
   <footer class="footer">
     <div class="footer__content">
       <button
-        on:click="{switchToPluginUIPage}"
+        on:click="{navigateToHarmonograph}"
         class="footer__button footer__button--primary">
         Get Started
       </button>
@@ -158,26 +118,12 @@ function resetToDefaults() {
           <button
             class="ellipsis-menu__option"
             on:click="{() => {
-              resetToDefaults();
-              toggleMenu();
-            }}">Reset params</button>
-          <div class="ellipsis-menu__divider"></div>
-          <button
-            class="ellipsis-menu__option"
-            on:click="{() => {
-              switchToAboutPage();
-              toggleMenu();
-            }}">About this plugin</button>
-          <div class="ellipsis-menu__divider"></div>
-          <button
-            class="ellipsis-menu__option"
-            on:click="{() => {
               openWebsite();
               toggleMenu();
-            }}">@thirteen23</button>
+            }}">@thirteen23</button
+          >
         </div>
       </div>
     </div>
   </footer>
-  <div class="edge-bottom"></div>
 </div>

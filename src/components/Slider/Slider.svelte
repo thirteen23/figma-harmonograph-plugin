@@ -21,7 +21,8 @@ function handleInput(event) {
       max="{max}"
       step="0"
       bind:value="{value}"
-      on:input="{handleInput}" />
+      on:input="{handleInput}"
+    />
     <div class="slider__value-range">
       <div class="slider__lowest-value">{min}</div>
       <div class="slider__highest-value">{max}</div>
@@ -34,5 +35,6 @@ function handleInput(event) {
     min="{min}"
     max="{max}"
     bind:value="{value}"
-    on:input="{handleInput}" />
+    on:input="{handleInput}"
+  />
 </div>
