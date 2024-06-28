@@ -40,8 +40,7 @@ function openWebsite() {
 }
 
 onMount(() => {
-  const edge =
-    document.getElementById("edge_bottom");
+  const edge = document.getElementById("edge_bottom");
 
   if (edge) {
     edge.onpointerdown = (e) => {
@@ -65,16 +64,14 @@ onMount(() => {
         sendFTUEComplete();
         currentPage = 0;
       }}"
-      openWebsite={openWebsite}
-    />
+      openWebsite="{openWebsite}" />
   {:else if currentPage === 0}
     <CreateHarmonograph
       currentHarmonograph="{loadedHarmonograph}"
       navigateToAbout="{() => {
         currentPage = 1;
       }}"
-            openWebsite={openWebsite}
-    />
+      openWebsite="{openWebsite}" />
   {/if}
 
   <div id="edge_bottom"></div>

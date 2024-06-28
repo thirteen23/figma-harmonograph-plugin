@@ -97,6 +97,13 @@ input[type="text"]:focus {
     align-items: center;
     padding: 0 1.5em;
     height: 100%;
+
+    &__right {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 9px;
+    }
   }
 
   &__button {
@@ -229,6 +236,10 @@ input[type="text"]:focus {
     width: 45px;
     color: var(--figma-color-text-disabled);
 
+    &:nth-child(2) {
+      padding-left: 8px;
+    }
+
     &--active {
       color: var(--figma-color-text);
       font-weight: 600;
@@ -292,6 +303,22 @@ input[type="text"]:focus {
       transform: translateX(0.95em);
       background-color: var(--figma-color-bg);
     }
+  }
+}
+
+#reset-svg {
+  width: 14px;
+  height: 14px;
+}
+
+.svg-container {
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 0.25em;
+  padding: 0.5em;
+
+  &:hover {
+    background-color: var(--figma-color-bg-hover);
   }
 }
 

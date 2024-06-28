@@ -11,7 +11,7 @@ import {
   inputRanges,
   randomizeInputs,
   getDefaultHarmonograph,
-  createSVGPathData
+  createSVGPathData,
 } from "../../Harmonograph";
 
 import { PluginMessages } from "../../Messages";
@@ -134,8 +134,7 @@ function cancel() {
       xmlns="http://www.w3.org/2000/svg"
       width="320"
       height="320"
-      version="1.1"
-    ></svg>
+      version="1.1"></svg>
   </div>
 
   <div class="advanced-mode">
@@ -163,8 +162,7 @@ function cancel() {
             if (activeMode !== 'simple') {
               selectedPanel = 0;
             }
-          }}"
-        >
+          }}">
           Pendulums
         </button>
 
@@ -175,8 +173,7 @@ function cancel() {
             if (activeMode !== 'simple') {
               selectedPanel = 1;
             }
-          }}"
-        >
+          }}">
           Paper
         </button>
 
@@ -187,8 +184,7 @@ function cancel() {
             if (activeMode !== 'simple') {
               selectedPanel = 2;
             }
-          }}"
-        >
+          }}">
           Drawing
         </button>
       </div>
@@ -201,8 +197,7 @@ function cancel() {
         {#if activeMode === "simple"}
           <InformationHeader
             text="{'Frequency'}"
-            info="{'This is how many times it moves'}"
-          />
+            info="{'This is how many times it moves'}" />
 
           <Input
             value="{currentHarmonograph.f}"
@@ -212,8 +207,7 @@ function cancel() {
             decimalPlaces="{inputRanges.f.decimalPlaces}"
             inputData="{'left_pendulum_frequency'}"
             unit="{'Hz'}"
-            labelFieldText="{'Left pendulum frequency'}"
-          />
+            labelFieldText="{'Left pendulum frequency'}" />
 
           <Input
             value="{currentHarmonograph.g}"
@@ -223,13 +217,11 @@ function cancel() {
             decimalPlaces="{inputRanges.g.decimalPlaces}"
             inputData="{'right_pendulum_frequency'}"
             unit="{'Hz'}"
-            labelFieldText="{'Right pendulum frequency'}"
-          />
+            labelFieldText="{'Right pendulum frequency'}" />
 
           <InformationHeader
             text="{'Amplitude'}"
-            info="{'This is how many long it be'}"
-          />
+            info="{'This is how many long it be'}" />
 
           <Input
             value="{currentHarmonograph.A}"
@@ -239,8 +231,7 @@ function cancel() {
             decimalPlaces="{inputRanges.A.decimalPlaces}"
             inputData="{'pendulum_left_amplitude'}"
             unit="{'degrees'}"
-            labelFieldText="{'Pendulum left amplitude'}"
-          />
+            labelFieldText="{'Pendulum left amplitude'}" />
 
           <Input
             value="{currentHarmonograph.B}"
@@ -250,26 +241,22 @@ function cancel() {
             decimalPlaces="{inputRanges.B.decimalPlaces}"
             inputData="{'pendulum_right_amplitude'}"
             unit="{'degrees'}"
-            labelFieldText="{'Pendulum right amplitude'}"
-          />
+            labelFieldText="{'Pendulum right amplitude'}" />
 
           <InformationHeader
             text="{'Steps'}"
-            info="{'This is how many times it steps'}"
-          />
+            info="{'This is how many times it steps'}" />
 
           <Slider
             min="{0}"
             max="{5000}"
             value="{currentHarmonograph.steps}"
-            onValueChange="{(value) => updateHarmonograph('steps', value)}"
-          />
+            onValueChange="{(value) => updateHarmonograph('steps', value)}" />
         {:else}
           <div class="{`harmono-panel${selectedPanel === 0 ? '' : ' hidden'}`}">
             <InformationHeader
               text="{'Frequency'}"
-              info="{'This is how many times it moves'}"
-            />
+              info="{'This is how many times it moves'}" />
 
             <div class="two-col-layout">
               <Input
@@ -281,8 +268,7 @@ function cancel() {
                 inputData="{'left_pendulum_frequency'}"
                 hideRandomizeButton="{true}"
                 unit="{'Hz'}"
-                labelFieldText="{'Left pendulum frequency'}"
-              />
+                labelFieldText="{'Left pendulum frequency'}" />
 
               <Input
                 value="{currentHarmonograph.g}"
@@ -293,14 +279,12 @@ function cancel() {
                 inputData="{'right_pendulum_frequency'}"
                 hideRandomizeButton="{true}"
                 unit="{'Hz'}"
-                labelFieldText="{'Right pendulum frequency'}"
-              />
+                labelFieldText="{'Right pendulum frequency'}" />
             </div>
 
             <InformationHeader
               text="{'Amplitude'}"
-              info="{'This is how many long it be'}"
-            />
+              info="{'This is how many long it be'}" />
 
             <div class="two-col-layout">
               <Input
@@ -312,8 +296,7 @@ function cancel() {
                 inputData="{'pendulum_left_amplitude'}"
                 hideRandomizeButton="{true}"
                 unit="{'degrees'}"
-                labelFieldText="{'Pendulum left amplitude'}"
-              />
+                labelFieldText="{'Pendulum left amplitude'}" />
 
               <Input
                 value="{currentHarmonograph.B}"
@@ -324,14 +307,12 @@ function cancel() {
                 inputData="{'pendulum_right_amplitude'}"
                 hideRandomizeButton="{true}"
                 unit="{'degrees'}"
-                labelFieldText="{'Pendulum right amplitude'}"
-              />
+                labelFieldText="{'Pendulum right amplitude'}" />
             </div>
 
             <InformationHeader
               text="{'Damping'}"
-              info="{'This is how damping'}"
-            />
+              info="{'This is how damping'}" />
 
             <div class="two-col-layout">
               <Input
@@ -343,8 +324,7 @@ function cancel() {
                 inputData="{'left_pendulum_damping'}"
                 hideRandomizeButton="{true}"
                 unit="{'degrees'}"
-                labelFieldText="{'Left pendulum'}"
-              />
+                labelFieldText="{'Left pendulum'}" />
 
               <Input
                 value="{currentHarmonograph.S}"
@@ -355,14 +335,12 @@ function cancel() {
                 inputData="{'right_pendulum_damping'}"
                 hideRandomizeButton="{true}"
                 unit="{'degrees'}"
-                labelFieldText="{'Right pendulum'}"
-              />
+                labelFieldText="{'Right pendulum'}" />
             </div>
 
             <InformationHeader
               text="{'Phase'}"
-              info="{'This is how phasing bro'}"
-            />
+              info="{'This is how phasing bro'}" />
 
             <div class="two-col-layout">
               <Input
@@ -375,8 +353,7 @@ function cancel() {
                 hideRandomizeButton="{true}"
                 hideUnits="{true}"
                 unit="{'degrees'}"
-                labelFieldText="{'Left pendulum'}"
-              />
+                labelFieldText="{'Left pendulum'}" />
 
               <Input
                 value="{currentHarmonograph.v}"
@@ -388,14 +365,12 @@ function cancel() {
                 hideRandomizeButton="{true}"
                 hideUnits="{true}"
                 unit="{'degrees'}"
-                labelFieldText="{'Right pendulum'}"
-              />
+                labelFieldText="{'Right pendulum'}" />
             </div>
 
             <InformationHeader
               text="{'Distance between pendulums'}"
-              info="{'This is how distance bro'}"
-            />
+              info="{'This is how distance bro'}" />
 
             <Input
               value="{currentHarmonograph.d}"
@@ -406,15 +381,13 @@ function cancel() {
               inputData="{'distance_between_pendulums'}"
               hideRandomizeButton="{true}"
               hideUnits="{true}"
-              labelFieldText="{'Distance'}"
-            />
+              labelFieldText="{'Distance'}" />
           </div>
 
           <div class="{`harmono-panel${selectedPanel === 1 ? '' : ' hidden'}`}">
             <InformationHeader
               text="{'Paper Center'}"
-              info="{'This is how paper center bro'}"
-            />
+              info="{'This is how paper center bro'}" />
 
             <Input
               value="{currentHarmonograph.c}"
@@ -425,13 +398,11 @@ function cancel() {
               inputData="{'paper_center'}"
               hideRandomizeButton="{true}"
               hideUnits="{true}"
-              labelFieldText="{'Location'}"
-            />
+              labelFieldText="{'Location'}" />
 
             <InformationHeader
               text="{'Length of pen arm'}"
-              info="{'This is how paper length bro'}"
-            />
+              info="{'This is how paper length bro'}" />
 
             <Input
               value="{currentHarmonograph.p}"
@@ -442,13 +413,11 @@ function cancel() {
               inputData="{'length_of_pen_arm'}"
               hideRandomizeButton="{true}"
               hideUnits="{true}"
-              labelFieldText="{'Length'}"
-            />
+              labelFieldText="{'Length'}" />
 
             <InformationHeader
               text="{'Position of pen arm'}"
-              info="{'This is how position pen bro'}"
-            />
+              info="{'This is how position pen bro'}" />
 
             <Input
               value="{currentHarmonograph.q}"
@@ -459,13 +428,11 @@ function cancel() {
               inputData="{'position_of_pen_arm'}"
               hideRandomizeButton="{true}"
               hideUnits="{true}"
-              labelFieldText="{'Position'}"
-            />
+              labelFieldText="{'Position'}" />
 
             <InformationHeader
               text="{'Paper Radius'}"
-              info="{'This is how paper radius bro'}"
-            />
+              info="{'This is how paper radius bro'}" />
 
             <Input
               value="{currentHarmonograph.r}"
@@ -477,13 +444,11 @@ function cancel() {
               hideRandomizeButton="{true}"
               hideUnits="{true}"
               unit="{'degrees'}"
-              labelFieldText="{'Length'}"
-            />
+              labelFieldText="{'Length'}" />
 
             <InformationHeader
               text="{'Frequency of paper rotation'}"
-              info="{'This is how paper rotaion frequency bro'}"
-            />
+              info="{'This is how paper rotaion frequency bro'}" />
 
             <Input
               value="{currentHarmonograph.h}"
@@ -495,13 +460,11 @@ function cancel() {
               hideRandomizeButton="{true}"
               hideUnits="{true}"
               unit="{'degrees'}"
-              labelFieldText="{'Frequency'}"
-            />
+              labelFieldText="{'Frequency'}" />
 
             <InformationHeader
               text="{'Pen thickness (stroke)'}"
-              info="{'This is how pen thickness bro'}"
-            />
+              info="{'This is how pen thickness bro'}" />
 
             <Input
               value="{currentHarmonograph.w}"
@@ -513,8 +476,7 @@ function cancel() {
               hideRandomizeButton="{true}"
               hideUnits="{true}"
               unit="{'degrees'}"
-              labelFieldText="{'Thickness'}"
-            />
+              labelFieldText="{'Thickness'}" />
           </div>
 
           <div class="{`harmono-panel${selectedPanel === 2 ? '' : ' hidden'}`}">
@@ -530,8 +492,7 @@ function cancel() {
 
             <InformationHeader
               text="{'Segments per Step'}"
-              info="{'This is how segments bro'}"
-            />
+              info="{'This is how segments bro'}" />
 
             <Slider
               value="{currentHarmonograph.segments}"
@@ -539,7 +500,6 @@ function cancel() {
               max="{50}"
               onValueChange="{(value) =>
                 updateHarmonograph('segments', value)}" />
-
           </div>
         {/if}
       </div>
@@ -550,44 +510,76 @@ function cancel() {
     <div class="footer__content">
       <button
         class="footer__button footer__button--primary"
-        on:click="{insertHarmonograph}"
-      >
+        on:click="{insertHarmonograph}">
         Add to canvas
       </button>
-      <div class="ellipsis-menu" aria-label="More options">
-        <div
-          class="ellipsis-menu__dots"
-          on:click|stopPropagation="{toggleMenu}"
-        >
-          <span class="ellipsis-menu__dot"></span>
-          <span class="ellipsis-menu__dot"></span>
-          <span class="ellipsis-menu__dot"></span>
+
+      <div class="footer__content__right">
+        <div class="svg-container" on:click="{resetToDefaults}">
+          <svg
+            id="reset-svg"
+            width="18"
+            height="17"
+            viewBox="0 0 18 17"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_947_45942)">
+              <path
+                d="M1.44263 2.83331V7.08331H5.69263"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+              <path
+                d="M17.0261 14.1667V9.91669H12.7761"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+              <path
+                d="M15.248 6.37497C14.8888 5.35978 14.2782 4.45213 13.4733 3.73673C12.6684 3.02132 11.6954 2.52147 10.6451 2.28382C9.59476 2.04617 8.50134 2.07846 7.46687 2.37769C6.43239 2.67691 5.49057 3.23331 4.72929 3.99497L1.44263 7.08331M17.026 9.91664L13.7393 13.005C12.978 13.7666 12.0362 14.323 11.0017 14.6223C9.96724 14.9215 8.87383 14.9538 7.8235 14.7161C6.77316 14.4785 5.80015 13.9786 4.99525 13.2632C4.19035 12.5478 3.57979 11.6402 3.22054 10.625"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"></path>
+            </g>
+            <defs>
+              <clipPath id="clip0_947_45942">
+                <rect
+                  width="17"
+                  height="17"
+                  fill="white"
+                  transform="translate(0.734375)"></rect>
+              </clipPath>
+            </defs>
+          </svg>
         </div>
 
-        <div id="menu" class="ellipsis-menu__dropdown" style="display: none;">
-          <button
-            class="ellipsis-menu__option"
-            on:click="{() => {
-              resetToDefaults();
-              toggleMenu();
-            }}">Reset params</button
-          >
-          <div class="ellipsis-menu__divider"></div>
-          <button
-            class="ellipsis-menu__option"
-            on:click="{() => {
-              navigateToAbout();
-              toggleMenu();
-            }}">About this plugin</button
-          >
-          <div class="ellipsis-menu__divider"></div>
-          <button
-            class="ellipsis-menu__option"
-            on:click="{() => {
-              openWebsite();
-              toggleMenu();
-            }}">@thirteen23</button
-          >
+        <div class="ellipsis-menu" aria-label="More options">
+          <div
+            class="ellipsis-menu__dots"
+            on:click|stopPropagation="{toggleMenu}">
+            <span class="ellipsis-menu__dot"></span>
+            <span class="ellipsis-menu__dot"></span>
+            <span class="ellipsis-menu__dot"></span>
+          </div>
+
+          <div id="menu" class="ellipsis-menu__dropdown" style="display: none;">
+            <div class="ellipsis-menu__divider"></div>
+            <button
+              class="ellipsis-menu__option"
+              on:click="{() => {
+                navigateToAbout();
+                toggleMenu();
+              }}">About this plugin</button>
+            <div class="ellipsis-menu__divider"></div>
+            <button
+              class="ellipsis-menu__option"
+              on:click="{() => {
+                openWebsite();
+                toggleMenu();
+              }}">@thirteen23</button>
+          </div>
         </div>
       </div>
     </div>
