@@ -26,6 +26,16 @@ function resizeWindow(e) {
     { pluginMessage: { type: PluginMessages.resizeWindow, height: height } },
     "*",
   );
+
+  const optionsContainer = document.querySelector(".options");
+  if (optionsContainer) {
+    const maxHeight = height - 400;
+    if (maxHeight < 305) {
+      optionsContainer.style.maxHeight = `305px`;
+    } else {
+      optionsContainer.style.maxHeight = `${maxHeight}px`;
+    }
+  }
 }
 
 function sendFTUEComplete() {

@@ -22,6 +22,21 @@ input[type="text"]:focus {
   border: 2px solid var(--figma-color-border-selected);
 }
 
+input[type="number"]:focus {
+  outline: var(--figma-color-border-selected);
+  border: 2px solid var(--figma-color-border-selected);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .two-col-layout {
   display: flex;
   flex-direction: row;
@@ -72,10 +87,15 @@ input[type="text"]:focus {
 }
 
 @keyframes dash {
-  0% { stroke-dashoffset: 1000000}
-  50% { stroke-dashoffset: 500}
-  100% { stroke-dashoffset: 0 }
-
+  0% {
+    stroke-dashoffset: 1000000;
+  }
+  50% {
+    stroke-dashoffset: 500;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
 }
 
 .options {
@@ -87,7 +107,7 @@ input[type="text"]:focus {
 
   &__wrapper {
     box-sizing: border-box;
-    padding: 0 1.5em 14.875em 1.5em;
+    padding: 0 1.5em 10.875em 1.5em;
     height: fit-content;
   }
 }
@@ -159,9 +179,8 @@ input[type="text"]:focus {
   }
 
   &__dropdown {
-    display: flex;
     position: absolute;
-    top: -5.9375em;
+    top: -4.5em;
     right: 0;
     flex-direction: column;
     z-index: 10;
@@ -317,11 +336,6 @@ input[type="text"]:focus {
   }
 }
 
-#reset-svg {
-  width: 14px;
-  height: 14px;
-}
-
 .svg-container {
   display: inline-block;
   cursor: pointer;
@@ -331,6 +345,11 @@ input[type="text"]:focus {
   &:hover {
     background-color: var(--figma-color-bg-hover);
   }
+}
+
+#reset-svg {
+  width: 14px;
+  height: 14px;
 }
 
 #edge_bottom {

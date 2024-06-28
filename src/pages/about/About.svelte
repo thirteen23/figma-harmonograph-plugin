@@ -91,8 +91,7 @@ function handleOutsideClick(event) {
           <a
             class="about__credits-link"
             href="https://ttencate.github.io/harmonograph/"
-            >Harmonograph in JavaScript</a
-          >
+            >Harmonograph in JavaScript</a>
         </p>
       </div>
     </div>
@@ -114,14 +113,16 @@ function handleOutsideClick(event) {
           <span class="ellipsis-menu__dot"></span>
         </div>
 
-        <div id="menu" class="ellipsis-menu__dropdown" style="display: none;">
+        <div
+          id="menu"
+          class="ellipsis-menu__dropdown--lower"
+          style="display: none;">
           <button
             class="ellipsis-menu__option"
             on:click="{() => {
               openWebsite();
               toggleMenu();
-            }}">@thirteen23</button
-          >
+            }}">@thirteen23</button>
         </div>
       </div>
     </div>
