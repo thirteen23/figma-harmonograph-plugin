@@ -112,7 +112,14 @@ function drawHarmonographSVG(harmonograph) {
 
   path.setAttribute("d", createSVGPathData(harmonograph));
 
-  svg.appendChild(path);
+
+  svg.style.animation = 'none';
+  svg.offsetWidth; /* trigger reflow */
+  setTimeout(() => {
+    svg.appendChild(path);
+    svg.style.animation = '';
+  }, 100);
+
 }
 
 function updateHarmonograph(property, value) {
