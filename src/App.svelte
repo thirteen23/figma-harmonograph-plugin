@@ -21,9 +21,10 @@ addEventListener("message", function handleMessage(msg) {
 });
 
 function resizeWindow(e) {
-  const height = Math.max(50, Math.floor(e.clientY + 5));
+  const height = Math.floor(e.clientY + 5);
+
   parent.postMessage(
-    { pluginMessage: { type: PluginMessages.resizeWindow, height: height } },
+    { pluginMessage: { type: PluginMessages.resizeWindow, height } },
     "*",
   );
 
@@ -38,7 +39,7 @@ function resizeWindow(e) {
   }
 }
 
-function sendFTUEComplete() {
+const sendFTUEComplete = () => {
   parent.postMessage(
     { pluginMessage: { type: PluginMessages.FTUEVisited } },
     "*",
@@ -67,7 +68,7 @@ onMount(() => {
 });
 </script>
 
-<div>
+<div class="root">
   {#if currentPage === 1}
     <About
       navigateToHarmonograph="{() => {
