@@ -1,27 +1,39 @@
 import type { Harmonograph } from "./Harmonograph";
 import { createSVGString, getDefaultHarmonograph } from "./Harmonograph";
-import { EventMessages, PluginMessages, ClientStorageMessages } from "./Messages";
+import {
+  EventMessages,
+  PluginMessages,
+  ClientStorageMessages,
+} from "./Messages";
 
 figma.showUI(__html__, { themeColors: true, width: 400, height: 800 });
 
 // Load if user is returning
-figma.clientStorage.getAsync(ClientStorageMessages.returningUser).then((returningUser) => {
-  let page = returningUser === undefined ? 1 : 0;
-      
-  figma.clientStorage.getAsync(ClientStorageMessages.lastHarmonograph).then((savedHarmonograph) => {
-    console.log("Loaded last inserted harmonograph: ", savedHarmonograph);
-  
-    let harmonograph: Harmonograph = savedHarmonograph ?? getDefaultHarmonograph();
-  
-    figma.ui.postMessage({ type: EventMessages.loadState, harmonograph, page });
-  });
-});
+figma.clientStorage
+  .getAsync(ClientStorageMessages.returningUser)
+  .then((returningUser) => {
+    let page = returningUser === undefined ? 1 : 0;
 
+    figma.clientStorage
+      .getAsync(ClientStorageMessages.lastHarmonograph)
+      .then((savedHarmonograph) => {
+        console.log("Loaded last inserted harmonograph: ", savedHarmonograph);
+
+        let harmonograph: Harmonograph =
+          savedHarmonograph ?? getDefaultHarmonograph();
+
+        figma.ui.postMessage({
+          type: EventMessages.loadState,
+          harmonograph,
+          page,
+        });
+      });
+  });
 
 figma.ui.onmessage = (msg) => {
   console.log(msg.type);
   switch (msg.type) {
-    case  PluginMessages.insertHarmonograph:
+    case PluginMessages.insertHarmonograph:
       const nodes = [];
       var harmonograph = msg.harmonograph;
 
@@ -32,11 +44,13 @@ figma.ui.onmessage = (msg) => {
 
       figma.currentPage.selection = nodes;
       figma.viewport.scrollAndZoomIntoView(nodes);
-      figma.closePlugin();
       break;
     case PluginMessages.saveHarmonograph:
       var harmonograph = msg.harmonograph;
-      figma.clientStorage.setAsync(ClientStorageMessages.lastHarmonograph, harmonograph);
+      figma.clientStorage.setAsync(
+        ClientStorageMessages.lastHarmonograph,
+        harmonograph,
+      );
 
       break;
     case PluginMessages.resizeWindow:

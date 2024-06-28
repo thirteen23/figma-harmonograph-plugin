@@ -21,6 +21,7 @@
   &__icon {
     width: 0.75em;
     height: 0.75em;
+    color: var(--figma-color-bg-inverse);
   }
 
   &__info-panel {
@@ -43,7 +44,7 @@
     top: -0.5em;
     left: 0.75em;
     border-right: 0.5em solid transparent;
-    border-bottom: 0.5em solid var(--figma-color-bg-inverse);
+    border-bottom: 0.5em solid $--figma-black-no-change;
     border-left: 0.5em solid transparent;
     width: 0;
     height: 0;

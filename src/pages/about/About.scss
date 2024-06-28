@@ -28,7 +28,7 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 0.313em;
+    gap: 0.4em;
     margin-top: 0.75em;
   }
 
@@ -48,7 +48,7 @@
 
   &__content {
     padding: 0 1.5em;
-    // max-height: 25em;
+    max-height: 25em;
     overflow-y: scroll;
   }
 
@@ -60,6 +60,8 @@
   &__image {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     z-index: 10;
     border: 1px solid;
     border-image: linear-gradient(
@@ -72,13 +74,13 @@
       #8bcffd 94%
     );
     border-image-slice: 1;
-    background-color: var(--figma-color-bg);
+    background-color: $ui-default-white;
     height: 22.5em;
     overflow: hidden;
 
     &-img {
-      width: 100%;
-      height: 100%;
+      width: 80%;
+      height: 80%;
       object-fit: contain;
     }
   }
@@ -92,45 +94,6 @@
   &__credits-link {
     color: var(--figma-color-bg-inverse);
     text-decoration: underline;
-  }
-
-  &__footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    z-index: 20;
-    border-top: 1px solid var(--figma-color-border);
-    background-color: var(--figma-color-bg);
-    width: 100%;
-    height: 2.625em;
-
-    &-content {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1.5em;
-      padding: 0 1.5em;
-      height: 100%;
-    }
-
-    &-button {
-      @include body-text-p-font;
-
-      transition: background-color 0.1s ease-in-out;
-      cursor: pointer;
-      border: none;
-      border-radius: 0.3125em;
-      padding: 0.25em 0.75em;
-
-      &--primary {
-        background-color: var(--figma-color-bg-selected-strong);
-
-        &:hover,
-        &:focus {
-          background-color: var(--figma-color-icon-brand-secondary);
-        }
-      }
-    }
   }
 }
 
@@ -148,12 +111,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
     padding: 0 1.5em;
     height: 100%;
   }
 
   &__button {
-    @include body-text-p-font;
+    @include cta-button-font;
 
     transition: background-color 0.1s ease-in-out;
     cursor: pointer;
@@ -161,9 +125,9 @@
     border-radius: 0.3125em;
     padding: 0.25em 0.75em;
 
-    &--primary {
+    &--primary-wide {
       background-color: var(--figma-color-bg-brand);
-      color: var(--figma-color-text-onbrand);
+      width: 100%;
 
       &:hover,
       &:focus {
@@ -175,6 +139,17 @@
 
 .ellipsis-menu {
   position: relative;
+
+  &__container {
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 0.25em;
+    padding: 0.2em;
+
+    &:hover {
+      background-color: var(--figma-color-bg-hover);
+    }
+  }
 
   &__dots {
     display: inline-flex;

@@ -5,7 +5,7 @@ import Input from "../../components/Input/Input.svelte";
 import Slider from "../../components/Slider/Slider.svelte";
 import InformationHeader from "../../components/InformationHeader/InformationHeader.svelte";
 import SpinMeButton from "../../components/SpinMeButton/SpinMeButton.svelte";
-import { onMount, createEventDispatcher } from "svelte";
+import { onMount } from "svelte";
 
 import {
   inputRanges,
@@ -112,11 +112,11 @@ function drawHarmonographSVG(harmonograph) {
 
   path.setAttribute("d", createSVGPathData(harmonograph));
 
-  svg.style.animation = 'none';
+  svg.style.animation = "none";
   svg.offsetWidth; /* trigger reflow */
   setTimeout(() => {
     svg.appendChild(path);
-    svg.style.animation = '';
+    svg.style.animation = "";
   }, 100);
 }
 
@@ -562,11 +562,13 @@ function cancel() {
 
         <div class="ellipsis-menu" aria-label="More options">
           <div
-            class="ellipsis-menu__dots"
+            class="ellipsis-menu__container"
             on:click|stopPropagation="{toggleMenu}">
-            <span class="ellipsis-menu__dot"></span>
-            <span class="ellipsis-menu__dot"></span>
-            <span class="ellipsis-menu__dot"></span>
+            <div class="ellipsis-menu__dots">
+              <span class="ellipsis-menu__dot"></span>
+              <span class="ellipsis-menu__dot"></span>
+              <span class="ellipsis-menu__dot"></span>
+            </div>
           </div>
 
           <div id="menu" class="ellipsis-menu__dropdown" style="display: none;">

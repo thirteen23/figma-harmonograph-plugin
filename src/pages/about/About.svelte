@@ -1,7 +1,7 @@
 <script>
 import { GlobalCSS } from "figma-plugin-ds-svelte";
-import homeImage from "../../harmonographs.png";
-import { onMount, createEventDispatcher } from "svelte";
+import homeImage from "../../static/harmonographs.png";
+import { onMount } from "svelte";
 
 import SpinMeButton from "../../components/SpinMeButton/SpinMeButton.svelte";
 
@@ -101,16 +101,18 @@ function handleOutsideClick(event) {
     <div class="footer__content">
       <button
         on:click="{navigateToHarmonograph}"
-        class="footer__button footer__button--primary">
+        class="footer__button footer__button--primary-wide">
         Get Started
       </button>
       <div class="ellipsis-menu" aria-label="More options">
-        <div
-          class="ellipsis-menu__dots"
-          on:click|stopPropagation="{toggleMenu}">
-          <span class="ellipsis-menu__dot"></span>
-          <span class="ellipsis-menu__dot"></span>
-          <span class="ellipsis-menu__dot"></span>
+        <div class="ellipsis-menu__container">
+          <div
+            class="ellipsis-menu__dots"
+            on:click|stopPropagation="{toggleMenu}">
+            <span class="ellipsis-menu__dot"></span>
+            <span class="ellipsis-menu__dot"></span>
+            <span class="ellipsis-menu__dot"></span>
+          </div>
         </div>
 
         <div

@@ -10,7 +10,7 @@
   z-index: 10000000;
   cursor: pointer;
 
-  box-shadow: var(--figma-color-bg) 0px 0px 1.875em;
+  // box-shadow: var(--figma-color-bg) 0px 0px 1.875em;
   border: 1px solid $--figma-black-no-change;
   border-radius: 50%;
   background: radial-gradient(
@@ -26,6 +26,18 @@
   background-size: 200% 200%;
   width: 5.625em;
   height: 5.625em;
+
+  &::before {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    bottom: -2px;
+    left: -2px;
+    z-index: -1;
+    border: 1px solid $--figma-white-no-change;
+    border-radius: 50%;
+    content: "";
+  }
 
   &__text {
     transform: rotate(18deg);

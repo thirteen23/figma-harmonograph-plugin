@@ -7,7 +7,6 @@ button {
 
 path {
   z-index: 1;
-  color: var(--figma-color-bg-inverse);
 }
 
 label {
@@ -58,7 +57,7 @@ input[type="number"] {
   display: flex;
   flex-direction: column;
   z-index: 10;
-  background-color: var(--figma-color-bg);
+  background-color: $ui-default-white;
   overflow: hidden;
 }
 
@@ -76,10 +75,10 @@ input[type="number"] {
     #8bcffd 94%
   );
   border-image-slice: 1;
-  background-color: var(--figma-color-bg);
+  background-color: $ui-default-white;
   width: 100%;
   height: 22.5em;
-  color: var(--figma-color-text);
+  color: $--figma-black-no-change;
 
   stroke-dasharray: 1000000;
   stroke-dashoffset: 1000000;
@@ -138,7 +137,7 @@ input[type="number"] {
   }
 
   &__button {
-    @include body-text-p-font;
+    @include cta-button-font;
 
     transition: background-color 0.1s ease-in-out;
     cursor: pointer;
@@ -148,7 +147,6 @@ input[type="number"] {
 
     &--primary {
       background-color: var(--figma-color-bg-brand);
-      color: var(--figma-color-text-onbrand);
 
       &:hover,
       &:focus {
@@ -160,6 +158,17 @@ input[type="number"] {
 
 .ellipsis-menu {
   position: relative;
+
+  &__container {
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 0.25em;
+    padding: 0.2em;
+
+    &:hover {
+      background-color: var(--figma-color-bg-hover);
+    }
+  }
 
   &__dots {
     display: inline-flex;
@@ -265,6 +274,7 @@ input[type="number"] {
     padding: 1em 0;
     width: 45px;
     color: var(--figma-color-text-disabled);
+    font-weight: 500;
 
     &:nth-child(2) {
       padding-left: 8px;
@@ -278,6 +288,7 @@ input[type="number"] {
     &--disabled {
       pointer-events: none;
       color: var(--figma-color-text-disabled);
+      font-weight: 500;
     }
   }
 }
@@ -350,4 +361,5 @@ input[type="number"] {
 #reset-svg {
   width: 14px;
   height: 14px;
+  color: var(--figma-color-bg-inverse);
 }
