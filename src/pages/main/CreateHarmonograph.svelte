@@ -2,7 +2,7 @@
 import { GlobalCSS } from "figma-plugin-ds-svelte";
 
 import { onMount } from "svelte";
-import { draw } from "svelte/transition";
+import { draw, fade } from "svelte/transition";
 import { quintOut } from "svelte/easing";
 
 import Input from "../../components/Input/Input.svelte";
@@ -28,11 +28,10 @@ export let currentHarmonograph = getDefaultHarmonograph();
 var svg = "";
 
 var selectedPanel = 0;
-let activeMode = "simple";
 let checkbox = false;
 
 $: activeMode = checkbox ? "advanced" : "simple";
-$: svgPath = "";
+let svgPath = "";
 
 function randomizeAllInputs() {
   currentHarmonograph = randomizeInputs(currentHarmonograph, activeMode);
@@ -77,6 +76,7 @@ function insertHarmonograph() {
       pluginMessage: {
         type: PluginMessages.insertHarmonograph,
         harmonograph: currentHarmonograph,
+        pathData: svgPath,
       },
     },
     "*",
@@ -95,9 +95,9 @@ function saveHarmonograph() {
   );
 }
 
-$: renderPath = true;
-$: diameter = 320;
-$: stroke_width = 0.2;
+let renderPath = true;
+let diameter = 320;
+let stroke_width = 0.2;
 
 function drawHarmonographSVG(harmonograph) {
   svg = document.getElementById("preview");
@@ -112,7 +112,7 @@ function drawHarmonographSVG(harmonograph) {
 
   setTimeout(() => {
     renderPath = true;
-  }, 100);
+  }, 300);
 }
 
 function updateHarmonograph(property, value) {
@@ -146,6 +146,9 @@ function cancel() {
             duration: Math.min(currentHarmonograph.steps, 3000),
             easing: quintOut,
           }}"
+          out:fade={{
+            duration: 300
+          }}
           d="{svgPath}"
         ></path>
       {/if}
@@ -213,6 +216,7 @@ function cancel() {
     <div class="options">
       <div class="options__wrapper">
         {#if activeMode === "simple"}
+
           <InformationHeader
             text="{'Frequency'}"
             info="{'This is how many times it moves'}"
@@ -275,6 +279,7 @@ function cancel() {
           <Slider
             min="{0}"
             max="{5000}"
+            inputFieldMax="{8000}"
             value="{currentHarmonograph.steps}"
             onValueChange="{(value) => updateHarmonograph('steps', value)}"
           />
@@ -538,9 +543,10 @@ function cancel() {
             />
 
             <Slider
-              value="{currentHarmonograph.steps}"
               min="{0}"
               max="{5000}"
+              inputFieldMax="{8000}"
+              value="{currentHarmonograph.steps}"
               onValueChange="{(value) => updateHarmonograph('steps', value)}"
             />
 
@@ -553,7 +559,7 @@ function cancel() {
               value="{currentHarmonograph.segments}"
               min="{1}"
               max="{50}"
-              constrainInputField="{true}"
+              inputFieldMax="{50}"
               onValueChange="{(value) => updateHarmonograph('segments', value)}"
             />
           </div>

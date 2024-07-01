@@ -1,6 +1,6 @@
 {
-  "name": "svelte-app",
-  "version": "1.0.4",
+  "name": "thirteen23-harmonograph",
+  "version": "1.0.0",
   "scripts": {
     "format": "prettier --write .",
     "build": "rollup -c",

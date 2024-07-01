@@ -7,8 +7,8 @@ import { EventMessages, PluginMessages } from "./Messages";
 
 import "./App.scss";
 
-$: currentPage = -1;
-$: loadedHarmonograph = undefined;
+let currentPage = -1;
+let loadedHarmonograph = undefined;
 
 addEventListener("message", function handleMessage(msg) {
   console.log("got message: ", msg);

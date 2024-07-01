@@ -5,9 +5,9 @@ export let value;
 export let onValueChange;
 export let min = 0;
 export let max = 5000;
-export let constrainInputField = false;
+export let inputFieldMax = 5000;
 
-function handleInput(event) {
+function handleSliderInput(event) {
   let newValue = event.target.value;
 
   if (newValue < min) {
@@ -20,11 +20,13 @@ function handleInput(event) {
   onValueChange(value);
 }
 
-function handleInputUncapped(event) {
+function handleInputField(event) {
   let newValue = event.target.value;
 
   if (newValue < min) {
     newValue = min;
+  } else if (newValue > inputFieldMax) {
+    newValue = inputFieldMax;
   }
 
   value = newValue;
@@ -41,7 +43,7 @@ function handleInputUncapped(event) {
       max="{max}"
       step="0"
       bind:value="{value}"
-      on:input="{handleInput}"
+      on:input="{handleSliderInput}"
     />
     <div class="slider__value-range">
       <div class="slider__lowest-value">{min}</div>
@@ -55,6 +57,6 @@ function handleInputUncapped(event) {
     min="{min}"
     max="{max}"
     bind:value="{value}"
-    on:input="{constrainInputField ? handleInput : handleInputUncapped}"
+    on:input="{handleInputField}"
   />
 </div>
