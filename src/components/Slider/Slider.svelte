@@ -1,10 +1,12 @@
 <script>
 import "./Slider.scss";
 
+
 export let value;
 export let onValueChange;
 export let min = 0;
 export let max = 5000;
+export let constrainInputField = false
 
 function handleInput(event) {
   let newValue = event.target.value;
@@ -17,6 +19,17 @@ function handleInput(event) {
 
   value = newValue;
   onValueChange(value);
+}
+
+function handleInputUncapped(event) {
+  let newValue = event.target.value;
+
+if (newValue < min) {
+  newValue = min;
+}
+
+value = newValue;
+onValueChange(value);
 }
 </script>
 
@@ -42,5 +55,5 @@ function handleInput(event) {
     min="{min}"
     max="{max}"
     bind:value="{value}"
-    on:input="{handleInput}" />
+    on:input="{constrainInputField ? handleInput : handleInputUncapped}" />
 </div>

@@ -95,7 +95,7 @@ function saveHarmonograph() {
   );
 }
 
-$: visible = true
+$: renderPath = true
 $: diameter = 320;
 $: stroke_width = 0.2;
 
@@ -108,10 +108,10 @@ function drawHarmonographSVG(harmonograph) {
   diameter = harmonograph.r;
   stroke_width = harmonograph.w;
 
-  visible = false;
+  renderPath = false;
 
   setTimeout(() => {
-    visible = true;
+    renderPath = true;
   }, 100);
 }
 
@@ -135,8 +135,8 @@ function cancel() {
       width="320"
       height="320"
       version="1.1">
-      {#if visible}
-        <path id="preview_path" in:draw={{ duration: 1000, easing: quintOut }} d={svgPath} />
+      {#if renderPath}
+        <path id="preview_path" in:draw={{ duration: Math.min(currentHarmonograph.steps, 3000), easing: quintOut }} d={svgPath} />
       {/if}
 
     </svg>
@@ -504,6 +504,7 @@ function cancel() {
               value="{currentHarmonograph.segments}"
               min="{1}"
               max="{50}"
+              constrainInputField="{true}"
               onValueChange="{(value) =>
                 updateHarmonograph('segments', value)}" />
           </div>
