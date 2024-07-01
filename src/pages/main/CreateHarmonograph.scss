@@ -79,22 +79,15 @@ input[type="number"] {
   width: 100%;
   height: 22.5em;
   color: $--figma-black-no-change;
-
-  stroke-dasharray: 1000000;
-  stroke-dashoffset: 1000000;
-  animation: dash 5s linear forwards;
 }
 
-@keyframes dash {
-  0% {
-    stroke-dashoffset: 1000000;
-  }
-  50% {
-    stroke-dashoffset: 500;
-  }
-  100% {
-    stroke-dashoffset: 0;
-  }
+#preview_path {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  z-index: 1;
+  stroke-width: var(--stroke_width);
+  transform: scale(0.5, 0.5) translate(var(--diameter), var(--diameter));
 }
 
 .options {

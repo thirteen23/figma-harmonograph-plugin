@@ -1,11 +1,14 @@
 <script>
 import { GlobalCSS } from "figma-plugin-ds-svelte";
 
+import { onMount } from "svelte";
+import { draw } from 'svelte/transition';
+import { quintOut } from 'svelte/easing';
+
 import Input from "../../components/Input/Input.svelte";
 import Slider from "../../components/Slider/Slider.svelte";
 import InformationHeader from "../../components/InformationHeader/InformationHeader.svelte";
 import SpinMeButton from "../../components/SpinMeButton/SpinMeButton.svelte";
-import { onMount } from "svelte";
 
 import {
   inputRanges,
@@ -29,6 +32,7 @@ let activeMode = "simple";
 let checkbox = false;
 
 $: activeMode = checkbox ? "advanced" : "simple";
+$: svgPath = "";
 
 function randomizeAllInputs() {
   currentHarmonograph = randomizeInputs(currentHarmonograph, activeMode);
@@ -91,32 +95,23 @@ function saveHarmonograph() {
   );
 }
 
-function drawHarmonographSVG(harmonograph) {
-  var width = harmonograph.r;
-  var height = harmonograph.r;
+$: visible = true
+$: diameter = 320;
+$: stroke_width = 0.2;
 
+function drawHarmonographSVG(harmonograph) {
   svg = document.getElementById("preview");
-  svg.innerHTML = "";
   svg.setAttribute("viewBox", `0 0 ${harmonograph.r} ${harmonograph.r}`);
 
-  var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-  path.setAttribute("fill", "none");
-  path.setAttribute("stroke", "currentColor");
-  path.setAttribute("stroke-width", harmonograph.w);
-  path.setAttribute("stroke-linecap", "round");
-  path.setAttribute("z-index", "1");
-  path.setAttribute(
-    "transform",
-    `scale(0.5, 0.5) translate(${width}, ${height})`,
-  );
+  svgPath = createSVGPathData(harmonograph);
 
-  path.setAttribute("d", createSVGPathData(harmonograph));
+  diameter = harmonograph.r;
+  stroke_width = harmonograph.w;
 
-  svg.style.animation = "none";
-  svg.offsetWidth; /* trigger reflow */
+  visible = false;
+
   setTimeout(() => {
-    svg.appendChild(path);
-    svg.style.animation = "";
+    visible = true;
   }, 100);
 }
 
@@ -130,16 +125,22 @@ function cancel() {
 }
 </script>
 
-<div class="wrapper p-xxsmall">
+<div class="wrapper">
   <SpinMeButton on:click="{randomizeAllInputs}" />
 
-  <div class="preview-settings">
+  <div class="preview-settings" style={`--stroke_width: ${stroke_width}px;--diameter: ${diameter}px`}>
     <svg
       id="preview"
       xmlns="http://www.w3.org/2000/svg"
       width="320"
       height="320"
-      version="1.1"></svg>
+      version="1.1">
+      {#if visible}
+        <path id="preview_path" in:draw={{ duration: 1000, easing: quintOut }} d={svgPath} />
+      {/if}
+
+    </svg>
+
   </div>
 
   <div class="advanced-mode">
