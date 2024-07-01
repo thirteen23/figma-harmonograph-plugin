@@ -44,7 +44,7 @@ const sendFTUEComplete = () => {
     { pluginMessage: { type: PluginMessages.FTUEVisited } },
     "*",
   );
-}
+};
 
 function openWebsite() {
   window.open("https://www.thirteen23.com/", "_blank");
@@ -75,14 +75,16 @@ onMount(() => {
         sendFTUEComplete();
         currentPage = 0;
       }}"
-      openWebsite="{openWebsite}" />
+      openWebsite="{openWebsite}"
+    />
   {:else if currentPage === 0}
     <CreateHarmonograph
       currentHarmonograph="{loadedHarmonograph}"
       navigateToAbout="{() => {
         currentPage = 1;
       }}"
-      openWebsite="{openWebsite}" />
+      openWebsite="{openWebsite}"
+    />
   {/if}
 
   <div id="edge_bottom"></div>

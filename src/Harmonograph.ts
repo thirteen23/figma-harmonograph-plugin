@@ -76,7 +76,7 @@ export function randomizeInputs(
         Math.round(randomized[key as keyof Harmonograph] * factor) / factor;
     }
   }
-  
+
   return randomized;
 }
 
@@ -106,15 +106,11 @@ export function createSVGString(harmonograph: Harmonograph): string {
 function getXY(harmonograph: Harmonograph, step: number) {
   var alpha =
     toRadians(harmonograph.A) *
-    Math.sin(
-      2.0 * Math.PI * (harmonograph.f * step + harmonograph.u),
-    ) *
+    Math.sin(2.0 * Math.PI * (harmonograph.f * step + harmonograph.u)) *
     Math.exp(-harmonograph.R * step);
   var beta =
     toRadians(harmonograph.B) *
-    Math.sin(
-      2.0 * Math.PI * (harmonograph.g * step + harmonograph.v),
-    ) *
+    Math.sin(2.0 * Math.PI * (harmonograph.g * step + harmonograph.v)) *
     Math.exp(-harmonograph.S * step);
   var gamma = 2.0 * Math.PI * harmonograph.h * step;
 

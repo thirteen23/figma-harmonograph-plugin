@@ -1,12 +1,11 @@
 <script>
 import "./Slider.scss";
 
-
 export let value;
 export let onValueChange;
 export let min = 0;
 export let max = 5000;
-export let constrainInputField = false
+export let constrainInputField = false;
 
 function handleInput(event) {
   let newValue = event.target.value;
@@ -24,12 +23,12 @@ function handleInput(event) {
 function handleInputUncapped(event) {
   let newValue = event.target.value;
 
-if (newValue < min) {
-  newValue = min;
-}
+  if (newValue < min) {
+    newValue = min;
+  }
 
-value = newValue;
-onValueChange(value);
+  value = newValue;
+  onValueChange(value);
 }
 </script>
 
@@ -42,7 +41,8 @@ onValueChange(value);
       max="{max}"
       step="0"
       bind:value="{value}"
-      on:input="{handleInput}" />
+      on:input="{handleInput}"
+    />
     <div class="slider__value-range">
       <div class="slider__lowest-value">{min}</div>
       <div class="slider__highest-value">{max}</div>
@@ -55,5 +55,6 @@ onValueChange(value);
     min="{min}"
     max="{max}"
     bind:value="{value}"
-    on:input="{constrainInputField ? handleInput : handleInputUncapped}" />
+    on:input="{constrainInputField ? handleInput : handleInputUncapped}"
+  />
 </div>

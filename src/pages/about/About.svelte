@@ -1,9 +1,10 @@
 <script>
 import { GlobalCSS } from "figma-plugin-ds-svelte";
-import homeImage from "../../static/harmonographs.png";
+
 import { onMount } from "svelte";
 
 import SpinMeButton from "../../components/SpinMeButton/SpinMeButton.svelte";
+import homeImage from "../../static/harmonographs.png";
 
 import "./About.scss";
 
@@ -79,7 +80,8 @@ function handleOutsideClick(event) {
             height="30px"
             position="relative"
             right="0"
-            top="0" />
+            top="0"
+          />
 
           <span>for a surprise!</span>
         </div>
@@ -91,7 +93,8 @@ function handleOutsideClick(event) {
           <a
             class="about__credits-link"
             href="https://ttencate.github.io/harmonograph/"
-            >Harmonograph in JavaScript</a>
+            >Harmonograph in JavaScript</a
+          >
         </p>
       </div>
     </div>
@@ -101,14 +104,16 @@ function handleOutsideClick(event) {
     <div class="footer__content">
       <button
         on:click="{navigateToHarmonograph}"
-        class="footer__button footer__button--primary-wide">
+        class="footer__button footer__button--primary-wide"
+      >
         Get Started
       </button>
       <div class="ellipsis-menu" aria-label="More options">
         <div class="ellipsis-menu__container">
           <div
             class="ellipsis-menu__dots"
-            on:click|stopPropagation="{toggleMenu}">
+            on:click|stopPropagation="{toggleMenu}"
+          >
             <span class="ellipsis-menu__dot"></span>
             <span class="ellipsis-menu__dot"></span>
             <span class="ellipsis-menu__dot"></span>
@@ -118,13 +123,15 @@ function handleOutsideClick(event) {
         <div
           id="menu"
           class="ellipsis-menu__dropdown--lower"
-          style="display: none;">
+          style="display: none;"
+        >
           <button
             class="ellipsis-menu__option"
             on:click="{() => {
               openWebsite();
               toggleMenu();
-            }}">@thirteen23</button>
+            }}">@thirteen23</button
+          >
         </div>
       </div>
     </div>
