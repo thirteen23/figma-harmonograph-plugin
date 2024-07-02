@@ -55,8 +55,8 @@
   &__unit {
     @include text-input-font;
     position: absolute;
-    top: 40%;
-    right: 16%;
+    top: 39%;
+    right: 3.5rem;
     z-index: 10;
     color: var(--figma-color-bg-inverse);
 

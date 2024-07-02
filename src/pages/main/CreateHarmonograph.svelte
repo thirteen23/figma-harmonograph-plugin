@@ -30,7 +30,10 @@ var svg = "";
 var selectedPanel = 0;
 let checkbox = false;
 
-$: activeMode = checkbox ? "advanced" : "simple";
+const MODE_SIMPLE = "simple";
+const MODE_ADVANCED = "advanced";
+
+$: activeMode = checkbox ? MODE_ADVANCED : MODE_SIMPLE;
 let svgPath = "";
 
 function randomizeAllInputs() {
@@ -101,8 +104,7 @@ let stroke_width = 0.2;
 
 function drawHarmonographSVG(harmonograph) {
   svg = document.getElementById("preview");
-  svg.setAttribute("viewBox", `0 0 ${harmonograph.r} ${harmonograph.r}`);
-
+  
   svgPath = createSVGPathData(harmonograph);
 
   diameter = harmonograph.r;
@@ -111,6 +113,7 @@ function drawHarmonographSVG(harmonograph) {
   renderPath = false;
 
   setTimeout(() => {
+    svg.setAttribute("viewBox", `0 0 ${harmonograph.r} ${harmonograph.r}`);
     renderPath = true;
   }, 300);
 }
@@ -146,9 +149,9 @@ function cancel() {
             duration: Math.min(currentHarmonograph.steps, 3000),
             easing: quintOut,
           }}"
-          out:fade={{
-            duration: 300
-          }}
+          out:fade="{{
+            duration: 300,
+          }}"
           d="{svgPath}"
         ></path>
       {/if}
@@ -215,76 +218,8 @@ function cancel() {
   {#if currentHarmonograph !== undefined}
     <div class="options">
       <div class="options__wrapper">
-        {#if activeMode === "simple"}
-
-          <InformationHeader
-            text="{'Frequency'}"
-            info="{'This is how many times it moves'}"
-          />
-
-          <Input
-            value="{currentHarmonograph.f}"
-            onValueChange="{(value) => updateHarmonograph('f', value)}"
-            minValue="{inputRanges.f.min}"
-            maxValue="{inputRanges.f.max}"
-            decimalPlaces="{inputRanges.f.decimalPlaces}"
-            inputData="{'left_pendulum_frequency'}"
-            unit="{'Hz'}"
-            labelFieldText="{'Left pendulum frequency'}"
-          />
-
-          <Input
-            value="{currentHarmonograph.g}"
-            onValueChange="{(value) => updateHarmonograph('g', value)}"
-            minValue="{inputRanges.g.min}"
-            maxValue="{inputRanges.g.max}"
-            decimalPlaces="{inputRanges.g.decimalPlaces}"
-            inputData="{'right_pendulum_frequency'}"
-            unit="{'Hz'}"
-            labelFieldText="{'Right pendulum frequency'}"
-          />
-
-          <InformationHeader
-            text="{'Amplitude'}"
-            info="{'This is how many long it be'}"
-          />
-
-          <Input
-            value="{currentHarmonograph.A}"
-            onValueChange="{(value) => updateHarmonograph('A', value)}"
-            minValue="{inputRanges.A.min}"
-            maxValue="{inputRanges.A.max}"
-            decimalPlaces="{inputRanges.A.decimalPlaces}"
-            inputData="{'pendulum_left_amplitude'}"
-            unit="{'degrees'}"
-            labelFieldText="{'Pendulum left amplitude'}"
-          />
-
-          <Input
-            value="{currentHarmonograph.B}"
-            onValueChange="{(value) => updateHarmonograph('B', value)}"
-            minValue="{inputRanges.B.min}"
-            maxValue="{inputRanges.B.max}"
-            decimalPlaces="{inputRanges.B.decimalPlaces}"
-            inputData="{'pendulum_right_amplitude'}"
-            unit="{'degrees'}"
-            labelFieldText="{'Pendulum right amplitude'}"
-          />
-
-          <InformationHeader
-            text="{'Steps'}"
-            info="{'This is how many times it steps'}"
-          />
-
-          <Slider
-            min="{0}"
-            max="{5000}"
-            inputFieldMax="{8000}"
-            value="{currentHarmonograph.steps}"
-            onValueChange="{(value) => updateHarmonograph('steps', value)}"
-          />
-        {:else}
-          <div class="{`harmono-panel${selectedPanel === 0 ? '' : ' hidden'}`}">
+        <div class="harmono-panel">
+          {#if activeMode === MODE_SIMPLE || selectedPanel === 0}
             <InformationHeader
               text="{'Frequency'}"
               info="{'This is how many times it moves'}"
@@ -298,7 +233,6 @@ function cancel() {
                 maxValue="{inputRanges.f.max}"
                 decimalPlaces="{inputRanges.f.decimalPlaces}"
                 inputData="{'left_pendulum_frequency'}"
-                hideRandomizeButton="{true}"
                 unit="{'Hz'}"
                 labelFieldText="{'Left pendulum frequency'}"
               />
@@ -310,12 +244,13 @@ function cancel() {
                 maxValue="{inputRanges.g.max}"
                 decimalPlaces="{inputRanges.g.decimalPlaces}"
                 inputData="{'right_pendulum_frequency'}"
-                hideRandomizeButton="{true}"
                 unit="{'Hz'}"
                 labelFieldText="{'Right pendulum frequency'}"
               />
             </div>
+          {/if}
 
+          {#if activeMode === MODE_SIMPLE || selectedPanel === 0}
             <InformationHeader
               text="{'Amplitude'}"
               info="{'This is how many long it be'}"
@@ -329,7 +264,6 @@ function cancel() {
                 maxValue="{inputRanges.A.max}"
                 decimalPlaces="{inputRanges.A.decimalPlaces}"
                 inputData="{'pendulum_left_amplitude'}"
-                hideRandomizeButton="{true}"
                 unit="{'degrees'}"
                 labelFieldText="{'Pendulum left amplitude'}"
               />
@@ -341,12 +275,13 @@ function cancel() {
                 maxValue="{inputRanges.B.max}"
                 decimalPlaces="{inputRanges.B.decimalPlaces}"
                 inputData="{'pendulum_right_amplitude'}"
-                hideRandomizeButton="{true}"
                 unit="{'degrees'}"
                 labelFieldText="{'Pendulum right amplitude'}"
               />
             </div>
+          {/if}
 
+          {#if activeMode === MODE_ADVANCED && selectedPanel === 0}
             <InformationHeader
               text="{'Damping'}"
               info="{'This is how damping'}"
@@ -360,7 +295,6 @@ function cancel() {
                 maxValue="{inputRanges.R.max}"
                 decimalPlaces="{inputRanges.R.decimalPlaces}"
                 inputData="{'left_pendulum_damping'}"
-                hideRandomizeButton="{true}"
                 unit="{'degrees'}"
                 labelFieldText="{'Left pendulum'}"
               />
@@ -372,7 +306,6 @@ function cancel() {
                 maxValue="{inputRanges.S.max}"
                 decimalPlaces="{inputRanges.S.decimalPlaces}"
                 inputData="{'right_pendulum_damping'}"
-                hideRandomizeButton="{true}"
                 unit="{'degrees'}"
                 labelFieldText="{'Right pendulum'}"
               />
@@ -391,7 +324,6 @@ function cancel() {
                 maxValue="{inputRanges.u.max}"
                 decimalPlaces="{inputRanges.u.decimalPlaces}"
                 inputData="{'left_pendulum_phase'}"
-                hideRandomizeButton="{true}"
                 hideUnits="{true}"
                 unit="{'degrees'}"
                 labelFieldText="{'Left pendulum'}"
@@ -404,7 +336,6 @@ function cancel() {
                 maxValue="{inputRanges.v.max}"
                 decimalPlaces="{inputRanges.v.decimalPlaces}"
                 inputData="{'right_pendulum_phase'}"
-                hideRandomizeButton="{true}"
                 hideUnits="{true}"
                 unit="{'degrees'}"
                 labelFieldText="{'Right pendulum'}"
@@ -423,13 +354,12 @@ function cancel() {
               maxValue="{inputRanges.d.max}"
               decimalPlaces="{inputRanges.d.decimalPlaces}"
               inputData="{'distance_between_pendulums'}"
-              hideRandomizeButton="{true}"
               hideUnits="{true}"
               labelFieldText="{'Distance'}"
             />
-          </div>
+          {/if}
 
-          <div class="{`harmono-panel${selectedPanel === 1 ? '' : ' hidden'}`}">
+          {#if activeMode === MODE_ADVANCED && selectedPanel === 1}
             <InformationHeader
               text="{'Paper Center'}"
               info="{'This is how paper center bro'}"
@@ -442,7 +372,6 @@ function cancel() {
               maxValue="{inputRanges.c.max}"
               decimalPlaces="{inputRanges.c.decimalPlaces}"
               inputData="{'paper_center'}"
-              hideRandomizeButton="{true}"
               hideUnits="{true}"
               labelFieldText="{'Location'}"
             />
@@ -459,7 +388,6 @@ function cancel() {
               maxValue="{inputRanges.p.max}"
               decimalPlaces="{inputRanges.p.decimalPlaces}"
               inputData="{'length_of_pen_arm'}"
-              hideRandomizeButton="{true}"
               hideUnits="{true}"
               labelFieldText="{'Length'}"
             />
@@ -476,7 +404,6 @@ function cancel() {
               maxValue="{inputRanges.q.max}"
               decimalPlaces="{inputRanges.q.decimalPlaces}"
               inputData="{'position_of_pen_arm'}"
-              hideRandomizeButton="{true}"
               hideUnits="{true}"
               labelFieldText="{'Position'}"
             />
@@ -493,7 +420,6 @@ function cancel() {
               maxValue="{inputRanges.r.max}"
               decimalPlaces="{inputRanges.r.decimalPlaces}"
               inputData="{'paper_radius'}"
-              hideRandomizeButton="{true}"
               hideUnits="{true}"
               unit="{'degrees'}"
               labelFieldText="{'Length'}"
@@ -511,14 +437,13 @@ function cancel() {
               maxValue="{inputRanges.h.max}"
               decimalPlaces="{inputRanges.h.decimalPlaces}"
               inputData="{'frequency_of_paper_rotation'}"
-              hideRandomizeButton="{true}"
               hideUnits="{true}"
               unit="{'degrees'}"
               labelFieldText="{'Frequency'}"
             />
-          </div>
+          {/if}
 
-          <div class="{`harmono-panel${selectedPanel === 2 ? '' : ' hidden'}`}">
+          {#if activeMode === MODE_ADVANCED && selectedPanel === 2}
             <InformationHeader
               text="{'Pen thickness (stroke)'}"
               info="{'This is how pen thickness bro'}"
@@ -531,12 +456,13 @@ function cancel() {
               maxValue="{inputRanges.w.max}"
               decimalPlaces="{inputRanges.w.decimalPlaces}"
               inputData="{'pen_thickness'}"
-              hideRandomizeButton="{true}"
               hideUnits="{true}"
               unit="{'degrees'}"
               labelFieldText="{'Thickness'}"
             />
+          {/if}
 
+          {#if activeMode === MODE_SIMPLE || selectedPanel === 2}
             <InformationHeader
               text="{'Steps'}"
               info="{'This is how many times it steps'}"
@@ -549,7 +475,9 @@ function cancel() {
               value="{currentHarmonograph.steps}"
               onValueChange="{(value) => updateHarmonograph('steps', value)}"
             />
+          {/if}
 
+          {#if activeMode === MODE_ADVANCED && selectedPanel === 2}
             <InformationHeader
               text="{'Segments per Step'}"
               info="{'This is how segments bro'}"
@@ -562,8 +490,8 @@ function cancel() {
               inputFieldMax="{50}"
               onValueChange="{(value) => updateHarmonograph('segments', value)}"
             />
-          </div>
-        {/if}
+          {/if}
+        </div>
       </div>
     </div>
   {/if}

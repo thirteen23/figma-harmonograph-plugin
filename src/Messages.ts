@@ -3,7 +3,7 @@ export enum EventMessages {
 }
 
 export enum ClientStorageMessages {
-  returningUser = "returning-user",
+  userSettings = "userSettings",
   lastHarmonograph = "last-harmonograph",
   savedHarmonographs = "saved-harmonographs",
 }
@@ -13,4 +13,5 @@ export enum PluginMessages {
   insertHarmonograph = "insert-harmonograh",
   saveHarmonograph = "save-harmonograph",
   resizeWindow = "resize-window",
+  resetSettings = "plugin-reset"
 }

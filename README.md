@@ -1,73 +1,78 @@
-# Figsvelte
+<a href="https://thirteen23.com">
+    <picture>
+    	<source media="(prefers-color-scheme: dark)" srcset="./documentation/thirteen23_logo_light.svg"> 
+    <img src="./documentation/thirteen23_logo.svg" alt="thirteen23 logo" title="thirteen23" align="right" width="160" height="auto" />
+        </picture>
+</a>
 
-A boilerplate for creating Figma plugins using Svelte.
+# thirteen23 harmonograph
 
-This starter project has everything you need to start developing a Figma plugin usign Svelte. Your JS, CSS, SVG and image assets can be bundled on build. The package will take care of compiling your typescript + app on save during development, and also minify on build.
+![thirteen23 harmonograph cover](documentation/cover.png)
 
-Additionally, this package comes preconfigured with [Figma Plugin DS Svelte](https://github.com/thomas-lowry/figma-plugin-ds-svelte) where you have access to a large range of components and icons that match the Figma UI, to get you up and running quickly. Note: installing this boilerplate will install the component library as a dependency.
+[thirteen23 harmonograph](https://github.com/thirteen23/figma-harmonograph) is a Figma plugin that allows you to create beautiful mathematical art! This powerful tool allows you to generate intricate and beautiful harmonographs. Customize your harmonograph the frequency, amplitude, and steps in simple mode, or jump into advanced mode to take full control! If you need some inspiration, click the 'Spin Me' button for a randomized harmonograph.
 
-Only what you import/use will be included in the final build for small bundle size.
+<picture>
+	<source media="(prefers-color-scheme: dark)" srcset="./documentation/divider-dark.png"> 
+    	<img alt="divider please ignore" src="./documentation/divider-light.png">
+</picture>
 
-## To get started
+## Preview
+
+// Perhaps we place some gif here
+
+<picture>
+	<source media="(prefers-color-scheme: dark)" srcset="./documentation/divider-dark.png"> 
+    	<img alt="divider please ignore" src="./documentation/divider-light.png">
+</picture>
+
+## Usage
+
+- Navigate to the [thirteen23 harmonograph](https://github.com/thirteen23/figma-harmonograph) plugin page, select Open in… and select your desired Figma file.
+- Save or Like it to use it later in Figma. Go to **Plugins / Saved / thirteen23 harmonograph**
+
+<picture>
+	<source media="(prefers-color-scheme: dark)" srcset="./documentation/divider-dark.png"> 
+    	<img alt="divider please ignore" src="./documentation/divider-light.png">
+</picture>
+
+## Development
+
+To get started, install the dependencies and build the project:
 
 ```bash
-npx degit thomas-lowry/figsvelte figma-plugin
-cd figma-plugin
-npm install
+$ npm install
+$ npm run dev
 ```
 
-_Note that you will need to have [Node.js](https://nodejs.org/) installed._
+Once installed and built, connect the plugin to Figma.
 
+ <picture>
+	<source media="(prefers-color-scheme: dark)" srcset="./documentation/divider-dark.png"> 
+    	<img alt="divider please ignore" src="./documentation/divider-light.png">
+</picture>
+ 
 ## Connecting your plugin to Figma
 
 Connecting your plugin to Figma
-After installing, go to **Plugins / Development / New Plugin** in the Figma desktop app for Mac OS or Windows and choose the option **"Link existing plugin"**.
+Go to **Plugins / Development / Import plugin from manifest...** in the Figma desktop app.
 
-_You also can just type "New Plugin" in Figma global search to go there_
+_You can also type "Import plugin from manifest..." in Figma global search to go there_
 
 From there you need to link a **manifest.json** file located at **public** folder in your directory:
 
 ```bash
-/figma-plugin/public/manifest.json
+/figma-harmonograph/public/manifest.json
 ```
 
-Now edit this file to give a new name for your plugin, and you will be able call it from Figma: **Plugins / Development / Your Plugin Name**
+<picture>
+	<source media="(prefers-color-scheme: dark)" srcset="./documentation/divider-dark.png"> 
+    	<img alt="divider please ignore" src="./documentation/divider-light.png">
+</picture>
 
-## Development
+Now you will be able to run the plugin in Figma, go to: **Plugins / Development / thirteen23-harmonograph**
 
-During development, watch your project for changes with the following command.
+## Credits
 
-```bash
-npm run dev
-```
+Harmonograph code based on: [ttencate/harmonograph](https://github.com/ttencate/harmonograph)
 
-Start building your plugin UI in `'src/Plugin.svelte'`.
-
-## Build
-
-When ready to package up your final Figma Plugin:
-
-```bash
-npm run build
-```
-
-## Useful info
-
-To include an external CSS file:
-
-```javascript
-import styles from "./styles.css";
-```
-
-To include an SVG:
-
-```javascript
-import SvgName from './image.svg';
-
-//use in your markup
-{@html SvgName}
-```
-
-_For more info on using the Icon component system with SVGs from [Figma Plugin DS Svelte](https://github.com/thomas-lowry/figma-plugin-ds-svelte), refer to the repo._
-
-_For info about Figma API visit [Figma API Overview](https://www.figma.com/plugin-docs/api/api-overview/)_
+Built with: [Figma Plugin DS Svelte](https://github.com/thomas-lowry/figma-plugin-ds-svelte)

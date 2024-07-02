@@ -11,7 +11,6 @@ let currentPage = -1;
 let loadedHarmonograph = undefined;
 
 addEventListener("message", function handleMessage(msg) {
-  console.log("got message: ", msg);
   switch (msg.data.pluginMessage.type) {
     case EventMessages.loadState:
       currentPage = msg.data.pluginMessage.page;
@@ -20,23 +19,32 @@ addEventListener("message", function handleMessage(msg) {
   }
 });
 
-function resizeWindow(e) {
+function resizeWindowVertical(e) {
   const height = Math.floor(e.clientY + 5);
 
   parent.postMessage(
     { pluginMessage: { type: PluginMessages.resizeWindow, height } },
     "*",
   );
+}
 
-  const optionsContainer = document.querySelector(".options");
-  if (optionsContainer) {
-    const maxHeight = height - 400;
-    if (maxHeight < 305) {
-      optionsContainer.style.maxHeight = `305px`;
-    } else {
-      optionsContainer.style.maxHeight = `${maxHeight}px`;
-    }
-  }
+function resizeWindowHorizontal(e) {
+  const width = Math.floor(e.clientX + 5);
+
+  parent.postMessage(
+    { pluginMessage: { type: PluginMessages.resizeWindow, width } },
+    "*",
+  );
+}
+
+function resizeWindow(e) {
+  const height = Math.floor(e.clientY + 5);
+  const width = Math.floor(e.clientX + 5);
+
+  parent.postMessage(
+    { pluginMessage: { type: PluginMessages.resizeWindow, height, width } },
+    "*",
+  );
 }
 
 const sendFTUEComplete = () => {
@@ -51,21 +59,31 @@ function openWebsite() {
 }
 
 onMount(() => {
-  const edge = document.getElementById("edge_bottom");
+  const resizeBottom = document.getElementById("resize_bottom");
+  const resizeRight = document.getElementById("resize_right");
+  const resizeCornerBottom = document.getElementById("resize_corner_bottom");
+  const resizeCornerRight = document.getElementById("resize_corner_right");
 
-  if (edge) {
-    edge.onpointerdown = (e) => {
-      edge.onpointermove = resizeWindow;
-      edge.setPointerCapture(e.pointerId);
-    };
-    edge.onpointerup = (e) => {
-      edge.onpointermove = null;
-      edge.releasePointerCapture(e.pointerId);
-    };
-  }
+  addResizeTrigger(resizeBottom, resizeWindowVertical);
+  addResizeTrigger(resizeRight, resizeWindowHorizontal);
+  addResizeTrigger(resizeCornerBottom, resizeWindow);
+  addResizeTrigger(resizeCornerRight, resizeWindow);
 
   return () => {};
 });
+
+const addResizeTrigger = (element, resizeFunction) => {
+  if (element) {
+    element.onpointerdown = (e) => {
+      element.onpointermove = resizeFunction;
+      element.setPointerCapture(e.pointerId);
+    };
+    element.onpointerup = (e) => {
+      element.onpointermove = null;
+      element.releasePointerCapture(e.pointerId);
+    };
+  }
+};
 </script>
 
 <div class="root">
@@ -87,5 +105,8 @@ onMount(() => {
     />
   {/if}
 
-  <div id="edge_bottom"></div>
+  <div id="resize_bottom"></div>
+  <div id="resize_right"></div>
+  <div id="resize_corner_bottom"></div>
+  <div id="resize_corner_right"></div>
 </div>

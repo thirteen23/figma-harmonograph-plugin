@@ -7,12 +7,40 @@ import {
   ClientStorageMessages,
 } from "./Messages";
 
-figma.showUI(__html__, { themeColors: true, width: 400, height: 800 });
+const PLUGIN_DEFAULT_WIDTH = 500;
+const PLUGIN_MIN_WIDTH = 400;
+
+const PLUGIN_DEFAULT_HEIGHT = 800;
+const PLUGIN_MIN_HEIGHT = 700;
+
+let userSettings = {
+  ftueVisited: false,
+  uiHeight: PLUGIN_DEFAULT_HEIGHT,
+  uiWidth: PLUGIN_DEFAULT_WIDTH
+}
+
+
 
 figma.clientStorage
-  .getAsync(ClientStorageMessages.returningUser)
-  .then((returningUser) => {
-    let page = returningUser === undefined ? 1 : 0;
+  .getAsync(ClientStorageMessages.userSettings)
+  .then((returningUserInfo) => {
+    console.log("Loaded user info: ", JSON.stringify(returningUserInfo));
+
+    if(returningUserInfo !== undefined) {
+      userSettings = returningUserInfo;
+    }
+
+    console.log("User info: ", JSON.stringify(userSettings));
+
+    let page = userSettings.ftueVisited ? 0 : 1;
+    let height = userSettings.uiHeight;
+    let width = userSettings.uiWidth;
+
+    figma.showUI(__html__, {
+      themeColors: true,
+      width,
+      height,
+    });
 
     figma.clientStorage
       .getAsync(ClientStorageMessages.lastHarmonograph)
@@ -25,7 +53,7 @@ figma.clientStorage
         figma.ui.postMessage({
           type: EventMessages.loadState,
           harmonograph,
-          page,
+          page
         });
       });
   });
@@ -70,11 +98,19 @@ figma.ui.onmessage = (msg) => {
 
       break;
     case PluginMessages.resizeWindow:
-      const windowHeight = Math.max(700, Math.floor(msg.height));
-      figma.ui.resize(400, windowHeight);
+      let newWidth = msg.width ?? userSettings.uiWidth;
+      let newHeight = msg.height ?? userSettings.uiHeight;
+
+      userSettings.uiWidth = Math.max(PLUGIN_MIN_WIDTH, Math.floor(newWidth));
+      userSettings.uiHeight = Math.max(PLUGIN_MIN_HEIGHT, Math.floor(newHeight));
+
+      figma.clientStorage.setAsync(ClientStorageMessages.userSettings, userSettings);
+
+      figma.ui.resize(userSettings.uiWidth, userSettings.uiHeight);
       break;
     case PluginMessages.FTUEVisited:
-      figma.clientStorage.setAsync(ClientStorageMessages.returningUser, true);
+      userSettings.ftueVisited = true;
+      figma.clientStorage.setAsync(ClientStorageMessages.userSettings, userSettings);
       break;
   }
 };
