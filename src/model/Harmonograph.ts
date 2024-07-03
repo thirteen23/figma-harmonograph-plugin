@@ -18,6 +18,69 @@ export interface Harmonograph {
   segments: number;
 }
 
+export enum Mode {
+  advanced = "advanced-mode",
+  simple = "simple-mode",
+}
+
+export const tooltips = {
+  frequency: {
+    header: "Frequency",
+    tooltip: "Number of full pendulum swings per drawing step",
+  },
+  amplitude: {
+    header: "Amplitude",
+    tooltip:
+      "The angle the pendulum moves left and right of the start position",
+  },
+  damping: {
+    header: "Damping",
+    tooltip: "Gradual reduction of the pendulum's amplitude over time",
+  },
+  phase: {
+    header: "Phase",
+    tooltip: "Starting position of the pendulum movement",
+  },
+  pendulumDistance: {
+    header: "Distance between pendulums",
+    tooltip: "Distance between the two pendulums",
+  },
+  paperCenter: {
+    header: "Paper center",
+    tooltip:
+      "Distance from the top of the second pendulum to the center of the paper",
+  },
+  penArmLength: {
+    header: "Length of pen arm",
+    tooltip: "Length of attached pen from the first pendulum",
+  },
+  penArmPosition: {
+    header: "Position of pen arm",
+    tooltip:
+      "Distance from the top of the harmonograph to the center of the pen arm",
+  },
+  paperRadius: {
+    header: "Paper radius",
+    tooltip: "Distance between the edge and center of the drawing area",
+  },
+  paperFrequency: {
+    header: "Frequency of paper rotation",
+    tooltip: "Number of paper rotations per drawing step",
+  },
+  penThickness: {
+    header: "Pen thickness",
+    tooltip: "Stroke thickness",
+  },
+  steps: {
+    header: "Steps",
+    tooltip: "Number of drawing cycles",
+  },
+  segments: {
+    header: "Segments per step",
+    tooltip: "Number of calculations per drawing cycle",
+  },
+};
+
 export const inputRanges: {
   [key: string]: {
     min: number;
@@ -28,42 +91,96 @@ export const inputRanges: {
   };
 } = {
   // Simple mode params
-  f: { min: -0.5, max: 0.5, decimalPlaces: 3, default: 0.3, mode: "simple" },
-  g: { min: -0.5, max: 0.5, decimalPlaces: 3, default: 0.302, mode: "simple" },
-  A: { min: 1, max: 50, decimalPlaces: 0, default: 10, mode: "simple" },
-  B: { min: 1, max: 50, decimalPlaces: 0, default: 10, mode: "simple" },
-  steps: { min: 0, max: 5000, decimalPlaces: 0, default: 900, mode: "simple" },
+  f: { min: -0.5, max: 0.5, decimalPlaces: 3, default: 0.3, mode: Mode.simple },
+  g: {
+    min: -0.5,
+    max: 0.5,
+    decimalPlaces: 3,
+    default: 0.302,
+    mode: Mode.simple,
+  },
+  A: { min: 1, max: 50, decimalPlaces: 0, default: 10, mode: Mode.simple },
+  B: { min: 1, max: 50, decimalPlaces: 0, default: 10, mode: Mode.simple },
+  steps: {
+    min: 0,
+    max: 5000,
+    decimalPlaces: 0,
+    default: 900,
+    mode: Mode.simple,
+  },
 
   // Advanced mode params
-  R: { min: 0, max: 0.009, decimalPlaces: 3, default: 0.001, mode: "advanced" },
-  S: { min: 0, max: 0.009, decimalPlaces: 3, default: 0.001, mode: "advanced" },
-  u: { min: 0, max: 0.2, decimalPlaces: 2, default: 0, mode: "advanced" },
-  v: { min: 0, max: 0.2, decimalPlaces: 2, default: 0, mode: "advanced" },
-  d: { min: 200, max: 1000, decimalPlaces: 0, default: 900, mode: "advanced" },
-  c: { min: 200, max: 1000, decimalPlaces: 0, default: 800, mode: "advanced" },
-  p: { min: 200, max: 1000, decimalPlaces: 0, default: 900, mode: "advanced" },
-  q: { min: 200, max: 1000, decimalPlaces: 0, default: 700, mode: "advanced" },
-  r: { min: 200, max: 900, decimalPlaces: 0, default: 300, mode: "advanced" },
+  R: {
+    min: 0,
+    max: 0.009,
+    decimalPlaces: 3,
+    default: 0.001,
+    mode: Mode.advanced,
+  },
+  S: {
+    min: 0,
+    max: 0.009,
+    decimalPlaces: 3,
+    default: 0.001,
+    mode: Mode.advanced,
+  },
+  u: { min: 0, max: 0.2, decimalPlaces: 2, default: 0, mode: Mode.advanced },
+  v: { min: 0, max: 0.2, decimalPlaces: 2, default: 0, mode: Mode.advanced },
+  d: {
+    min: 200,
+    max: 1000,
+    decimalPlaces: 0,
+    default: 900,
+    mode: Mode.advanced,
+  },
+  c: {
+    min: 200,
+    max: 1000,
+    decimalPlaces: 0,
+    default: 800,
+    mode: Mode.advanced,
+  },
+  p: {
+    min: 200,
+    max: 1000,
+    decimalPlaces: 0,
+    default: 900,
+    mode: Mode.advanced,
+  },
+  q: {
+    min: 200,
+    max: 1000,
+    decimalPlaces: 0,
+    default: 700,
+    mode: Mode.advanced,
+  },
+  r: {
+    min: 200,
+    max: 900,
+    decimalPlaces: 0,
+    default: 300,
+    mode: Mode.advanced,
+  },
   h: {
     min: 0,
     max: 0.001,
     decimalPlaces: 4,
     default: 0.0008,
-    mode: "advanced",
+    mode: Mode.advanced,
   },
-  w: { min: 0.1, max: 1, decimalPlaces: 1, default: 0.2, mode: "advanced" },
+  w: { min: 0.1, max: 1, decimalPlaces: 1, default: 0.2, mode: Mode.advanced },
   segments: {
     min: 1,
     max: 100,
     decimalPlaces: 0,
     default: 32,
-    mode: "advanced",
+    mode: Mode.advanced,
   },
 };
 
 export function randomizeInputs(
   harmonograph: Harmonograph,
-  currentMode: string,
+  currentMode: Mode,
 ): Harmonograph {
   const randomized: Harmonograph = { ...harmonograph };
   for (const [key, range] of Object.entries(inputRanges)) {

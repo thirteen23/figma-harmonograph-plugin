@@ -1,4 +1,6 @@
 <script>
+import { fade } from "svelte/transition";
+
 import "./InformationHeader.scss";
 
 export let text = "";
@@ -7,7 +9,12 @@ export let info = "";
 let showInfo = false;
 </script>
 
-<div class="information-header">
+<div
+  class="information-header"
+  in:fade="{{
+    duration: 300,
+  }}"
+>
   <h2 class="information-header__title">{text}</h2>
   <div class="information-header__icon-container">
     <svg

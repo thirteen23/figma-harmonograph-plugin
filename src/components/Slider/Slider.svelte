@@ -1,4 +1,6 @@
 <script>
+import { fade } from "svelte/transition";
+
 import "./Slider.scss";
 
 export let value;
@@ -34,7 +36,12 @@ function handleInputField(event) {
 }
 </script>
 
-<div class="slider">
+<div
+  class="slider"
+  in:fade="{{
+    duration: 300,
+  }}"
+>
   <div class="slider__range-container">
     <input
       class="slider__range"

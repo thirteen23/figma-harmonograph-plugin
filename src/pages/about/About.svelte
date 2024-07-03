@@ -1,10 +1,12 @@
 <script>
 import { GlobalCSS } from "figma-plugin-ds-svelte";
 
+import { fade } from "svelte/transition";
 import { onMount } from "svelte";
 
 import SpinMeButton from "../../components/SpinMeButton/SpinMeButton.svelte";
 import homeImage from "../../static/harmonographs.png";
+import Footer from "../../components/Footer/Footer.svelte";
 
 import "./About.scss";
 
@@ -18,11 +20,6 @@ onMount(() => {
     document.removeEventListener("click", handleOutsideClick);
   };
 });
-
-function toggleMenu() {
-  const menu = document.getElementById("menu");
-  menu.style.display = menu.style.display === "none" ? "flex" : "none";
-}
 
 function handleOutsideClick(event) {
   const menu = document.getElementById("menu");
@@ -100,40 +97,17 @@ function handleOutsideClick(event) {
     </div>
   </div>
 
-  <footer class="footer">
-    <div class="footer__content">
-      <button
-        on:click="{navigateToHarmonograph}"
-        class="footer__button footer__button--primary-wide"
-      >
-        Get Started
-      </button>
-      <div class="ellipsis-menu" aria-label="More options">
-        <div class="ellipsis-menu__container">
-          <div
-            class="ellipsis-menu__dots"
-            on:click|stopPropagation="{toggleMenu}"
-          >
-            <span class="ellipsis-menu__dot"></span>
-            <span class="ellipsis-menu__dot"></span>
-            <span class="ellipsis-menu__dot"></span>
-          </div>
-        </div>
-
-        <div
-          id="menu"
-          class="ellipsis-menu__dropdown--lower"
-          style="display: none;"
-        >
-          <button
-            class="ellipsis-menu__option"
-            on:click="{() => {
-              openWebsite();
-              toggleMenu();
-            }}">@thirteen23</button
-          >
-        </div>
-      </div>
-    </div>
-  </footer>
+  <Footer
+    primaryButton="{{
+      fullWidth: true,
+      text: 'Get started',
+      action: navigateToHarmonograph,
+    }}"
+    options="{[
+      {
+        text: '@thirteen23',
+        action: openWebsite,
+      },
+    ]}"
+  />
 </div>

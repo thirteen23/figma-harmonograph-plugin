@@ -1,11 +1,11 @@
-import type { Harmonograph } from "./Harmonograph";
-import { getDefaultHarmonograph } from "./Harmonograph";
+import type { Harmonograph } from "./model/Harmonograph";
+import { getDefaultHarmonograph } from "./model/Harmonograph";
 
 import {
   EventMessages,
   PluginMessages,
   ClientStorageMessages,
-} from "./Messages";
+} from "./model/Messages";
 
 const PLUGIN_DEFAULT_WIDTH = 500;
 const PLUGIN_MIN_WIDTH = 400;
@@ -15,26 +15,26 @@ const PLUGIN_MIN_HEIGHT = 700;
 
 let userSettings = {
   ftueVisited: false,
+  advancedMode: false,
   uiHeight: PLUGIN_DEFAULT_HEIGHT,
-  uiWidth: PLUGIN_DEFAULT_WIDTH
-}
-
-
+  uiWidth: PLUGIN_DEFAULT_WIDTH,
+};
 
 figma.clientStorage
   .getAsync(ClientStorageMessages.userSettings)
   .then((returningUserInfo) => {
     console.log("Loaded user info: ", JSON.stringify(returningUserInfo));
 
-    if(returningUserInfo !== undefined) {
+    if (returningUserInfo !== undefined) {
       userSettings = returningUserInfo;
     }
 
     console.log("User info: ", JSON.stringify(userSettings));
 
-    let page = userSettings.ftueVisited ? 0 : 1;
+    let ftueVisited = userSettings.ftueVisited;
     let height = userSettings.uiHeight;
     let width = userSettings.uiWidth;
+    let advancedMode = userSettings.advancedMode ?? false;
 
     figma.showUI(__html__, {
       themeColors: true,
@@ -53,7 +53,8 @@ figma.clientStorage
         figma.ui.postMessage({
           type: EventMessages.loadState,
           harmonograph,
-          page
+          ftueVisited,
+          advancedMode,
         });
       });
   });
@@ -102,15 +103,32 @@ figma.ui.onmessage = (msg) => {
       let newHeight = msg.height ?? userSettings.uiHeight;
 
       userSettings.uiWidth = Math.max(PLUGIN_MIN_WIDTH, Math.floor(newWidth));
-      userSettings.uiHeight = Math.max(PLUGIN_MIN_HEIGHT, Math.floor(newHeight));
+      userSettings.uiHeight = Math.max(
+        PLUGIN_MIN_HEIGHT,
+        Math.floor(newHeight),
+      );
 
-      figma.clientStorage.setAsync(ClientStorageMessages.userSettings, userSettings);
+      figma.clientStorage.setAsync(
+        ClientStorageMessages.userSettings,
+        userSettings,
+      );
 
       figma.ui.resize(userSettings.uiWidth, userSettings.uiHeight);
       break;
     case PluginMessages.FTUEVisited:
       userSettings.ftueVisited = true;
-      figma.clientStorage.setAsync(ClientStorageMessages.userSettings, userSettings);
+      figma.clientStorage.setAsync(
+        ClientStorageMessages.userSettings,
+        userSettings,
+      );
       break;
+    case PluginMessages.updateAdvancedMode:
+      let isAdvanced = msg.advancedMode ?? false;
+      console.log("setting advanced mode?: ", msg.advancedMode);
+      userSettings.advancedMode = isAdvanced;
+      figma.clientStorage.setAsync(
+        ClientStorageMessages.userSettings,
+        userSettings,
+      );
   }
 };

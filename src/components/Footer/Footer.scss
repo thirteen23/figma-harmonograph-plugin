@@ -1,0 +1,122 @@
+.footer {
+    bottom: 0;
+    left: 0;
+    flex-shrink: 0;
+    z-index: 200;
+    border-top: 1px solid var(--figma-color-border);
+    background-color: var(--figma-color-bg);
+    width: 100%;
+    height: 2.625em;
+  
+    &__content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 1.5em;
+      height: 100%;
+  
+      &__right {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 9px;
+      }
+    }
+  
+    &__button {
+      @include cta-button-font;
+  
+      transition: background-color 0.1s ease-in-out;
+      cursor: pointer;
+      border: none;
+      border-radius: 0.3125em;
+      padding: 0.25em 0.75em;
+  
+      &--primary {
+        background-color: var(--figma-color-bg-brand);
+  
+        &:hover,
+        &:focus {
+          background-color: var(--figma-color-icon-brand-secondary);
+        }
+      }
+  
+      &--primary-wide {
+        background-color: var(--figma-color-bg-brand);
+        width: 100%;
+  
+        &:hover,
+        &:focus {
+          background-color: var(--figma-color-icon-brand-secondary);
+        }
+      }
+    }
+  }
+  
+  .ellipsis-menu {
+    position: relative;
+    margin-left: 0.5rem;
+  
+    &__container {
+      display: inline-block;
+      cursor: pointer;
+      border-radius: 0.25em;
+      padding: 0.2em;
+  
+      &:hover {
+        background-color: var(--figma-color-bg-hover);
+      }
+    }
+  
+    &__dots {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      width: 1.5em;
+      height: 1.5em;
+    }
+  
+    &__dot {
+      margin: 0 0.125em;
+      border-radius: 50%;
+      background-color: var(--figma-color-bg-inverse);
+      width: 0.1875em;
+      height: 0.1875em;
+    }
+  
+    &__dropdown {
+      display: flex;
+      position: absolute;
+      right: 0;
+      bottom: 2em;
+      flex-direction: column;
+      z-index: 10;
+      box-shadow: var(--figma-color-bg) 0px 0px 0.625em;
+      border-radius: 0.1875em;
+      background-color: $--figma-black-no-change;
+      padding: 0.375em 0;
+      width: 11.5em;
+    }
+  
+    &__divider {
+      background-color: transparent;
+      width: 100%;
+      height: 0.0625em;
+    }
+  
+    &__option {
+      @include body-text-p-font;
+      cursor: pointer;
+      border: none;
+      background: none;
+      padding: 0.375em 1.75em;
+      color: $--figma-white-no-change;
+      text-align: left;
+  
+      &:hover {
+        background-color: var(--figma-color-bg-brand);
+      }
+    }
+  }
+  

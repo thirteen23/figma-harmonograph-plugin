@@ -1,20 +1,48 @@
 <script lang="ts">
 import { onMount } from "svelte";
 
+import { getDefaultHarmonograph } from "./model/Harmonograph";
+import { Page } from "./model/Routes";
+import { EventMessages, PluginMessages } from "./model/Messages";
+
 import CreateHarmonograph from "./pages/main/CreateHarmonograph.svelte";
 import About from "./pages/about/About.svelte";
-import { EventMessages, PluginMessages } from "./Messages";
 
 import "./App.scss";
 
-let currentPage = -1;
+let currentPage = undefined;
 let loadedHarmonograph = undefined;
+let advancedMode = false;
+
+const navigateToHarmonograph = () => {
+  sendFTUEComplete();
+  currentPage = Page.harmonograph;
+};
+
+const navigateToAbout = () => {
+  currentPage = Page.About;
+};
+
+const resetToDefaults = () => {
+  loadedHarmonograph = getDefaultHarmonograph();
+  saveHarmonograph();
+};
 
 addEventListener("message", function handleMessage(msg) {
   switch (msg.data.pluginMessage.type) {
     case EventMessages.loadState:
-      currentPage = msg.data.pluginMessage.page;
+      currentPage = msg.data.pluginMessage.ftueVisited
+        ? Page.harmonograph
+        : Page.about;
       loadedHarmonograph = msg.data.pluginMessage.harmonograph;
+      advancedMode = msg.data.pluginMessage.advancedMode;
+
+      console.log(
+        "current page from message?: ",
+        currentPage,
+        " ",
+        msg.data.pluginMessage.ftueVisited,
+      );
       break;
   }
 });
@@ -87,19 +115,20 @@ const addResizeTrigger = (element, resizeFunction) => {
 </script>
 
 <div class="root">
-  {#if currentPage === 1}
+  {#if currentPage === Page.about}
     <About
       navigateToHarmonograph="{() => {
         sendFTUEComplete();
-        currentPage = 0;
+        currentPage = Page.harmonograph;
       }}"
       openWebsite="{openWebsite}"
     />
-  {:else if currentPage === 0}
+  {:else if currentPage === Page.harmonograph}
     <CreateHarmonograph
       currentHarmonograph="{loadedHarmonograph}"
+      advancedMode="{advancedMode}"
       navigateToAbout="{() => {
-        currentPage = 1;
+        currentPage = Page.about;
       }}"
       openWebsite="{openWebsite}"
     />

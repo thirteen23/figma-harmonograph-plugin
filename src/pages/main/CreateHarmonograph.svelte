@@ -9,31 +9,33 @@ import Input from "../../components/Input/Input.svelte";
 import Slider from "../../components/Slider/Slider.svelte";
 import InformationHeader from "../../components/InformationHeader/InformationHeader.svelte";
 import SpinMeButton from "../../components/SpinMeButton/SpinMeButton.svelte";
+import Footer from "../../components/Footer/Footer.svelte";
 
 import {
   inputRanges,
   randomizeInputs,
   getDefaultHarmonograph,
   createSVGPathData,
-} from "../../Harmonograph";
-
-import { PluginMessages } from "../../Messages";
+  Mode,
+  tooltips,
+} from "../../model/Harmonograph";
+import { Page } from "../../model/Routes";
+import { PluginMessages } from "../../model/Messages";
 
 import "./CreateHarmonograph.scss";
 
 export let openWebsite = () => console.log("not implemented!");
 export let navigateToAbout = () => console.log("not implemented!");
+
 export let currentHarmonograph = getDefaultHarmonograph();
 
 var svg = "";
 
 var selectedPanel = 0;
-let checkbox = false;
 
-const MODE_SIMPLE = "simple";
-const MODE_ADVANCED = "advanced";
+export let advancedMode = false;
 
-$: activeMode = checkbox ? MODE_ADVANCED : MODE_SIMPLE;
+$: activeMode = advancedMode ? Mode.advanced : Mode.simple;
 let svgPath = "";
 
 function randomizeAllInputs() {
@@ -45,11 +47,6 @@ function resetToDefaults() {
   currentHarmonograph = getDefaultHarmonograph(activeMode);
   drawHarmonographSVG(currentHarmonograph);
   saveHarmonograph();
-}
-
-function toggleMenu() {
-  const menu = document.getElementById("menu");
-  menu.style.display = menu.style.display === "none" ? "flex" : "none";
 }
 
 onMount(() => {
@@ -98,19 +95,35 @@ function saveHarmonograph() {
   );
 }
 
+function updateAdvancedMode() {
+  parent.postMessage(
+    {
+      pluginMessage: {
+        type: PluginMessages.updateAdvancedMode,
+        advancedMode,
+      },
+    },
+    "*",
+  );
+}
+
 let renderPath = true;
 let diameter = 320;
 let stroke_width = 0.2;
 
 function drawHarmonographSVG(harmonograph) {
   svg = document.getElementById("preview");
-  
+
   svgPath = createSVGPathData(harmonograph);
 
   diameter = harmonograph.r;
   stroke_width = harmonograph.w;
 
   renderPath = false;
+
+  setTimeout(() => {
+    svg.setAttribute("viewBox", `0 0 ${harmonograph.r} ${harmonograph.r}`);
+  }, 200);
 
   setTimeout(() => {
     svg.setAttribute("viewBox", `0 0 ${harmonograph.r} ${harmonograph.r}`);
@@ -121,6 +134,9 @@ function drawHarmonographSVG(harmonograph) {
 function updateHarmonograph(property, value) {
   currentHarmonograph[property] = value;
   drawHarmonographSVG(currentHarmonograph);
+  console.log(
+    `width: ${window.screen.availWidth} height: ${window.screen.availHeight} devicePixelRatio: ${window.devicePixelRatio}`,
+  );
 }
 
 function cancel() {
@@ -162,12 +178,30 @@ function cancel() {
     <div class="advanced-mode__wrapper">
       <div class="advanced-mode__row-one">
         <div class="advanced-mode__title">ADVANCED MODE</div>
-        <div class="advanced-mode__toggle">
-          <label class="switch">
-            <input type="checkbox" bind:checked="{checkbox}" />
-            <span class="switch__toggle switch__toggle--round"></span>
-          </label>
-        </div>
+        <label class="switch">
+          <input
+            type="checkbox"
+            bind:checked="{advancedMode}"
+            on:change="{updateAdvancedMode}"
+          />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="52"
+            height="28"
+            viewBox="0 0 52 28"
+            fill="none"
+          >
+            <rect
+              class="switch__background"
+              x="1"
+              y="1"
+              width="48"
+              height="24"
+              rx="12"
+            ></rect>
+            <circle class="switch__foreground" cx="13" cy="13" r="12"></circle>
+          </svg>
+        </label>
       </div>
 
       <div class="advanced-mode__description">
@@ -219,10 +253,10 @@ function cancel() {
     <div class="options">
       <div class="options__wrapper">
         <div class="harmono-panel">
-          {#if activeMode === MODE_SIMPLE || selectedPanel === 0}
+          {#if activeMode === Mode.simple || selectedPanel === 0}
             <InformationHeader
-              text="{'Frequency'}"
-              info="{'This is how many times it moves'}"
+              text="{tooltips.frequency.header}"
+              info="{tooltips.frequency.tooltip}"
             />
 
             <div class="two-col-layout">
@@ -250,10 +284,10 @@ function cancel() {
             </div>
           {/if}
 
-          {#if activeMode === MODE_SIMPLE || selectedPanel === 0}
+          {#if activeMode === Mode.simple || selectedPanel === 0}
             <InformationHeader
-              text="{'Amplitude'}"
-              info="{'This is how many long it be'}"
+              text="{tooltips.amplitude.header}"
+              info="{tooltips.amplitude.tooltip}"
             />
 
             <div class="two-col-layout">
@@ -281,10 +315,10 @@ function cancel() {
             </div>
           {/if}
 
-          {#if activeMode === MODE_ADVANCED && selectedPanel === 0}
+          {#if activeMode === Mode.advanced && selectedPanel === 0}
             <InformationHeader
-              text="{'Damping'}"
-              info="{'This is how damping'}"
+              text="{tooltips.damping.header}"
+              info="{tooltips.damping.tooltip}"
             />
 
             <div class="two-col-layout">
@@ -295,7 +329,6 @@ function cancel() {
                 maxValue="{inputRanges.R.max}"
                 decimalPlaces="{inputRanges.R.decimalPlaces}"
                 inputData="{'left_pendulum_damping'}"
-                unit="{'degrees'}"
                 labelFieldText="{'Left pendulum'}"
               />
 
@@ -306,14 +339,13 @@ function cancel() {
                 maxValue="{inputRanges.S.max}"
                 decimalPlaces="{inputRanges.S.decimalPlaces}"
                 inputData="{'right_pendulum_damping'}"
-                unit="{'degrees'}"
                 labelFieldText="{'Right pendulum'}"
               />
             </div>
 
             <InformationHeader
-              text="{'Phase'}"
-              info="{'This is how phasing bro'}"
+              text="{tooltips.phase.header}"
+              info="{tooltips.phase.tooltip}"
             />
 
             <div class="two-col-layout">
@@ -343,8 +375,8 @@ function cancel() {
             </div>
 
             <InformationHeader
-              text="{'Distance between pendulums'}"
-              info="{'This is how distance bro'}"
+              text="{tooltips.pendulumDistance.header}"
+              info="{tooltips.pendulumDistance.tooltip}"
             />
 
             <Input
@@ -355,14 +387,13 @@ function cancel() {
               decimalPlaces="{inputRanges.d.decimalPlaces}"
               inputData="{'distance_between_pendulums'}"
               hideUnits="{true}"
-              labelFieldText="{'Distance'}"
             />
           {/if}
 
-          {#if activeMode === MODE_ADVANCED && selectedPanel === 1}
+          {#if activeMode === Mode.advanced && selectedPanel === 1}
             <InformationHeader
-              text="{'Paper Center'}"
-              info="{'This is how paper center bro'}"
+              text="{tooltips.paperCenter.header}"
+              info="{tooltips.paperCenter.tooltip}"
             />
 
             <Input
@@ -373,12 +404,11 @@ function cancel() {
               decimalPlaces="{inputRanges.c.decimalPlaces}"
               inputData="{'paper_center'}"
               hideUnits="{true}"
-              labelFieldText="{'Location'}"
             />
 
             <InformationHeader
-              text="{'Length of pen arm'}"
-              info="{'This is how paper length bro'}"
+              text="{tooltips.penArmLength.header}"
+              info="{tooltips.penArmLength.tooltip}"
             />
 
             <Input
@@ -389,12 +419,11 @@ function cancel() {
               decimalPlaces="{inputRanges.p.decimalPlaces}"
               inputData="{'length_of_pen_arm'}"
               hideUnits="{true}"
-              labelFieldText="{'Length'}"
             />
 
             <InformationHeader
-              text="{'Position of pen arm'}"
-              info="{'This is how position pen bro'}"
+              text="{tooltips.penArmPosition.header}"
+              info="{tooltips.penArmPosition.tooltip}"
             />
 
             <Input
@@ -405,12 +434,11 @@ function cancel() {
               decimalPlaces="{inputRanges.q.decimalPlaces}"
               inputData="{'position_of_pen_arm'}"
               hideUnits="{true}"
-              labelFieldText="{'Position'}"
             />
 
             <InformationHeader
-              text="{'Paper Radius'}"
-              info="{'This is how paper radius bro'}"
+              text="{tooltips.paperRadius.header}"
+              info="{tooltips.paperRadius.tooltip}"
             />
 
             <Input
@@ -422,12 +450,11 @@ function cancel() {
               inputData="{'paper_radius'}"
               hideUnits="{true}"
               unit="{'degrees'}"
-              labelFieldText="{'Length'}"
             />
 
             <InformationHeader
-              text="{'Frequency of paper rotation'}"
-              info="{'This is how paper rotaion frequency bro'}"
+              text="{tooltips.paperFrequency.header}"
+              info="{tooltips.paperFrequency.tooltip}"
             />
 
             <Input
@@ -438,15 +465,14 @@ function cancel() {
               decimalPlaces="{inputRanges.h.decimalPlaces}"
               inputData="{'frequency_of_paper_rotation'}"
               hideUnits="{true}"
-              unit="{'degrees'}"
-              labelFieldText="{'Frequency'}"
+              unit="{'Hz'}"
             />
           {/if}
 
-          {#if activeMode === MODE_ADVANCED && selectedPanel === 2}
+          {#if activeMode === Mode.advanced && selectedPanel === 2}
             <InformationHeader
-              text="{'Pen thickness (stroke)'}"
-              info="{'This is how pen thickness bro'}"
+              text="{tooltips.penThickness.header}"
+              info="{tooltips.penThickness.tooltip}"
             />
 
             <Input
@@ -458,14 +484,13 @@ function cancel() {
               inputData="{'pen_thickness'}"
               hideUnits="{true}"
               unit="{'degrees'}"
-              labelFieldText="{'Thickness'}"
             />
           {/if}
 
-          {#if activeMode === MODE_SIMPLE || selectedPanel === 2}
+          {#if activeMode === Mode.simple || selectedPanel === 2}
             <InformationHeader
-              text="{'Steps'}"
-              info="{'This is how many times it steps'}"
+              text="{tooltips.steps.header}"
+              info="{tooltips.steps.tooltip}"
             />
 
             <Slider
@@ -477,10 +502,10 @@ function cancel() {
             />
           {/if}
 
-          {#if activeMode === MODE_ADVANCED && selectedPanel === 2}
+          {#if activeMode === Mode.advanced && selectedPanel === 2}
             <InformationHeader
-              text="{'Segments per Step'}"
-              info="{'This is how segments bro'}"
+              text="{tooltips.segments.header}"
+              info="{tooltips.segments.tooltip}"
             />
 
             <Slider
@@ -496,93 +521,22 @@ function cancel() {
     </div>
   {/if}
 
-  <footer class="footer">
-    <div class="footer__content">
-      <button
-        class="footer__button footer__button--primary"
-        on:click="{insertHarmonograph}"
-      >
-        Add to canvas
-      </button>
-
-      <div class="footer__content__right">
-        <div class="svg-container" on:click="{resetToDefaults}">
-          <svg
-            id="reset-svg"
-            width="18"
-            height="17"
-            viewBox="0 0 18 17"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g clip-path="url(#clip0_947_45942)">
-              <path
-                d="M1.44263 2.83331V7.08331H5.69263"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></path>
-              <path
-                d="M17.0261 14.1667V9.91669H12.7761"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></path>
-              <path
-                d="M15.248 6.37497C14.8888 5.35978 14.2782 4.45213 13.4733 3.73673C12.6684 3.02132 11.6954 2.52147 10.6451 2.28382C9.59476 2.04617 8.50134 2.07846 7.46687 2.37769C6.43239 2.67691 5.49057 3.23331 4.72929 3.99497L1.44263 7.08331M17.026 9.91664L13.7393 13.005C12.978 13.7666 12.0362 14.323 11.0017 14.6223C9.96724 14.9215 8.87383 14.9538 7.8235 14.7161C6.77316 14.4785 5.80015 13.9786 4.99525 13.2632C4.19035 12.5478 3.57979 11.6402 3.22054 10.625"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              ></path>
-            </g>
-            <defs>
-              <clipPath id="clip0_947_45942">
-                <rect
-                  width="17"
-                  height="17"
-                  fill="white"
-                  transform="translate(0.734375)"
-                ></rect>
-              </clipPath>
-            </defs>
-          </svg>
-        </div>
-
-        <div class="ellipsis-menu" aria-label="More options">
-          <div
-            class="ellipsis-menu__container"
-            on:click|stopPropagation="{toggleMenu}"
-          >
-            <div class="ellipsis-menu__dots">
-              <span class="ellipsis-menu__dot"></span>
-              <span class="ellipsis-menu__dot"></span>
-              <span class="ellipsis-menu__dot"></span>
-            </div>
-          </div>
-
-          <div id="menu" class="ellipsis-menu__dropdown" style="display: none;">
-            <div class="ellipsis-menu__divider"></div>
-            <button
-              class="ellipsis-menu__option"
-              on:click="{() => {
-                navigateToAbout();
-                toggleMenu();
-              }}">About this plugin</button
-            >
-            <div class="ellipsis-menu__divider"></div>
-            <button
-              class="ellipsis-menu__option"
-              on:click="{() => {
-                openWebsite();
-                toggleMenu();
-              }}">@thirteen23</button
-            >
-          </div>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <Footer
+    primaryButton="{{
+      fullWidth: false,
+      text: 'Add to canvas',
+      action: insertHarmonograph,
+    }}"
+    onResetClicked="{resetToDefaults}"
+    options="{[
+      {
+        text: 'About this plugin',
+        action: navigateToAbout,
+      },
+      {
+        text: '@thirteen23',
+        action: openWebsite,
+      },
+    ]}"
+  />
 </div>

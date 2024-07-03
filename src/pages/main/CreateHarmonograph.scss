@@ -181,13 +181,41 @@ input[type="number"] {
   display: inline-block;
   position: relative;
   margin: 0;
-  width: 1.5em;
-  height: 0.75em;
 
   input {
     opacity: 0;
     width: 0;
     height: 0;
+  }
+
+  svg {
+    position: relative;
+    top: 0;
+    left: 0;
+    transform: scale(0.5) translateX(50%);
+  }
+
+  input:checked + svg > &__background {
+    fill: var(--figma-color-bg-inverse);
+  }
+
+  input:checked + svg > &__foreground {
+    transform: translateX(25px);
+    fill: var(--figma-color-bg);
+  }
+
+  &__background {
+    transition: 0.4s;
+    stroke-width: 2px;
+    stroke: var(--figma-color-bg-inverse);
+    fill: var(--figma-color-bg);
+  }
+
+  &__foreground {
+    transition: 0.4s;
+    stroke-width: 2px;
+    fill: var(--figma-color-bg);
+    stroke: var(--figma-color-bg-inverse);
   }
 
   &__toggle {
@@ -220,15 +248,6 @@ input[type="number"] {
       border-radius: 0.4125em;
     }
   }
-
-  input:checked + &__toggle {
-    background-color: var(--figma-color-bg-inverse);
-
-    &:before {
-      transform: translateX(0.95em);
-      background-color: var(--figma-color-bg);
-    }
-  }
 }
 
 .svg-container {
@@ -246,69 +265,4 @@ input[type="number"] {
   width: 14px;
   height: 14px;
   color: var(--figma-color-bg-inverse);
-}
-
-.ellipsis-menu {
-  position: relative;
-
-  &__container {
-    display: inline-block;
-    cursor: pointer;
-    border-radius: 0.25em;
-    padding: 0.2em;
-
-    &:hover {
-      background-color: var(--figma-color-bg-hover);
-    }
-  }
-
-  &__dots {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    width: 1.5em;
-    height: 1.5em;
-  }
-
-  &__dot {
-    margin: 0 0.125em;
-    border-radius: 50%;
-    background-color: var(--figma-color-bg-inverse);
-    width: 0.1875em;
-    height: 0.1875em;
-  }
-
-  &__dropdown {
-    position: absolute;
-    top: -4.5em;
-    right: 0;
-    flex-direction: column;
-    z-index: 10;
-    box-shadow: var(--figma-color-bg) 0px 0px 0.625em;
-    border-radius: 0.1875em;
-    background-color: $--figma-black-no-change;
-    padding: 0.375em 0;
-    width: 11.5em;
-  }
-
-  &__divider {
-    background-color: transparent;
-    width: 100%;
-    height: 0.0625em;
-  }
-
-  &__option {
-    @include body-text-p-font;
-    cursor: pointer;
-    border: none;
-    background: none;
-    padding: 0.375em 1.75em;
-    color: $--figma-white-no-change;
-    text-align: left;
-
-    &:hover {
-      background-color: var(--figma-color-bg-brand);
-    }
-  }
 }

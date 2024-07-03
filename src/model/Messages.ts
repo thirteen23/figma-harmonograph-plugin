@@ -10,8 +10,9 @@ export enum ClientStorageMessages {
 
 export enum PluginMessages {
   FTUEVisited = "ftue-visited",
+  updateAdvancedMode = "advanced-mode-updated",
   insertHarmonograph = "insert-harmonograh",
   saveHarmonograph = "save-harmonograph",
   resizeWindow = "resize-window",
-  resetSettings = "plugin-reset"
+  resetSettings = "plugin-reset",
 }

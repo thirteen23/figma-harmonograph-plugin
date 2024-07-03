@@ -1,4 +1,6 @@
 <script>
+import { fade } from "svelte/transition";
+
 import "./Input.scss";
 
 export let value;
@@ -24,7 +26,12 @@ function handleChange(event) {
 }
 </script>
 
-<div class="input">
+<div
+  class="input"
+  in:fade="{{
+    duration: 300,
+  }}"
+>
   <label class="input__label" for="{inputData}">{labelFieldText}</label>
 
   <div class="input__wrapper">
