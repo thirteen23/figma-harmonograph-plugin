@@ -41,7 +41,7 @@ input[type="number"] {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 0.5em;
+  gap: 1em;
 }
 
 .wrapper {
@@ -92,6 +92,7 @@ input[type="number"] {
 }
 
 .options {
+  position: relative;
   flex-grow: 1;
   z-index: 100;
   box-sizing: border-box;
@@ -99,6 +100,7 @@ input[type="number"] {
   overflow-y: scroll;
 
   &__wrapper {
+    position: relative;
     box-sizing: border-box;
     padding: 0 1.5em 1.5em 1.5em;
     height: fit-content;
@@ -202,6 +204,10 @@ input[type="number"] {
   input:checked + svg > &__foreground {
     transform: translateX(25px);
     fill: var(--figma-color-bg);
+  }
+
+  &:hover {
+    cursor: pointer;
   }
 
   &__background {
