@@ -37,7 +37,17 @@ const toggleMenu = () => {
 
     <div class="footer__content__right">
       {#if onResetClicked !== undefined}
-        <div class="svg-container" on:click="{onResetClicked}">
+        <div
+          class="svg-container"
+          on:click="{onResetClicked}"
+          tabindex="0"
+          role="button"
+          on:keydown="{(e) => {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            e.preventDefault();
+            e.target.click();
+          }}"
+        >
           <svg
             id="reset-svg"
             width="18"
@@ -87,6 +97,13 @@ const toggleMenu = () => {
         <div
           class="ellipsis-menu__container"
           on:click|stopPropagation="{toggleMenu}"
+          tabindex="0"
+          role="button"
+          on:keydown="{(e) => {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            e.preventDefault();
+            e.target.click();
+          }}"
         >
           <div class="ellipsis-menu__dots">
             <span class="ellipsis-menu__dot"></span>

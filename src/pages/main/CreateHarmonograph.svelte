@@ -18,8 +18,8 @@ import {
   createSVGPathData,
   Mode,
   tooltips,
+  checkHarmonographInView,
 } from "../../model/Harmonograph";
-import { Page } from "../../model/Routes";
 import { PluginMessages } from "../../model/Messages";
 
 import "./CreateHarmonograph.scss";
@@ -30,6 +30,7 @@ export let navigateToAbout = () => console.log("not implemented!");
 export let currentHarmonograph = getDefaultHarmonograph();
 
 var svg = "";
+let svgRef;
 
 var selectedPanel = 0;
 
@@ -40,7 +41,7 @@ let svgPath = "";
 
 function randomizeAllInputs() {
   currentHarmonograph = randomizeInputs(currentHarmonograph, activeMode);
-  drawHarmonographSVG(currentHarmonograph);
+  drawHarmonographSVG(currentHarmonograph, true);
 }
 
 function resetToDefaults() {
@@ -68,7 +69,7 @@ function handleOutsideClick(event) {
   }
 }
 
-function insertHarmonograph() {
+const insertHarmonograph = () => {
   saveHarmonograph();
 
   parent.postMessage(
@@ -81,9 +82,9 @@ function insertHarmonograph() {
     },
     "*",
   );
-}
+};
 
-function saveHarmonograph() {
+const saveHarmonograph = () => {
   parent.postMessage(
     {
       pluginMessage: {
@@ -93,9 +94,9 @@ function saveHarmonograph() {
     },
     "*",
   );
-}
+};
 
-function updateAdvancedMode() {
+const updateAdvancedMode = () => {
   parent.postMessage(
     {
       pluginMessage: {
@@ -105,38 +106,80 @@ function updateAdvancedMode() {
     },
     "*",
   );
-}
+};
+
+const notifySmallCanvas = () => {
+  parent.postMessage(
+    {
+      pluginMessage: {
+        type: PluginMessages.errorMessage,
+        message:
+          "Harmonograph path may not be fully visible, try increasing the size of the paper or the number of drawing steps.",
+      },
+    },
+    "*",
+  );
+};
 
 let renderPath = true;
 let diameter = 320;
 let stroke_width = 0.2;
 
-function drawHarmonographSVG(harmonograph) {
-  svg = document.getElementById("preview");
-
-  svgPath = createSVGPathData(harmonograph);
-
-  diameter = harmonograph.r;
-  stroke_width = harmonograph.w;
-
+const drawHarmonographSVG = (harmonograph, autoResize = false) => {
   renderPath = false;
 
   setTimeout(() => {
-    svg.setAttribute("viewBox", `0 0 ${harmonograph.r} ${harmonograph.r}`);
-  }, 200);
+    diameter = harmonograph.r;
+    stroke_width = harmonograph.w;
+    svgRef.setAttribute(
+      "viewBox",
+      `0 0 ${harmonograph.r * 2} ${harmonograph.r * 2}`,
+    );
+
+    svgPath = createSVGPathData(harmonograph);
+  }, 300);
 
   setTimeout(() => {
-    svg.setAttribute("viewBox", `0 0 ${harmonograph.r} ${harmonograph.r}`);
+    let path = document.getElementById("predraw_path");
+    let harmonographInView = false;
+    let pathRect = path.getBoundingClientRect();
+
+    if (autoResize) {
+      harmonographInView = checkHarmonographInView(
+        svgRef.getBoundingClientRect(),
+        pathRect,
+        60,
+        80,
+      );
+    } else {
+      harmonographInView = checkHarmonographInView(
+        svgRef.getBoundingClientRect(),
+        pathRect,
+      );
+    }
+
+    if (!harmonographInView && autoResize) {
+      // Harmonograph is likely too small, increasing paper size to fit it into view
+      harmonograph.r += Math.max(
+        Math.abs(pathRect.right - pathRect.left),
+        Math.abs(pathRect.bottom - pathRect.top),
+      );
+
+      drawHarmonographSVG(harmonograph);
+
+      return;
+    } else if (!harmonographInView) {
+      // Tell the user the canvas may still be too small, but draw the path anyways
+      notifySmallCanvas();
+    }
+
     renderPath = true;
-  }, 300);
-}
+  }, 350);
+};
 
 function updateHarmonograph(property, value) {
   currentHarmonograph[property] = value;
   drawHarmonographSVG(currentHarmonograph);
-  console.log(
-    `width: ${window.screen.availWidth} height: ${window.screen.availHeight} devicePixelRatio: ${window.devicePixelRatio}`,
-  );
 }
 
 function cancel() {
@@ -153,11 +196,14 @@ function cancel() {
   >
     <svg
       id="preview"
+      bind:this="{svgRef}"
       xmlns="http://www.w3.org/2000/svg"
       width="320"
       height="320"
       version="1.1"
     >
+      <path id="predraw_path" d="{svgPath}"></path>
+
       {#if renderPath}
         <path
           id="preview_path"
@@ -209,43 +255,45 @@ function cancel() {
         set values for the pendulums, paper, and drawing.
       </div>
 
-      <div class="advanced-mode__panel-settings">
-        <button
-          type="button"
-          class="{`advanced-mode__panel-button ${selectedPanel === 0 ? 'advanced-mode__panel-button--active' : ''} ${activeMode === 'simple' ? 'advanced-mode__panel-button--disabled' : ''}`}"
-          on:click="{() => {
-            if (activeMode !== 'simple') {
-              selectedPanel = 0;
-            }
-          }}"
-        >
-          Pendulums
-        </button>
+      {#if activeMode === Mode.advanced}
+        <div class="advanced-mode__panel-settings">
+          <button
+            type="button"
+            class="{`advanced-mode__panel-button ${selectedPanel === 0 ? 'advanced-mode__panel-button--active' : ''} ${activeMode === Mode.simple ? 'advanced-mode__panel-button--disabled' : ''}`}"
+            on:click="{() => {
+              if (activeMode === Mode.advanced) {
+                selectedPanel = 0;
+              }
+            }}"
+          >
+            Pendulums
+          </button>
 
-        <button
-          type="button"
-          class="{`advanced-mode__panel-button ${selectedPanel === 1 ? 'advanced-mode__panel-button--active' : ''} ${activeMode === 'simple' ? 'advanced-mode__panel-button--disabled' : ''}`}"
-          on:click="{() => {
-            if (activeMode !== 'simple') {
-              selectedPanel = 1;
-            }
-          }}"
-        >
-          Paper
-        </button>
+          <button
+            type="button"
+            class="{`advanced-mode__panel-button ${selectedPanel === 1 ? 'advanced-mode__panel-button--active' : ''} ${activeMode === Mode.simple ? 'advanced-mode__panel-button--disabled' : ''}`}"
+            on:click="{() => {
+              if (activeMode === Mode.advanced) {
+                selectedPanel = 1;
+              }
+            }}"
+          >
+            Paper
+          </button>
 
-        <button
-          type="button"
-          class="{`advanced-mode__panel-button ${selectedPanel === 2 ? 'advanced-mode__panel-button--active' : ''} ${activeMode === 'simple' ? 'advanced-mode__panel-button--disabled' : ''}`}"
-          on:click="{() => {
-            if (activeMode !== 'simple') {
-              selectedPanel = 2;
-            }
-          }}"
-        >
-          Drawing
-        </button>
-      </div>
+          <button
+            type="button"
+            class="{`advanced-mode__panel-button ${selectedPanel === 2 ? 'advanced-mode__panel-button--active' : ''} ${activeMode === Mode.simple ? 'advanced-mode__panel-button--disabled' : ''}`}"
+            on:click="{() => {
+              if (activeMode === Mode.advanced) {
+                selectedPanel = 2;
+              }
+            }}"
+          >
+            Drawing
+          </button>
+        </div>
+      {/if}
     </div>
   </div>
 
@@ -268,7 +316,7 @@ function cancel() {
                 decimalPlaces="{inputRanges.f.decimalPlaces}"
                 inputData="{'left_pendulum_frequency'}"
                 unit="{'Hz'}"
-                labelFieldText="{'Left pendulum frequency'}"
+                labelFieldText="{'Left pendulum'}"
               />
 
               <Input
@@ -279,7 +327,7 @@ function cancel() {
                 decimalPlaces="{inputRanges.g.decimalPlaces}"
                 inputData="{'right_pendulum_frequency'}"
                 unit="{'Hz'}"
-                labelFieldText="{'Right pendulum frequency'}"
+                labelFieldText="{'Right pendulum'}"
               />
             </div>
           {/if}
@@ -299,7 +347,7 @@ function cancel() {
                 decimalPlaces="{inputRanges.A.decimalPlaces}"
                 inputData="{'pendulum_left_amplitude'}"
                 unit="{'degrees'}"
-                labelFieldText="{'Pendulum left amplitude'}"
+                labelFieldText="{'Left pendulum'}"
               />
 
               <Input
@@ -310,7 +358,7 @@ function cancel() {
                 decimalPlaces="{inputRanges.B.decimalPlaces}"
                 inputData="{'pendulum_right_amplitude'}"
                 unit="{'degrees'}"
-                labelFieldText="{'Pendulum right amplitude'}"
+                labelFieldText="{'Right pendulum'}"
               />
             </div>
           {/if}

@@ -9,6 +9,7 @@
 
   &__label {
     @include text-input-label-font;
+
     display: inline-block;
     margin-top: 1.125em;
   }
@@ -24,6 +25,7 @@
 
   &__field {
     @include text-input-font;
+
     margin-top: 0.375em;
     outline: 1px solid var(--figma-color-border);
     border: 2px solid var(--figma-color-bg);
@@ -54,6 +56,7 @@
 
   &__unit {
     @include text-input-font;
+
     position: absolute;
     top: 39%;
     right: 3.5rem;

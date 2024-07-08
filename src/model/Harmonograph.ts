@@ -171,7 +171,7 @@ export const inputRanges: {
   w: { min: 0.1, max: 1, decimalPlaces: 1, default: 0.2, mode: Mode.advanced },
   segments: {
     min: 1,
-    max: 100,
+    max: 50,
     decimalPlaces: 0,
     default: 32,
     mode: Mode.advanced,
@@ -204,20 +204,6 @@ export function getDefaultHarmonograph(): Harmonograph {
   }
 
   return defaults;
-}
-
-export function createSVGString(harmonograph: Harmonograph): string {
-  var height = harmonograph.r;
-  var width = harmonograph.r;
-  var stroke = harmonograph.w;
-  var scale = 0.5;
-  var data = createSVGPathData(harmonograph);
-  var svg = `
-    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="${data}" stroke="black" stroke-width="${stroke}" stroke-linecap="round" transform="scale(${scale}, ${scale}) translate(${width}, ${height})"/>
-    </svg>`;
-
-  return svg;
 }
 
 function getXY(harmonograph: Harmonograph, step: number) {
@@ -307,6 +293,74 @@ export function createSVGPathData(harmonograph: Harmonograph): String {
   }
 
   return data.join(" ");
+}
+
+/**
+ * Checks to see if the harmonograph is likely drawn on the canvas
+ * If harmonograph overlap percentage is above the threshold
+ * then we can assume it is 'on the canvas' and return true
+ */
+export function checkHarmonographInView(
+  canvasRect: DOMRect,
+  harmonographRect: DOMRect,
+  harmonographMinimumOverlap: number = 30,
+  harmonographHighMinimumOverlap: number = 60,
+  canvasOverlapMax: number = 80,
+) {
+  const L1 = {
+    x: canvasRect.left,
+    y: canvasRect.top,
+  };
+  const R1 = {
+    x: canvasRect.right,
+    y: canvasRect.bottom,
+  };
+
+  const canvasArea = Math.abs(L1.x - R1.x) * Math.abs(L1.y - R1.y);
+
+  const L2 = {
+    x: harmonographRect.left,
+    y: harmonographRect.top,
+  };
+  const R2 = {
+    x: harmonographRect.right,
+    y: harmonographRect.bottom,
+  };
+
+  const harmonographArea = Math.abs(L2.x - R2.x) * Math.abs(L2.y - R2.y);
+
+  // If 0, there is no overlap
+  const xDistance = Math.max(0, Math.min(R1.x, R2.x) - Math.max(L1.x, L2.x));
+  const yDistance = Math.max(0, Math.min(R1.y, R2.y) - Math.max(L1.y, L2.y));
+
+  const overlapArea = xDistance * yDistance;
+
+  const canvasOverlapPercentage = (overlapArea / canvasArea) * 100;
+  const harmonographOverlapPercentage = (overlapArea / harmonographArea) * 100;
+
+  console.log(`
+      canvas: ${JSON.stringify(canvasRect)} ${R1.x - L1.x} x ${R1.y - L1.y}
+      harmonograph: ${JSON.stringify(harmonographRect)}  ${R2.x - L2.x} x ${R2.y - L2.y}
+      percent1: ${canvasOverlapPercentage}
+      percent2: ${harmonographOverlapPercentage}
+      `);
+
+  if (canvasOverlapPercentage > canvasOverlapMax) {
+    /**
+     * If the canvas has a high percentage,
+     * likely the harmonograph is too big, and may not be visible
+     */
+    return harmonographOverlapPercentage >= harmonographHighMinimumOverlap;
+  } else {
+    /**
+     * If the harmonograph has a high overlap percentage, and the canvas does not
+     * the harmonograph will likely be in view
+     */
+    console.log(`Harmonograph Overlap % ${harmonographOverlapPercentage}
+      Min overlap% ${harmonographMinimumOverlap}`);
+
+    return harmonographOverlapPercentage >= harmonographMinimumOverlap;
+  }
 }
 
 function round(x: number) {

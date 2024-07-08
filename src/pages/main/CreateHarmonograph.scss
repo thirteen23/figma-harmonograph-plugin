@@ -82,6 +82,14 @@ input[type="number"] {
   color: $--figma-black-no-change;
 }
 
+#predraw_path {
+  fill: none;
+  stroke: transparent;
+  stroke-linecap: round;
+  stroke-width: var(--stroke_width);
+  transform: scale(0.5, 0.5) translate(var(--diameter), var(--diameter));
+}
+
 #preview_path {
   fill: none;
   stroke: currentColor;

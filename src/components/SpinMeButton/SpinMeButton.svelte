@@ -25,7 +25,14 @@ function spinCircle() {
 
 <div
   class="spin-me-button"
+  tabindex="0"
+  role="button"
   on:click="{spinCircle}"
+  on:keydown="{(e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    e.target.click();
+  }}"
   style="z-index:{zIndex}; width: {width}; height: {height}; position:{position}; right:{right}; top:{top};"
 >
   <div class="spin-me-button__text" style="font-size: {fontSize};">SPIN ME</div>

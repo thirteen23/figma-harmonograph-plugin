@@ -10,6 +10,7 @@
 
   &__title {
     @include information-header-component-font;
+
     margin: 0;
     width: fit-content;
     white-space: nowrap;
@@ -20,10 +21,9 @@
     position: relative;
     justify-content: flex-start;
     align-items: center;
-    width: 100%;
 
     &:hover {
-      .information-header__info-panel {
+      .information-header__info-container {
         display: flex;
       }
     }
@@ -35,31 +35,60 @@
     color: var(--figma-color-bg-inverse);
   }
 
+  &__info-container {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    width: 90vw;
+
+    &--above {
+      bottom: calc(100% + 5px);
+    }
+
+    &--below {
+      top: calc(100% + 5px);
+    }
+
+    &:before {
+      position: absolute;
+      left: -2px;
+      border-right: 0.5em solid transparent;
+      border-left: 0.5em solid transparent;
+      width: 0;
+      height: 0;
+      content: "";
+    }
+
+    &--above:before {
+      top: 0;
+      border-top: 0.5em solid $--figma-black-no-change;
+    }
+
+    &--below:before {
+      bottom: 0;
+      border-bottom: 0.5em solid $--figma-black-no-change;
+    }
+  }
+
   &__info-panel {
     @include body-text-p-font;
 
-    display: none;
     position: absolute;
-    top: -3em;
-    left: -0.4em;
-    z-index: 1000;
+    transform: translate(-50%);
     box-shadow: 0 0.125em 0.25em rgba(0, 0, 0, 0.1);
     border-radius: 0.125em;
     background-color: $--figma-black-no-change;
-    padding: 0.3125em;
+    padding: 0.3125em 0.625em;
     width: fit-content;
     color: $--figma-white-no-change;
-  }
+    text-align: left;
 
-  &__info-panel-triangle {
-    position: absolute;
-    top: -0.5em;
-    left: -0.15em;
-    border-top: 0.5em solid $--figma-black-no-change;
-    border-right: 0.5em solid transparent;
-    border-left: 0.5em solid transparent;
-    width: 0;
-    height: 0;
-    content: "";
+    &--above {
+      bottom: calc(100%);
+    }
+
+    &--below {
+      top: calc(100%);
+    }
   }
 }

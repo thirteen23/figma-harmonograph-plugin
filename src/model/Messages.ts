@@ -15,4 +15,5 @@ export enum PluginMessages {
   saveHarmonograph = "save-harmonograph",
   resizeWindow = "resize-window",
   resetSettings = "plugin-reset",
+  errorMessage = "plugin-error",
 }

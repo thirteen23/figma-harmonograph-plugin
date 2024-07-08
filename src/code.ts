@@ -62,6 +62,11 @@ figma.clientStorage
 figma.ui.onmessage = (msg) => {
   console.log(msg.type);
   switch (msg.type) {
+    case PluginMessages.errorMessage:
+      figma.notify(msg.message, {
+        timeout: 10000,
+      });
+      break;
     case PluginMessages.insertHarmonograph:
       const nodes = [];
       var harmonograph = msg.harmonograph;

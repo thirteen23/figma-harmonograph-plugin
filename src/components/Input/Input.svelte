@@ -51,7 +51,17 @@ function handleChange(event) {
       {unit}
     </div>
 
-    <div class="input__svg-container" on:click="{randomizeValue}">
+    <div
+      class="input__svg-container"
+      on:click="{randomizeValue}"
+      tabindex="0"
+      role="button"
+      on:keydown="{(e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        e.target.click();
+      }}"
+    >
       <svg
         class="input__randomize"
         width="16"
