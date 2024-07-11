@@ -41,11 +41,11 @@ function handleOutsideClick(event) {
       <div class="about__harmonograph-information">
         <h1 class="about__harmonograph-information-title">Harmonographs</h1>
         <p class="about__harmonograph-information-description">
-          A harmonograph is a device that uses two pendulums to draw a geometric
-          image. One moves a pen back and forth along one axis, while the other
-          moves the drawing surface back and forth along a perpendicular axis.
-          By varying their amplitudes, frequencies and the phase difference, you
-          can create unique patterns.
+          A harmonograph is a device that uses pendulums to draw geometric images.
+          This plugin uses two pendulums in its calculation. One moves a pen back 
+          and forth along one axis, while the other moves the drawing surface back 
+          and forth along a perpendicular axis. By varying their amplitudes, 
+          frequencies and phases, you can create unique patterns.
         </p>
       </div>
 
@@ -57,10 +57,7 @@ function handleOutsideClick(event) {
             harmonograph.
           </li>
           <li class="about__instructions-step">
-            Once satisfied, add the generated harmonograph to canvas.
-          </li>
-          <li class="about__instructions-step">
-            Save your harmonograph for later.
+            Once satisfied, add the generated harmonograph to the canvas!
           </li>
         </ol>
       </div>
