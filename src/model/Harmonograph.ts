@@ -16,6 +16,8 @@ export interface Harmonograph {
   w: number;
   steps: number;
   segments: number;
+  translationX: number;
+  translationY: number;
 }
 
 export enum Mode {
@@ -230,6 +232,20 @@ export const inputRanges: {
     increment: 1,
     mode: Mode.advanced,
   },
+  translationX: {
+    min: -Infinity,
+    max: Infinity,
+    decimalPlaces: 0,
+    default: 0,
+    mode: Mode.simple,
+  },
+  translationY: {
+    min: -Infinity,
+    max: Infinity,
+    decimalPlaces: 0,
+    default: 0,
+    mode: Mode.simple,
+  },
 };
 
 export function randomizeInputs(
@@ -237,6 +253,8 @@ export function randomizeInputs(
   currentMode: Mode,
 ): Harmonograph {
   const randomized: Harmonograph = { ...harmonograph };
+  const defaultValues: Harmonograph = getDefaultHarmonograph();
+
   for (const [key, range] of Object.entries(inputRanges)) {
     if (range.mode === currentMode || range.mode === "both") {
       const { min, max, decimalPlaces } = range;
@@ -245,6 +263,10 @@ export function randomizeInputs(
       const factor = Math.pow(10, decimalPlaces);
       randomized[key as keyof Harmonograph] =
         Math.round(randomized[key as keyof Harmonograph] * factor) / factor;
+    } else {
+      // If in simple mode, reset these values to their default value
+      randomized[key as keyof Harmonograph] =
+        defaultValues[key as keyof Harmonograph];
     }
   }
 
@@ -349,6 +371,32 @@ export function createSVGPathData(harmonograph: Harmonograph): String {
   return data.join(" ");
 }
 
+export function computeCenteredTranslation(
+  canvasRect: any,
+  harmonographRect: any,
+  viewboxDiameter: number,
+) {
+  let translationX =
+    (viewboxDiameter - harmonographRect.width) / 2 - harmonographRect.x;
+  let translationY =
+    (viewboxDiameter - harmonographRect.height) / 2 - harmonographRect.y;
+
+  console.log(`
+    harmono = x: ${harmonographRect.x} y: ${harmonographRect.y}
+    width: ${harmonographRect.width} x ${harmonographRect.height}
+    Diameter = ${viewboxDiameter}
+    OffsetX = (${viewboxDiameter} - ${harmonographRect.width}) / 2 - ${harmonographRect.x}
+    OffsetY = (${viewboxDiameter} - ${harmonographRect.height}) / 2 - ${harmonographRect.y}
+    ${translationX}
+    ${translationY}
+    `);
+
+  return {
+    translationX,
+    translationY,
+  };
+}
+
 /**
  * Checks to see if the harmonograph is likely drawn on the canvas
  * If harmonograph overlap percentage is above the threshold
@@ -360,7 +408,7 @@ export function checkHarmonographInView(
   harmonographMinimumOverlap: number = 30,
   harmonographHighMinimumOverlap: number = 60,
   canvasOverlapMax: number = 80,
-) {
+): HarmonographSizeCheck {
   const L1 = {
     x: canvasRect.left,
     y: canvasRect.top,
@@ -381,6 +429,20 @@ export function checkHarmonographInView(
     y: harmonographRect.bottom,
   };
 
+  const canvasSize = {
+    x: L1.x,
+    y: L1.y,
+    width: R2.x - L2.x,
+    height: R1.y - L1.y,
+  };
+
+  const harmonographSize = {
+    x: L2.x,
+    y: L2.y,
+    width: R2.x - L2.x,
+    height: R1.y - L1.y,
+  };
+
   const harmonographArea = Math.abs(L2.x - R2.x) * Math.abs(L2.y - R2.y);
 
   // If 0, there is no overlap
@@ -393,20 +455,39 @@ export function checkHarmonographInView(
   const harmonographOverlapPercentage = (overlapArea / harmonographArea) * 100;
 
   console.log(`
-      canvas: ${JSON.stringify(canvasRect)} ${R1.x - L1.x} x ${R1.y - L1.y}
-      harmonograph: ${JSON.stringify(harmonographRect)}  ${R2.x - L2.x} x ${R2.y - L2.y}
-   
+      canvas: ${JSON.stringify(canvasRect)} ${canvasSize.width} x ${canvasSize.height}
+      harmonograph: ${JSON.stringify(harmonographRect)}  ${harmonographSize.width} x ${harmonographSize.height}
+      percent1: ${canvasOverlapPercentage}
+      percent2: ${harmonographOverlapPercentage}
       `);
 
-  console.log(`percent1: ${canvasOverlapPercentage}
-      percent2: ${harmonographOverlapPercentage}`);
+  let response: HarmonographSizeCheck = {
+    overlapPercentage: {
+      canvas: canvasOverlapPercentage,
+      harmonograph: harmonographOverlapPercentage,
+    },
+    computedSizes: {
+      canvas: canvasSize,
+      harmonograph: harmonographSize,
+    },
+  };
+
+  // TODO clean this up as it is over complicated for what it does atm
+
+  // Harmonograph likely too small
+  if (harmonographSize.height < 75 || harmonographSize.width < 75) {
+    response.message = harmonographTooSmallMessage;
+  }
 
   if (canvasOverlapPercentage > canvasOverlapMax) {
     /**
      * If the canvas has a high percentage,
      * likely the harmonograph is too big, and may not be visible
      */
-    return harmonographOverlapPercentage >= harmonographHighMinimumOverlap;
+
+    if (harmonographOverlapPercentage < harmonographHighMinimumOverlap) {
+      response.message = harmonographOutOfViewMessage;
+    }
   } else {
     /**
      * If the harmonograph has a high overlap percentage, and the canvas does not
@@ -415,9 +496,40 @@ export function checkHarmonographInView(
     console.log(`Harmonograph Overlap % ${harmonographOverlapPercentage}
       Min overlap% ${harmonographMinimumOverlap}`);
 
-    return harmonographOverlapPercentage >= harmonographMinimumOverlap;
+    if (harmonographOverlapPercentage < harmonographMinimumOverlap) {
+      response.message = harmonographOutOfViewMessage;
+    }
   }
+
+  return response;
 }
+
+const harmonographOutOfViewMessage =
+  "Harmonograph path may not be fully visible, try increasing the size of the paper or the number of drawing steps.";
+const harmonographTooSmallMessage =
+  "Harmonograph path may be too small, try decreasing the size of the paper.";
+
+export type HarmonographSizeCheck = {
+  overlapPercentage: {
+    canvas: number;
+    harmonograph: number;
+  };
+  computedSizes: {
+    canvas: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+    harmonograph: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    };
+  };
+  message?: string;
+};
 
 function round(x: number) {
   return Math.round(x * 1000) / 1000;

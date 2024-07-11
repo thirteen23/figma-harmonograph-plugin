@@ -87,7 +87,7 @@ input[type="number"] {
   stroke: transparent;
   stroke-linecap: round;
   stroke-width: var(--stroke_width);
-  transform: scale(0.5, 0.5) translate(var(--diameter), var(--diameter));
+  // transform: scale(0.5, 0.5) translate(var(--diameter), var(--diameter));
 }
 
 #preview_path {
@@ -96,7 +96,7 @@ input[type="number"] {
   stroke-linecap: round;
   z-index: 1;
   stroke-width: var(--stroke_width);
-  transform: scale(0.5, 0.5) translate(var(--diameter), var(--diameter));
+  // transform: scale(0.5, 0.5) translate(var(--diameter), var(--diameter));
 }
 
 .options {
