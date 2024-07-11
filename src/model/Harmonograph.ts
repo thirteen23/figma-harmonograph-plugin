@@ -87,25 +87,49 @@ export const inputRanges: {
     max: number;
     decimalPlaces: number;
     default: number;
+    increment: number;
     mode: string;
   };
 } = {
   // Simple mode params
-  f: { min: -0.5, max: 0.5, decimalPlaces: 3, default: 0.3, mode: Mode.simple },
+  f: {
+    min: -0.5,
+    max: 0.5,
+    decimalPlaces: 3,
+    default: 0.3,
+    increment: 0.1,
+    mode: Mode.simple,
+  },
   g: {
     min: -0.5,
     max: 0.5,
     decimalPlaces: 3,
     default: 0.302,
+    increment: 0.1,
     mode: Mode.simple,
   },
-  A: { min: 1, max: 50, decimalPlaces: 0, default: 10, mode: Mode.simple },
-  B: { min: 1, max: 50, decimalPlaces: 0, default: 10, mode: Mode.simple },
+  A: {
+    min: 1,
+    max: 50,
+    decimalPlaces: 0,
+    default: 10,
+    increment: 1,
+    mode: Mode.simple,
+  },
+  B: {
+    min: 1,
+    max: 50,
+    decimalPlaces: 0,
+    default: 10,
+    increment: 1,
+    mode: Mode.simple,
+  },
   steps: {
     min: 0,
     max: 5000,
     decimalPlaces: 0,
     default: 900,
+    increment: 100,
     mode: Mode.simple,
   },
 
@@ -115,6 +139,7 @@ export const inputRanges: {
     max: 0.009,
     decimalPlaces: 3,
     default: 0.001,
+    increment: 0.001,
     mode: Mode.advanced,
   },
   S: {
@@ -122,15 +147,31 @@ export const inputRanges: {
     max: 0.009,
     decimalPlaces: 3,
     default: 0.001,
+    increment: 0.001,
     mode: Mode.advanced,
   },
-  u: { min: 0, max: 0.2, decimalPlaces: 2, default: 0, mode: Mode.advanced },
-  v: { min: 0, max: 0.2, decimalPlaces: 2, default: 0, mode: Mode.advanced },
+  u: {
+    min: 0,
+    max: 0.2,
+    decimalPlaces: 2,
+    default: 0,
+    increment: 0.01,
+    mode: Mode.advanced,
+  },
+  v: {
+    min: 0,
+    max: 0.2,
+    decimalPlaces: 2,
+    default: 0,
+    increment: 0.01,
+    mode: Mode.advanced,
+  },
   d: {
     min: 200,
     max: 1000,
     decimalPlaces: 0,
     default: 900,
+    increment: 50,
     mode: Mode.advanced,
   },
   c: {
@@ -138,6 +179,7 @@ export const inputRanges: {
     max: 1000,
     decimalPlaces: 0,
     default: 800,
+    increment: 50,
     mode: Mode.advanced,
   },
   p: {
@@ -145,6 +187,7 @@ export const inputRanges: {
     max: 1000,
     decimalPlaces: 0,
     default: 900,
+    increment: 50,
     mode: Mode.advanced,
   },
   q: {
@@ -152,6 +195,7 @@ export const inputRanges: {
     max: 1000,
     decimalPlaces: 0,
     default: 700,
+    increment: 50,
     mode: Mode.advanced,
   },
   r: {
@@ -159,6 +203,7 @@ export const inputRanges: {
     max: 900,
     decimalPlaces: 0,
     default: 300,
+    increment: 50,
     mode: Mode.advanced,
   },
   h: {
@@ -166,14 +211,23 @@ export const inputRanges: {
     max: 0.001,
     decimalPlaces: 4,
     default: 0.0008,
+    increment: 0.0001,
     mode: Mode.advanced,
   },
-  w: { min: 0.1, max: 1, decimalPlaces: 1, default: 0.2, mode: Mode.advanced },
+  w: {
+    min: 0.1,
+    max: 1,
+    decimalPlaces: 1,
+    default: 0.2,
+    increment: 0.1,
+    mode: Mode.advanced,
+  },
   segments: {
     min: 1,
     max: 50,
     decimalPlaces: 0,
     default: 32,
+    increment: 1,
     mode: Mode.advanced,
   },
 };
@@ -341,9 +395,11 @@ export function checkHarmonographInView(
   console.log(`
       canvas: ${JSON.stringify(canvasRect)} ${R1.x - L1.x} x ${R1.y - L1.y}
       harmonograph: ${JSON.stringify(harmonographRect)}  ${R2.x - L2.x} x ${R2.y - L2.y}
-      percent1: ${canvasOverlapPercentage}
-      percent2: ${harmonographOverlapPercentage}
+   
       `);
+
+  console.log(`percent1: ${canvasOverlapPercentage}
+      percent2: ${harmonographOverlapPercentage}`);
 
   if (canvasOverlapPercentage > canvasOverlapMax) {
     /**
