@@ -237,6 +237,7 @@ export const inputRanges: {
     max: Infinity,
     decimalPlaces: 0,
     default: 0,
+    increment: 0,
     mode: Mode.simple,
   },
   translationY: {
@@ -244,6 +245,7 @@ export const inputRanges: {
     max: Infinity,
     decimalPlaces: 0,
     default: 0,
+    increment: 0,
     mode: Mode.simple,
   },
 };
@@ -371,30 +373,27 @@ export function createSVGPathData(harmonograph: Harmonograph): String {
   return data.join(" ");
 }
 
-export function computeCenteredTranslation(
-  canvasRect: any,
-  harmonographRect: any,
-  viewboxDiameter: number,
+export function computeCenteredScaledTranslation(
+  svgWidth: number,
+  svgHeight: number,
+  pathRect: DOMRect,
+  strokeWidth: number,
 ) {
-  let translationX =
-    (viewboxDiameter - harmonographRect.width) / 2 - harmonographRect.x;
-  let translationY =
-    (viewboxDiameter - harmonographRect.height) / 2 - harmonographRect.y;
+  const padding = strokeWidth / 2;
+  const availableWidth = svgWidth - 2 * padding;
+  const availableHeight = svgHeight - 2 * padding;
 
-  console.log(`
-    harmono = x: ${harmonographRect.x} y: ${harmonographRect.y}
-    width: ${harmonographRect.width} x ${harmonographRect.height}
-    Diameter = ${viewboxDiameter}
-    OffsetX = (${viewboxDiameter} - ${harmonographRect.width}) / 2 - ${harmonographRect.x}
-    OffsetY = (${viewboxDiameter} - ${harmonographRect.height}) / 2 - ${harmonographRect.y}
-    ${translationX}
-    ${translationY}
-    `);
+  const scaleX = availableWidth / pathRect.width;
+  const scaleY = availableHeight / pathRect.height;
+  const scale = Math.min(scaleX, scaleY, 1);
 
-  return {
-    translationX,
-    translationY,
-  };
+  const scaledWidth = pathRect.width * scale;
+  const scaledHeight = pathRect.height * scale;
+
+  const translationX = (svgWidth - scaledWidth) / 2 - pathRect.left * scale;
+  const translationY = (svgHeight - scaledHeight) / 2 - pathRect.top * scale;
+
+  return { translationX, translationY, scale };
 }
 
 /**
