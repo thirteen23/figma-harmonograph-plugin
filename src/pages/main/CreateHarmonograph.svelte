@@ -72,12 +72,15 @@ function handleOutsideClick(event) {
 const insertHarmonograph = () => {
   saveHarmonograph();
 
+  const svgElement = document.getElementById("preview");
+  const svgContent = svgElement.innerHTML;
+
   parent.postMessage(
     {
       pluginMessage: {
         type: PluginMessages.insertHarmonograph,
         harmonograph: currentHarmonograph,
-        pathData: pathAttributes.d,
+        svgContent: svgContent,
       },
     },
     "*",
