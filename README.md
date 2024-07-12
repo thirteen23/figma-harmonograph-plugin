@@ -31,7 +31,7 @@ $ npm run dev
 ```
 
 Once installed and built, connect the plugin to Figma.
- 
+
 ## Connecting your plugin to Figma
 
 Connecting your plugin to Figma

@@ -75,12 +75,14 @@ figma.ui.onmessage = (msg) => {
       var height = harmonograph.r * 2;
       var width = harmonograph.r * 2;
 
-      var svg = `
-          <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-            ${svgContent}
-          </svg>`;
+      console.log("svg content? ", JSON.stringify(svgContent));
 
-      var svgNode = figma.createNodeFromSvg(svg);
+      // var svg = `
+      //     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+      //       ${svgContent}
+      //     </svg>`;
+
+      var svgNode = figma.createNodeFromSvg(svgContent);
       svgNode.name = "harmonograph";
       svgNode.x = Math.floor(figma.viewport.center.x - width / 2);
       svgNode.y = Math.floor(figma.viewport.center.y - height / 2);
@@ -91,6 +93,7 @@ figma.ui.onmessage = (msg) => {
       figma.currentPage.selection = nodes;
       figma.viewport.scrollAndZoomIntoView(nodes);
 
+      figma.closePlugin();
       break;
     case PluginMessages.saveHarmonograph:
       var harmonograph = msg.harmonograph;

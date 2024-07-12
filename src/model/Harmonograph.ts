@@ -16,8 +16,6 @@ export interface Harmonograph {
   w: number;
   steps: number;
   segments: number;
-  translationX: number;
-  translationY: number;
 }
 
 export enum Mode {
@@ -232,22 +230,6 @@ export const inputRanges: {
     increment: 1,
     mode: Mode.advanced,
   },
-  translationX: {
-    min: -Infinity,
-    max: Infinity,
-    decimalPlaces: 0,
-    default: 0,
-    increment: 0,
-    mode: Mode.simple,
-  },
-  translationY: {
-    min: -Infinity,
-    max: Infinity,
-    decimalPlaces: 0,
-    default: 0,
-    increment: 0,
-    mode: Mode.simple,
-  },
 };
 
 export function randomizeInputs(
@@ -282,30 +264,6 @@ export function getDefaultHarmonograph(): Harmonograph {
   }
 
   return defaults;
-}
-
-function getXY(harmonograph: Harmonograph, step: number) {
-  var alpha =
-    toRadians(harmonograph.A) *
-    Math.sin(2.0 * Math.PI * (harmonograph.f * step + harmonograph.u)) *
-    Math.exp(-harmonograph.R * step);
-  var beta =
-    toRadians(harmonograph.B) *
-    Math.sin(2.0 * Math.PI * (harmonograph.g * step + harmonograph.v)) *
-    Math.exp(-harmonograph.S * step);
-  var gamma = 2.0 * Math.PI * harmonograph.h * step;
-
-  var xa =
-    harmonograph.p * Math.cos(alpha) +
-    harmonograph.q * Math.sin(alpha) -
-    harmonograph.d;
-  var ya = harmonograph.q * Math.cos(alpha) - harmonograph.p * Math.sin(alpha);
-  var xb = xa * Math.cos(beta) - ya * Math.sin(beta);
-  var yb = ya * Math.cos(beta) + xa * Math.sin(beta) - harmonograph.c;
-  var x = xb * Math.cos(gamma) - yb * Math.sin(gamma);
-  var y = yb * Math.cos(gamma) + xb * Math.sin(gamma);
-
-  return { x: x, y: y };
 }
 
 export function createSVGPathData(harmonograph: Harmonograph): String {
@@ -379,11 +337,11 @@ function calculateBoundingBox(pathData: string): {
   width: number;
   height: number;
 } {
-  //Only look for pathdata with numbers, this includes negatives and decimals
+  // Only look for pathdata with numbers, this includes negatives and decimals
   const numberPattern = /-?[0-9]*\.?[0-9]+/g;
   const numbers = pathData.match(numberPattern)?.map(Number) || [];
 
-  //If there are less than two points in the path, draw nothing, this will never happen but is still included
+  // Ignore if there is an empty path
   if (numbers.length < 2) {
     return { x: 0, y: 0, width: 0, height: 0 };
   }
@@ -393,7 +351,7 @@ function calculateBoundingBox(pathData: string): {
     maxX = -Infinity,
     maxY = -Infinity;
 
-  //for each point in the harmonograph path, update the min and max values
+  // Find the min and max values of the path data
   for (let i = 0; i < numbers.length; i += 2) {
     const x = numbers[i];
     const y = numbers[i + 1];
@@ -404,7 +362,6 @@ function calculateBoundingBox(pathData: string): {
     maxY = Math.max(maxY, y);
   }
 
-  //now that we found the min and maxes for both x and y, we do a simple bounding box calculation
   return {
     x: minX,
     y: minY,
@@ -415,11 +372,9 @@ function calculateBoundingBox(pathData: string): {
 
 export function centerAndScaleHarmonograph(
   pathData: string,
-  canvasWidth: number,
-  canvasHeight: number,
+  diameter: number,
   strokeWidth: number,
 ): object {
-  //get the bounding box of the path
   const bbox = calculateBoundingBox(pathData);
 
   if (bbox.width === 0 || bbox.height === 0) {
@@ -427,17 +382,14 @@ export function centerAndScaleHarmonograph(
     return { d: pathData, transform: "", strokeWidth };
   }
 
-  // Calculate scale factor, if the bounding box of the harmonograph is larger than
-  // the canvas dimensions, then the scale factor would be a decimal, e.g., 320/1000 = .32
-  // we check which width of height is the limiting factor (i.e., would expand and overflow first
-  // based on a scale and use the smaller of the two)
-  const scaleX = canvasWidth / bbox.width;
-  const scaleY = canvasHeight / bbox.height;
+  // Calculate the scale the harmonograph needs to fit inside the canvas
+  const scaleX = diameter / bbox.width;
+  const scaleY = diameter / bbox.height;
   const scale = Math.min(scaleX, scaleY, 1);
 
   // Calculate translation to center
-  const translateX = (canvasWidth - bbox.width * scale) / 2 - bbox.x * scale;
-  const translateY = (canvasHeight - bbox.height * scale) / 2 - bbox.y * scale;
+  const translateX = (diameter - bbox.width * scale) / 2 - bbox.x * scale;
+  const translateY = (diameter - bbox.height * scale) / 2 - bbox.y * scale;
 
   // Apply transformation to path, remove fill, and set stroke
   return {
@@ -447,27 +399,29 @@ export function centerAndScaleHarmonograph(
   };
 }
 
-export type HarmonographSizeCheck = {
-  overlapPercentage: {
-    canvas: number;
-    harmonograph: number;
-  };
-  computedSizes: {
-    canvas: {
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-    };
-    harmonograph: {
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-    };
-  };
-  message?: string;
-};
+function getXY(harmonograph: Harmonograph, step: number) {
+  var alpha =
+    toRadians(harmonograph.A) *
+    Math.sin(2.0 * Math.PI * (harmonograph.f * step + harmonograph.u)) *
+    Math.exp(-harmonograph.R * step);
+  var beta =
+    toRadians(harmonograph.B) *
+    Math.sin(2.0 * Math.PI * (harmonograph.g * step + harmonograph.v)) *
+    Math.exp(-harmonograph.S * step);
+  var gamma = 2.0 * Math.PI * harmonograph.h * step;
+
+  var xa =
+    harmonograph.p * Math.cos(alpha) +
+    harmonograph.q * Math.sin(alpha) -
+    harmonograph.d;
+  var ya = harmonograph.q * Math.cos(alpha) - harmonograph.p * Math.sin(alpha);
+  var xb = xa * Math.cos(beta) - ya * Math.sin(beta);
+  var yb = ya * Math.cos(beta) + xa * Math.sin(beta) - harmonograph.c;
+  var x = xb * Math.cos(gamma) - yb * Math.sin(gamma);
+  var y = yb * Math.cos(gamma) + xb * Math.sin(gamma);
+
+  return { x: x, y: y };
+}
 
 function round(x: number) {
   return Math.round(x * 1000) / 1000;

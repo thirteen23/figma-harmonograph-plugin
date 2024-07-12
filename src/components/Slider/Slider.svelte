@@ -63,7 +63,8 @@ function setValue(newValue) {
   class="slider"
   in:fade="{{
     duration: 300,
-  }}">
+  }}"
+>
   <div class="slider__range-container">
     <input
       class="slider__range"
@@ -73,7 +74,8 @@ function setValue(newValue) {
       step="0"
       bind:value="{value}"
       on:input="{handleSliderInput}"
-      on:keydown="{handleKeyDown}" />
+      on:keydown="{handleKeyDown}"
+    />
     <div class="slider__value-range">
       <div class="slider__lowest-value">{min}</div>
       <div class="slider__highest-value">{max}</div>
@@ -87,5 +89,6 @@ function setValue(newValue) {
     bind:value="{value}"
     on:input="{handleInputField}"
     on:blur="{handleInputBlur}"
-    on:keydown="{handleKeyDown}" />
+    on:keydown="{handleKeyDown}"
+  />
 </div>

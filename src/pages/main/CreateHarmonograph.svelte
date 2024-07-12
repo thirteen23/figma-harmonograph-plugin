@@ -51,6 +51,7 @@ function resetToDefaults() {
 }
 
 onMount(() => {
+  console.log("Current harmo: ", JSON.stringify(currentHarmonograph));
   renderCurrentHarmonograph();
 
   document.addEventListener("click", handleOutsideClick);
@@ -73,7 +74,7 @@ const insertHarmonograph = () => {
   saveHarmonograph();
 
   const svgElement = document.getElementById("preview");
-  const svgContent = svgElement.innerHTML;
+  const svgContent = svgElement.outerHTML;
 
   parent.postMessage(
     {
@@ -141,11 +142,12 @@ function renderCurrentHarmonograph() {
     pathAttributes = centerAndScaleHarmonograph(
       svgPath,
       diameter,
-      diameter,
       stroke_width,
     );
 
-    renderPath = true;
+    setTimeout(() => {
+      renderPath = true;
+    }, 50);
   }, 300);
 }
 
@@ -164,12 +166,14 @@ function cancel() {
 
   <div
     class="preview-settings"
-    style="--stroke_width: {stroke_width}px;--diameter: {diameter}px">
+    style="--stroke_width: {stroke_width}px;--diameter: {diameter}px"
+  >
     <svg
       id="preview"
       bind:this="{svgRef}"
       xmlns="http://www.w3.org/2000/svg"
-      version="1.1">
+      version="1.1"
+    >
       {#if renderPath}
         <path
           in:draw="{{
@@ -183,7 +187,8 @@ function cancel() {
           transform="{pathAttributes.transform}"
           fill="none"
           stroke="currentColor"
-          stroke-width="{pathAttributes.strokeWidth}"></path>
+          stroke-width="{pathAttributes.strokeWidth}"
+        ></path>
       {/if}
     </svg>
   </div>
@@ -196,20 +201,23 @@ function cancel() {
           <input
             type="checkbox"
             bind:checked="{advancedMode}"
-            on:change="{updateAdvancedMode}" />
+            on:change="{updateAdvancedMode}"
+          />
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="52"
             height="28"
             viewBox="0 0 52 28"
-            fill="none">
+            fill="none"
+          >
             <rect
               class="switch__background"
               x="1"
               y="1"
               width="48"
               height="24"
-              rx="12"></rect>
+              rx="12"
+            ></rect>
             <circle class="switch__foreground" cx="13" cy="13" r="12"></circle>
           </svg>
         </label>
@@ -229,7 +237,8 @@ function cancel() {
               if (activeMode === Mode.advanced) {
                 selectedPanel = 0;
               }
-            }}">
+            }}"
+          >
             Pendulums
           </button>
 
@@ -240,7 +249,8 @@ function cancel() {
               if (activeMode === Mode.advanced) {
                 selectedPanel = 1;
               }
-            }}">
+            }}"
+          >
             Paper
           </button>
 
@@ -251,7 +261,8 @@ function cancel() {
               if (activeMode === Mode.advanced) {
                 selectedPanel = 2;
               }
-            }}">
+            }}"
+          >
             Drawing
           </button>
         </div>
@@ -266,7 +277,8 @@ function cancel() {
           {#if activeMode === Mode.simple || selectedPanel === 0}
             <InformationHeader
               text="{tooltips.frequency.header}"
-              info="{tooltips.frequency.tooltip}" />
+              info="{tooltips.frequency.tooltip}"
+            />
 
             <div class="two-col-layout">
               <Input
@@ -278,7 +290,8 @@ function cancel() {
                 inputData="{'left_pendulum_frequency'}"
                 unit="{'Hz'}"
                 labelFieldText="{'Left pendulum'}"
-                increment="{inputRanges.f.increment}" />
+                increment="{inputRanges.f.increment}"
+              />
 
               <Input
                 value="{currentHarmonograph.g}"
@@ -289,14 +302,16 @@ function cancel() {
                 inputData="{'right_pendulum_frequency'}"
                 unit="{'Hz'}"
                 labelFieldText="{'Right pendulum'}"
-                increment="{inputRanges.g.increment}" />
+                increment="{inputRanges.g.increment}"
+              />
             </div>
           {/if}
 
           {#if activeMode === Mode.simple || selectedPanel === 0}
             <InformationHeader
               text="{tooltips.amplitude.header}"
-              info="{tooltips.amplitude.tooltip}" />
+              info="{tooltips.amplitude.tooltip}"
+            />
 
             <div class="two-col-layout">
               <Input
@@ -308,7 +323,8 @@ function cancel() {
                 inputData="{'pendulum_left_amplitude'}"
                 unit="{'degrees'}"
                 labelFieldText="{'Left pendulum'}"
-                increment="{inputRanges.A.increment}" />
+                increment="{inputRanges.A.increment}"
+              />
 
               <Input
                 value="{currentHarmonograph.B}"
@@ -319,14 +335,16 @@ function cancel() {
                 inputData="{'pendulum_right_amplitude'}"
                 unit="{'degrees'}"
                 labelFieldText="{'Right pendulum'}"
-                increment="{inputRanges.B.increment}" />
+                increment="{inputRanges.B.increment}"
+              />
             </div>
           {/if}
 
           {#if activeMode === Mode.advanced && selectedPanel === 0}
             <InformationHeader
               text="{tooltips.damping.header}"
-              info="{tooltips.damping.tooltip}" />
+              info="{tooltips.damping.tooltip}"
+            />
 
             <div class="two-col-layout">
               <Input
@@ -337,7 +355,8 @@ function cancel() {
                 decimalPlaces="{inputRanges.R.decimalPlaces}"
                 inputData="{'left_pendulum_damping'}"
                 labelFieldText="{'Left pendulum'}"
-                increment="{inputRanges.R.increment}" />
+                increment="{inputRanges.R.increment}"
+              />
 
               <Input
                 value="{currentHarmonograph.S}"
@@ -347,12 +366,14 @@ function cancel() {
                 decimalPlaces="{inputRanges.S.decimalPlaces}"
                 inputData="{'right_pendulum_damping'}"
                 labelFieldText="{'Right pendulum'}"
-                increment="{inputRanges.S.increment}" />
+                increment="{inputRanges.S.increment}"
+              />
             </div>
 
             <InformationHeader
               text="{tooltips.phase.header}"
-              info="{tooltips.phase.tooltip}" />
+              info="{tooltips.phase.tooltip}"
+            />
 
             <div class="two-col-layout">
               <Input
@@ -365,7 +386,8 @@ function cancel() {
                 hideUnits="{true}"
                 unit="{'degrees'}"
                 labelFieldText="{'Left pendulum'}"
-                increment="{inputRanges.u.increment}" />
+                increment="{inputRanges.u.increment}"
+              />
 
               <Input
                 value="{currentHarmonograph.v}"
@@ -377,12 +399,14 @@ function cancel() {
                 hideUnits="{true}"
                 unit="{'degrees'}"
                 labelFieldText="{'Right pendulum'}"
-                increment="{inputRanges.v.increment}" />
+                increment="{inputRanges.v.increment}"
+              />
             </div>
 
             <InformationHeader
               text="{tooltips.pendulumDistance.header}"
-              info="{tooltips.pendulumDistance.tooltip}" />
+              info="{tooltips.pendulumDistance.tooltip}"
+            />
 
             <Input
               value="{currentHarmonograph.d}"
@@ -392,13 +416,15 @@ function cancel() {
               decimalPlaces="{inputRanges.d.decimalPlaces}"
               inputData="{'distance_between_pendulums'}"
               hideUnits="{true}"
-              increment="{inputRanges.d.increment}" />
+              increment="{inputRanges.d.increment}"
+            />
           {/if}
 
           {#if activeMode === Mode.advanced && selectedPanel === 1}
             <InformationHeader
               text="{tooltips.paperCenter.header}"
-              info="{tooltips.paperCenter.tooltip}" />
+              info="{tooltips.paperCenter.tooltip}"
+            />
 
             <Input
               value="{currentHarmonograph.c}"
@@ -408,11 +434,13 @@ function cancel() {
               decimalPlaces="{inputRanges.c.decimalPlaces}"
               inputData="{'paper_center'}"
               hideUnits="{true}"
-              increment="{inputRanges.c.increment}" />
+              increment="{inputRanges.c.increment}"
+            />
 
             <InformationHeader
               text="{tooltips.penArmLength.header}"
-              info="{tooltips.penArmLength.tooltip}" />
+              info="{tooltips.penArmLength.tooltip}"
+            />
 
             <Input
               value="{currentHarmonograph.p}"
@@ -422,11 +450,13 @@ function cancel() {
               decimalPlaces="{inputRanges.p.decimalPlaces}"
               inputData="{'length_of_pen_arm'}"
               hideUnits="{true}"
-              increment="{inputRanges.p.increment}" />
+              increment="{inputRanges.p.increment}"
+            />
 
             <InformationHeader
               text="{tooltips.penArmPosition.header}"
-              info="{tooltips.penArmPosition.tooltip}" />
+              info="{tooltips.penArmPosition.tooltip}"
+            />
 
             <Input
               value="{currentHarmonograph.q}"
@@ -436,11 +466,13 @@ function cancel() {
               decimalPlaces="{inputRanges.q.decimalPlaces}"
               inputData="{'position_of_pen_arm'}"
               hideUnits="{true}"
-              increment="{inputRanges.q.increment}" />
+              increment="{inputRanges.q.increment}"
+            />
 
             <InformationHeader
               text="{tooltips.paperRadius.header}"
-              info="{tooltips.paperRadius.tooltip}" />
+              info="{tooltips.paperRadius.tooltip}"
+            />
 
             <Input
               value="{currentHarmonograph.r}"
@@ -451,11 +483,13 @@ function cancel() {
               inputData="{'paper_radius'}"
               hideUnits="{true}"
               unit="{'degrees'}"
-              increment="{inputRanges.r.increment}" />
+              increment="{inputRanges.r.increment}"
+            />
 
             <InformationHeader
               text="{tooltips.paperFrequency.header}"
-              info="{tooltips.paperFrequency.tooltip}" />
+              info="{tooltips.paperFrequency.tooltip}"
+            />
 
             <Input
               value="{currentHarmonograph.h}"
@@ -466,13 +500,15 @@ function cancel() {
               inputData="{'frequency_of_paper_rotation'}"
               hideUnits="{true}"
               unit="{'Hz'}"
-              increment="{inputRanges.h.increment}" />
+              increment="{inputRanges.h.increment}"
+            />
           {/if}
 
           {#if activeMode === Mode.advanced && selectedPanel === 2}
             <InformationHeader
               text="{tooltips.penThickness.header}"
-              info="{tooltips.penThickness.tooltip}" />
+              info="{tooltips.penThickness.tooltip}"
+            />
 
             <Input
               value="{currentHarmonograph.w}"
@@ -483,13 +519,15 @@ function cancel() {
               inputData="{'pen_thickness'}"
               hideUnits="{true}"
               unit="{'degrees'}"
-              increment="{inputRanges.w.increment}" />
+              increment="{inputRanges.w.increment}"
+            />
           {/if}
 
           {#if activeMode === Mode.simple || selectedPanel === 2}
             <InformationHeader
               text="{tooltips.steps.header}"
-              info="{tooltips.steps.tooltip}" />
+              info="{tooltips.steps.tooltip}"
+            />
 
             <Slider
               min="{inputRanges.steps.min}"
@@ -497,13 +535,15 @@ function cancel() {
               inputFieldMax="{5000}"
               value="{currentHarmonograph.steps}"
               onValueChange="{(value) => updateHarmonograph('steps', value)}"
-              increment="{inputRanges.steps.increment}" />
+              increment="{inputRanges.steps.increment}"
+            />
           {/if}
 
           {#if activeMode === Mode.advanced && selectedPanel === 2}
             <InformationHeader
               text="{tooltips.segments.header}"
-              info="{tooltips.segments.tooltip}" />
+              info="{tooltips.segments.tooltip}"
+            />
 
             <Slider
               value="{currentHarmonograph.segments}"
@@ -511,7 +551,8 @@ function cancel() {
               max="{inputRanges.segments.max}"
               inputFieldMax="{inputRanges.segments.max}"
               onValueChange="{(value) => updateHarmonograph('segments', value)}"
-              increment="{inputRanges.segments.increment}" />
+              increment="{inputRanges.segments.increment}"
+            />
           {/if}
         </div>
       </div>
@@ -534,5 +575,6 @@ function cancel() {
         text: '@thirteen23',
         action: openWebsite,
       },
-    ]}" />
+    ]}"
+  />
 </div>

@@ -1,7 +1,6 @@
-<script lang="ts">
+<script>
 import { onMount } from "svelte";
 
-import { getDefaultHarmonograph } from "./model/Harmonograph";
 import { Page } from "./model/Routes";
 import { EventMessages, PluginMessages } from "./model/Messages";
 
@@ -14,20 +13,6 @@ let currentPage = undefined;
 let loadedHarmonograph = undefined;
 let advancedMode = false;
 
-const navigateToHarmonograph = () => {
-  sendFTUEComplete();
-  currentPage = Page.harmonograph;
-};
-
-const navigateToAbout = () => {
-  currentPage = Page.About;
-};
-
-const resetToDefaults = () => {
-  loadedHarmonograph = getDefaultHarmonograph();
-  saveHarmonograph();
-};
-
 addEventListener("message", function handleMessage(msg) {
   switch (msg.data.pluginMessage.type) {
     case EventMessages.loadState:
@@ -38,10 +23,12 @@ addEventListener("message", function handleMessage(msg) {
       advancedMode = msg.data.pluginMessage.advancedMode;
 
       console.log(
-        "current page from message?: ",
-        currentPage,
-        " ",
-        msg.data.pluginMessage.ftueVisited,
+        `
+          Current page: ${currentPage}
+          FTUE Visited?: ${msg.data.pluginMessage.ftueVisited}
+          Advanced mode: ${advancedMode}
+          Harmono: ${JSON.stringify(loadedHarmonograph)}
+        `,
       );
       break;
   }
