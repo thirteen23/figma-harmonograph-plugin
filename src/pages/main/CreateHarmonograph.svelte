@@ -18,8 +18,7 @@ import {
   createSVGPathData,
   Mode,
   tooltips,
-  checkHarmonographInView,
-  computeCenteredScaledTranslation,
+  centerAndScaleHarmonograph,
 } from "../../model/Harmonograph";
 import { PluginMessages } from "../../model/Messages";
 
@@ -78,7 +77,7 @@ const insertHarmonograph = () => {
       pluginMessage: {
         type: PluginMessages.insertHarmonograph,
         harmonograph: currentHarmonograph,
-        pathData: svgPath,
+        pathData: pathAttributes.d,
       },
     },
     "*",
@@ -124,60 +123,28 @@ const displayWarningMessage = (message) => {
 let renderPath = true;
 let diameter = 320;
 let stroke_width = 0.2;
+let pathAttributes = { d: "", transform: "", strokeWidth: 0 };
 
-const renderCurrentHarmonograph = (autoResize = false) => {
-  console.log(
-    "-------------------------------redrawing------------------------",
-  );
+function renderCurrentHarmonograph() {
   renderPath = false;
 
   setTimeout(() => {
     stroke_width = currentHarmonograph.w;
-    // svgRef.setAttribute("preserveAspectRatio", "none");
+    svgRef.setAttribute("preserveAspectRatio", "xMidYMid meet");
     diameter = Math.floor(currentHarmonograph.r * 2);
     svgRef.setAttribute("viewBox", `0 0 ${diameter} ${diameter}`);
     svgPath = createSVGPathData(currentHarmonograph);
-  }, 300);
 
-  setTimeout(() => {
-    let path = document.getElementById("predraw_path");
-    let harmonographInView;
-    let svgRect = svgRef.getBoundingClientRect();
-    let pathRect = path.getBoundingClientRect();
-
-    let { translationX, translationY } = computeCenteredScaledTranslation(
-      svgRect,
-      pathRect,
+    pathAttributes = centerAndScaleHarmonograph(
+      svgPath,
       diameter,
+      diameter,
+      stroke_width,
     );
 
-    currentHarmonograph.translationX = translationX;
-    currentHarmonograph.translationY = translationY;
-
-    if (autoResize) {
-      harmonographInView = checkHarmonographInView(svgRect, pathRect, 60, 80);
-    } else {
-      harmonographInView = checkHarmonographInView(svgRect, pathRect);
-    }
-
-    // if (harmonographInView.message !== undefined && autoResize) {
-
-    //   currentHarmonograph.r = Math.max(
-    //     Math.abs(pathRect.right - pathRect.left),
-    //     Math.abs(pathRect.bottom - pathRect.top),
-    //   ) * 1.25;
-
-    //   renderCurrentHarmonograph();
-
-    //   return;
-    // } else if (harmonographInView.message) {
-    //   // Tell the user the canvas may still be too small, but draw the path anyways
-    //   displayWarningMessage(harmonographInView.message);
-    // }
-
     renderPath = true;
-  }, 350);
-};
+  }, 300);
+}
 
 function updateHarmonograph(property, value) {
   currentHarmonograph[property] = value;
@@ -194,17 +161,14 @@ function cancel() {
 
   <div
     class="preview-settings"
-    style="{`--stroke_width: ${stroke_width}px;--diameter: ${diameter}px`}">
+    style="--stroke_width: {stroke_width}px;--diameter: {diameter}px">
     <svg
       id="preview"
       bind:this="{svgRef}"
       xmlns="http://www.w3.org/2000/svg"
       version="1.1">
-      <path id="predraw_path" d="{svgPath}"></path>
       {#if renderPath}
         <path
-          id="preview_path"
-          style="{`transform: translate(${currentHarmonograph.translationX}px, ${currentHarmonograph.translationY}px) `}"
           in:draw="{{
             duration: Math.min(currentHarmonograph.steps, 3000),
             easing: quintOut,
@@ -212,7 +176,11 @@ function cancel() {
           out:fade="{{
             duration: 300,
           }}"
-          d="{svgPath}"></path>
+          d="{pathAttributes.d}"
+          transform="{pathAttributes.transform}"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="{pathAttributes.strokeWidth}"></path>
       {/if}
     </svg>
   </div>
@@ -536,9 +504,9 @@ function cancel() {
 
             <Slider
               value="{currentHarmonograph.segments}"
-              min="{currentHarmonograph.segments.min}"
-              max="{currentHarmonograph.segments.max}"
-              inputFieldMax="{currentHarmonograph.segments.max}"
+              min="{inputRanges.segments.min}"
+              max="{inputRanges.segments.max}"
+              inputFieldMax="{inputRanges.segments.max}"
               onValueChange="{(value) => updateHarmonograph('segments', value)}"
               increment="{inputRanges.segments.increment}" />
           {/if}

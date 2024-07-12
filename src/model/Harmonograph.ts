@@ -373,140 +373,79 @@ export function createSVGPathData(harmonograph: Harmonograph): String {
   return data.join(" ");
 }
 
-export function computeCenteredScaledTranslation(
-  svgWidth: number,
-  svgHeight: number,
-  pathRect: DOMRect,
-  strokeWidth: number,
-) {
-  const padding = strokeWidth / 2;
-  const availableWidth = svgWidth - 2 * padding;
-  const availableHeight = svgHeight - 2 * padding;
+function calculateBoundingBox(pathData: string): {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+} {
+  //Only look for pathdata with numbers, this includes negatives and decimals
+  const numberPattern = /-?[0-9]*\.?[0-9]+/g;
+  const numbers = pathData.match(numberPattern)?.map(Number) || [];
 
-  const scaleX = availableWidth / pathRect.width;
-  const scaleY = availableHeight / pathRect.height;
+  //If there are less than two points in the path, draw nothing, this will never happen but is still included
+  if (numbers.length < 2) {
+    return { x: 0, y: 0, width: 0, height: 0 };
+  }
+
+  let minX = Infinity,
+    minY = Infinity,
+    maxX = -Infinity,
+    maxY = -Infinity;
+
+  //for each point in the harmonograph path, update the min and max values
+  for (let i = 0; i < numbers.length; i += 2) {
+    const x = numbers[i];
+    const y = numbers[i + 1];
+
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+    maxX = Math.max(maxX, x);
+    maxY = Math.max(maxY, y);
+  }
+
+  //now that we found the min and maxes for both x and y, we do a simple bounding box calculation
+  return {
+    x: minX,
+    y: minY,
+    width: maxX - minX,
+    height: maxY - minY,
+  };
+}
+
+export function centerAndScaleHarmonograph(
+  pathData: string,
+  canvasWidth: number,
+  canvasHeight: number,
+  strokeWidth: number,
+): object {
+  //get the bounding box of the path
+  const bbox = calculateBoundingBox(pathData);
+
+  if (bbox.width === 0 || bbox.height === 0) {
+    console.warn("Invalid bounding box calculated. Using original path.");
+    return { d: pathData, transform: "", strokeWidth };
+  }
+
+  // Calculate scale factor, if the bounding box of the harmonograph is larger than
+  // the canvas dimensions, then the scale factor would be a decimal, e.g., 320/1000 = .32
+  // we check which width of height is the limiting factor (i.e., would expand and overflow first
+  // based on a scale and use the smaller of the two)
+  const scaleX = canvasWidth / bbox.width;
+  const scaleY = canvasHeight / bbox.height;
   const scale = Math.min(scaleX, scaleY, 1);
 
-  const scaledWidth = pathRect.width * scale;
-  const scaledHeight = pathRect.height * scale;
+  // Calculate translation to center
+  const translateX = (canvasWidth - bbox.width * scale) / 2 - bbox.x * scale;
+  const translateY = (canvasHeight - bbox.height * scale) / 2 - bbox.y * scale;
 
-  const translationX = (svgWidth - scaledWidth) / 2 - pathRect.left * scale;
-  const translationY = (svgHeight - scaledHeight) / 2 - pathRect.top * scale;
-
-  return { translationX, translationY, scale };
+  // Apply transformation to path, remove fill, and set stroke
+  return {
+    d: pathData,
+    transform: `translate(${translateX}, ${translateY}) scale(${scale})`,
+    strokeWidth: strokeWidth / scale,
+  };
 }
-
-/**
- * Checks to see if the harmonograph is likely drawn on the canvas
- * If harmonograph overlap percentage is above the threshold
- * then we can assume it is 'on the canvas' and return true
- */
-export function checkHarmonographInView(
-  canvasRect: DOMRect,
-  harmonographRect: DOMRect,
-  harmonographMinimumOverlap: number = 30,
-  harmonographHighMinimumOverlap: number = 60,
-  canvasOverlapMax: number = 80,
-): HarmonographSizeCheck {
-  const L1 = {
-    x: canvasRect.left,
-    y: canvasRect.top,
-  };
-  const R1 = {
-    x: canvasRect.right,
-    y: canvasRect.bottom,
-  };
-
-  const canvasArea = Math.abs(L1.x - R1.x) * Math.abs(L1.y - R1.y);
-
-  const L2 = {
-    x: harmonographRect.left,
-    y: harmonographRect.top,
-  };
-  const R2 = {
-    x: harmonographRect.right,
-    y: harmonographRect.bottom,
-  };
-
-  const canvasSize = {
-    x: L1.x,
-    y: L1.y,
-    width: R2.x - L2.x,
-    height: R1.y - L1.y,
-  };
-
-  const harmonographSize = {
-    x: L2.x,
-    y: L2.y,
-    width: R2.x - L2.x,
-    height: R1.y - L1.y,
-  };
-
-  const harmonographArea = Math.abs(L2.x - R2.x) * Math.abs(L2.y - R2.y);
-
-  // If 0, there is no overlap
-  const xDistance = Math.max(0, Math.min(R1.x, R2.x) - Math.max(L1.x, L2.x));
-  const yDistance = Math.max(0, Math.min(R1.y, R2.y) - Math.max(L1.y, L2.y));
-
-  const overlapArea = xDistance * yDistance;
-
-  const canvasOverlapPercentage = (overlapArea / canvasArea) * 100;
-  const harmonographOverlapPercentage = (overlapArea / harmonographArea) * 100;
-
-  console.log(`
-      canvas: ${JSON.stringify(canvasRect)} ${canvasSize.width} x ${canvasSize.height}
-      harmonograph: ${JSON.stringify(harmonographRect)}  ${harmonographSize.width} x ${harmonographSize.height}
-      percent1: ${canvasOverlapPercentage}
-      percent2: ${harmonographOverlapPercentage}
-      `);
-
-  let response: HarmonographSizeCheck = {
-    overlapPercentage: {
-      canvas: canvasOverlapPercentage,
-      harmonograph: harmonographOverlapPercentage,
-    },
-    computedSizes: {
-      canvas: canvasSize,
-      harmonograph: harmonographSize,
-    },
-  };
-
-  // TODO clean this up as it is over complicated for what it does atm
-
-  // Harmonograph likely too small
-  if (harmonographSize.height < 75 || harmonographSize.width < 75) {
-    response.message = harmonographTooSmallMessage;
-  }
-
-  if (canvasOverlapPercentage > canvasOverlapMax) {
-    /**
-     * If the canvas has a high percentage,
-     * likely the harmonograph is too big, and may not be visible
-     */
-
-    if (harmonographOverlapPercentage < harmonographHighMinimumOverlap) {
-      response.message = harmonographOutOfViewMessage;
-    }
-  } else {
-    /**
-     * If the harmonograph has a high overlap percentage, and the canvas does not
-     * the harmonograph will likely be in view
-     */
-    console.log(`Harmonograph Overlap % ${harmonographOverlapPercentage}
-      Min overlap% ${harmonographMinimumOverlap}`);
-
-    if (harmonographOverlapPercentage < harmonographMinimumOverlap) {
-      response.message = harmonographOutOfViewMessage;
-    }
-  }
-
-  return response;
-}
-
-const harmonographOutOfViewMessage =
-  "Harmonograph path may not be fully visible, try increasing the size of the paper or the number of drawing steps.";
-const harmonographTooSmallMessage =
-  "Harmonograph path may be too small, try decreasing the size of the paper.";
 
 export type HarmonographSizeCheck = {
   overlapPercentage: {

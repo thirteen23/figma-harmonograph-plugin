@@ -10,70 +10,51 @@ export let max = 5000;
 export let inputFieldMax = 5000;
 export let increment = 1;
 
-let inputValue = value.toString();
-let isInputEmpty = false;
-
 function handleSliderInput(event) {
   let newValue = event.target.value;
   setValue(newValue);
 }
 
 function handleInputField(event) {
-  const newValue = event.target.value;
-
-  if (newValue === "") {
-    isInputEmpty = true;
-    inputValue = "";
-    return;
-  }
-
-  isInputEmpty = false;
-
-  if (newValue === "-" || newValue === ".") {
-    inputValue = newValue;
-    return;
-  }
-
-  const parsedValue = parseFloat(newValue);
-
-  if (!isNaN(parsedValue)) {
-    inputValue = newValue;
-    setValue(parsedValue, false);
-  }
+  value = event.target.value;
+  onValueChange(value);
 }
 
 function handleInputBlur() {
-  if (isInputEmpty) {
-    setValue(min);
-    isInputEmpty = false;
+  let newValue = parseFloat(value);
+  if (isNaN(newValue)) {
+    newValue = min;
   } else {
-    const parsedValue = parseFloat(inputValue);
-    if (isNaN(parsedValue)) {
-      setValue(min);
-    } else {
-      setValue(parsedValue);
-    }
+    newValue = Math.min(Math.max(newValue, min), inputFieldMax);
   }
+  setValue(newValue);
 }
 
 function handleKeyDown(event) {
   if (event.key === "ArrowUp" || event.key === "ArrowDown") {
     event.preventDefault();
-    const direction = event.key === "ArrowUp" ? 1 : -1;
-    const factor = event.shiftKey ? 10 : 1;
-    const change = direction * factor * increment;
-    const currentValue = parseFloat(value) || 0;
-    const newValue = currentValue + change;
-    setValue(newValue, event.target.type === "number" ? inputFieldMax : max);
+    const multiplier = event.shiftKey ? 10 : 1;
+    const change =
+      event.key === "ArrowUp"
+        ? increment * multiplier
+        : -increment * multiplier;
+
+    let newValue = parseFloat(value) + change;
+    newValue = Math.min(
+      Math.max(newValue, min),
+      event.target.type === "range" ? max : inputFieldMax,
+    );
+
+    setValue(newValue);
   }
 }
 
-function setValue(newValue, updateInput = true, upperLimit = max) {
-  newValue = Math.max(min, Math.min(upperLimit, parseFloat(newValue) || min));
-  value = newValue;
-  if (updateInput) {
-    inputValue = newValue.toString();
+function setValue(newValue) {
+  value = parseFloat(newValue);
+  if (isNaN(value)) {
+    value = min;
   }
+  value = Math.min(Math.max(value, min), inputFieldMax);
   onValueChange(value);
 }
 </script>
@@ -91,8 +72,8 @@ function setValue(newValue, updateInput = true, upperLimit = max) {
       max="{max}"
       step="0"
       bind:value="{value}"
-      on:keydown="{handleKeyDown}"
-      on:input="{handleSliderInput}" />
+      on:input="{handleSliderInput}"
+      on:keydown="{handleKeyDown}" />
     <div class="slider__value-range">
       <div class="slider__lowest-value">{min}</div>
       <div class="slider__highest-value">{max}</div>
@@ -103,8 +84,8 @@ function setValue(newValue, updateInput = true, upperLimit = max) {
     class="slider__input"
     type="text"
     inputmode="numeric"
-    bind:value="{inputValue}"
-    on:keydown="{handleKeyDown}"
+    bind:value="{value}"
     on:input="{handleInputField}"
-    on:blur="{handleInputBlur}" />
+    on:blur="{handleInputBlur}"
+    on:keydown="{handleKeyDown}" />
 </div>

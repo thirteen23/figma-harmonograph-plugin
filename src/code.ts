@@ -93,7 +93,7 @@ figma.ui.onmessage = (msg) => {
       figma.currentPage.selection = nodes;
       figma.viewport.scrollAndZoomIntoView(nodes);
 
-      figma.closePlugin();
+      // figma.closePlugin();
       break;
     case PluginMessages.saveHarmonograph:
       var harmonograph = msg.harmonograph;
