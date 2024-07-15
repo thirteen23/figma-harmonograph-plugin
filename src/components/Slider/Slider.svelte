@@ -1,33 +1,60 @@
 <script>
 import { fade } from "svelte/transition";
 
+import { sanatizeValue } from "../../model/Harmonograph";
+
 import "./Slider.scss";
 
+export let field;
 export let value;
 export let onValueChange;
-export let min = 0;
+export let min = -1;
 export let max = 5000;
-export let inputFieldMax = 5000;
 export let increment = 1;
 
-function handleSliderInput(event) {
-  let newValue = event.target.value;
-  setValue(newValue);
+$: {
+  if (!isNaN(value)) {
+    console.log(`last valid value of ${field}: ${value}`);
+    lastValidValue = value;
+  }
 }
 
-function handleInputField(event) {
-  value = event.target.value;
-  onValueChange(value);
+let lastValue;
+let lastValidValue;
+
+function handleLastValue(event) {
+  lastValue = parseFloat(event.target.value);
+  console.log(`updating last known value ${lastValue}`);
+}
+
+function handleSliderInput(event) {
+  let newValue = parseFloat(event.target.value);
+
+  console.log(`slider input updated: ${newValue}`);
+
+  onValueChange(field, newValue, false);
+}
+
+function handleInputField() {
+  setValue(parseFloat(value));
 }
 
 function handleInputBlur() {
-  let newValue = parseFloat(value);
-  if (isNaN(newValue)) {
-    newValue = min;
-  } else {
-    newValue = Math.min(Math.max(newValue, min), inputFieldMax);
+  let sanatizedValue = value;
+
+  if (isNaN(sanatizedValue)) {
+    sanatizedValue = lastValidValue;
   }
-  setValue(newValue);
+
+  sanatizedValue = sanatizeValue(field, sanatizedValue);
+
+  if (value !== sanatizedValue) {
+    value = sanatizedValue;
+  }
+
+  if (lastValue !== undefined && lastValue !== value) {
+    onValueChange(field, value);
+  }
 }
 
 function handleKeyDown(event) {
@@ -39,23 +66,24 @@ function handleKeyDown(event) {
         ? increment * multiplier
         : -increment * multiplier;
 
-    let newValue = parseFloat(value) + change;
-    newValue = Math.min(
-      Math.max(newValue, min),
-      event.target.type === "range" ? max : inputFieldMax,
-    );
-
-    setValue(newValue);
+    setValue(parseFloat(value) + change);
   }
 }
 
 function setValue(newValue) {
-  value = parseFloat(newValue);
-  if (isNaN(value)) {
-    value = min;
+  if (isNaN(newValue)) {
+    console.log(`using last known value from ${newValue} to ${lastValidValue}`);
+    newValue = lastValidValue;
+    value = lastValidValue;
   }
-  value = Math.min(Math.max(value, min), inputFieldMax);
-  onValueChange(value);
+
+  newValue = sanatizeValue(field, newValue);
+
+  console.log(`updating value to: ${newValue} ${lastValue}`);
+
+  if (lastValue !== undefined && lastValue !== newValue) {
+    onValueChange(field, newValue);
+  }
 }
 </script>
 
@@ -87,6 +115,7 @@ function setValue(newValue) {
     type="text"
     inputmode="numeric"
     bind:value="{value}"
+    on:beforeinput="{handleLastValue}"
     on:input="{handleInputField}"
     on:blur="{handleInputBlur}"
     on:keydown="{handleKeyDown}"

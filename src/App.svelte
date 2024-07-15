@@ -31,6 +31,14 @@ addEventListener("message", function handleMessage(msg) {
         `,
       );
       break;
+    case EventMessages.loadHarmonograph:
+      loadedHarmonograph = msg.data.pluginMessage.harmonograph;
+
+      console.log(
+        "harmonograph here? ",
+        JSON.stringify(msg.data.pluginMessage),
+      );
+      break;
   }
 });
 
@@ -65,6 +73,13 @@ function resizeWindow(e) {
 const sendFTUEComplete = () => {
   parent.postMessage(
     { pluginMessage: { type: PluginMessages.FTUEVisited } },
+    "*",
+  );
+};
+
+const loadHarmonograph = () => {
+  parent.postMessage(
+    { pluginMessage: { type: PluginMessages.loadHarmonograph } },
     "*",
   );
 };
@@ -112,12 +127,13 @@ const addResizeTrigger = (element, resizeFunction) => {
     />
   {:else if currentPage === Page.harmonograph}
     <CreateHarmonograph
-      currentHarmonograph="{loadedHarmonograph}"
+      loadedHarmonograph="{loadedHarmonograph}"
       advancedMode="{advancedMode}"
       navigateToAbout="{() => {
         currentPage = Page.about;
       }}"
       openWebsite="{openWebsite}"
+      loadHarmonograph="{loadHarmonograph}"
     />
   {/if}
 

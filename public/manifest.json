@@ -4,5 +4,13 @@
   "api": "1.0.0",
   "main": "code.js",
   "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": [
+      "https://fonts.googleapis.com/css2",
+      "https://fonts.gstatic.com"
+    ],
+    "reasoning": "Google fonts"
+  },
   "ui": "index.html"
 }

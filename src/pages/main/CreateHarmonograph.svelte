@@ -26,10 +26,16 @@ import "./CreateHarmonograph.scss";
 
 export let openWebsite = () => console.log("not implemented!");
 export let navigateToAbout = () => console.log("not implemented!");
+export let loadHarmonograph = () => console.log("not implemented!");
 
-export let currentHarmonograph = getDefaultHarmonograph();
+export let loadedHarmonograph = undefined;
+let currentHarmonograph = getDefaultHarmonograph();
 
-var svg = "";
+$: {
+  currentHarmonograph = loadedHarmonograph;
+  renderCurrentHarmonograph();
+}
+
 let svgRef;
 
 var selectedPanel = 0;
@@ -112,52 +118,40 @@ const updateAdvancedMode = () => {
   );
 };
 
-const displayWarningMessage = (message) => {
-  parent.postMessage(
-    {
-      pluginMessage: {
-        type: PluginMessages.errorMessage,
-        message,
-      },
-    },
-    "*",
-  );
-};
-
 let renderPath = true;
 let diameter = 320;
 let stroke_width = 0.2;
 let pathAttributes = { d: "", transform: "", strokeWidth: 0 };
 
-function renderCurrentHarmonograph() {
-  renderPath = false;
-
-  setTimeout(() => {
-    stroke_width = currentHarmonograph.w;
-    svgRef.setAttribute("preserveAspectRatio", "xMidYMid meet");
-    diameter = Math.floor(currentHarmonograph.r * 2);
-    svgRef.setAttribute("viewBox", `0 0 ${diameter} ${diameter}`);
-    svgPath = createSVGPathData(currentHarmonograph);
-
-    pathAttributes = centerAndScaleHarmonograph(
-      svgPath,
-      diameter,
-      stroke_width,
-    );
+function renderCurrentHarmonograph(animate = true) {
+  if (animate) {
+    renderPath = false;
 
     setTimeout(() => {
-      renderPath = true;
-    }, 50);
-  }, 300);
+      drawHarmonographPath();
+
+      setTimeout(() => {
+        renderPath = true;
+      }, 50);
+    }, 300);
+  } else {
+    drawHarmonographPath();
+  }
 }
 
-function updateHarmonograph(property, value) {
+function drawHarmonographPath() {
+  stroke_width = currentHarmonograph.w;
+  svgRef.setAttribute("preserveAspectRatio", "xMidYMid meet");
+  diameter = Math.floor(currentHarmonograph.r * 2);
+  svgRef.setAttribute("viewBox", `0 0 ${diameter} ${diameter}`);
+  svgPath = createSVGPathData(currentHarmonograph);
+
+  pathAttributes = centerAndScaleHarmonograph(svgPath, diameter, stroke_width);
+}
+
+function updateHarmonograph(property, value, animated = true) {
   currentHarmonograph[property] = value;
-  renderCurrentHarmonograph();
-}
-
-function cancel() {
-  parent.postMessage({ pluginMessage: { type: "cancel" } }, "*");
+  renderCurrentHarmonograph(animated);
 }
 </script>
 
@@ -283,10 +277,8 @@ function cancel() {
             <div class="two-col-layout">
               <Input
                 value="{currentHarmonograph.f}"
-                onValueChange="{(value) => updateHarmonograph('f', value)}"
-                minValue="{inputRanges.f.min}"
-                maxValue="{inputRanges.f.max}"
-                decimalPlaces="{inputRanges.f.decimalPlaces}"
+                field="f"
+                onValueChange="{updateHarmonograph}"
                 inputData="{'left_pendulum_frequency'}"
                 unit="{'Hz'}"
                 labelFieldText="{'Left pendulum'}"
@@ -295,10 +287,8 @@ function cancel() {
 
               <Input
                 value="{currentHarmonograph.g}"
-                onValueChange="{(value) => updateHarmonograph('g', value)}"
-                minValue="{inputRanges.g.min}"
-                maxValue="{inputRanges.g.max}"
-                decimalPlaces="{inputRanges.g.decimalPlaces}"
+                field="g"
+                onValueChange="{updateHarmonograph}"
                 inputData="{'right_pendulum_frequency'}"
                 unit="{'Hz'}"
                 labelFieldText="{'Right pendulum'}"
@@ -316,10 +306,8 @@ function cancel() {
             <div class="two-col-layout">
               <Input
                 value="{currentHarmonograph.A}"
-                onValueChange="{(value) => updateHarmonograph('A', value)}"
-                minValue="{inputRanges.A.min}"
-                maxValue="{inputRanges.A.max}"
-                decimalPlaces="{inputRanges.A.decimalPlaces}"
+                field="A"
+                onValueChange="{updateHarmonograph}"
                 inputData="{'pendulum_left_amplitude'}"
                 unit="{'degrees'}"
                 labelFieldText="{'Left pendulum'}"
@@ -328,10 +316,8 @@ function cancel() {
 
               <Input
                 value="{currentHarmonograph.B}"
-                onValueChange="{(value) => updateHarmonograph('B', value)}"
-                minValue="{inputRanges.B.min}"
-                maxValue="{inputRanges.B.max}"
-                decimalPlaces="{inputRanges.B.decimalPlaces}"
+                field="B"
+                onValueChange="{updateHarmonograph}"
                 inputData="{'pendulum_right_amplitude'}"
                 unit="{'degrees'}"
                 labelFieldText="{'Right pendulum'}"
@@ -349,10 +335,8 @@ function cancel() {
             <div class="two-col-layout">
               <Input
                 value="{currentHarmonograph.R}"
-                onValueChange="{(value) => updateHarmonograph('R', value)}"
-                minValue="{inputRanges.R.min}"
-                maxValue="{inputRanges.R.max}"
-                decimalPlaces="{inputRanges.R.decimalPlaces}"
+                field="R"
+                onValueChange="{updateHarmonograph}"
                 inputData="{'left_pendulum_damping'}"
                 labelFieldText="{'Left pendulum'}"
                 increment="{inputRanges.R.increment}"
@@ -360,10 +344,8 @@ function cancel() {
 
               <Input
                 value="{currentHarmonograph.S}"
-                onValueChange="{(value) => updateHarmonograph('S', value)}"
-                minValue="{inputRanges.S.min}"
-                maxValue="{inputRanges.S.max}"
-                decimalPlaces="{inputRanges.S.decimalPlaces}"
+                field="S"
+                onValueChange="{updateHarmonograph}"
                 inputData="{'right_pendulum_damping'}"
                 labelFieldText="{'Right pendulum'}"
                 increment="{inputRanges.S.increment}"
@@ -378,10 +360,8 @@ function cancel() {
             <div class="two-col-layout">
               <Input
                 value="{currentHarmonograph.u}"
-                onValueChange="{(value) => updateHarmonograph('u', value)}"
-                minValue="{inputRanges.u.min}"
-                maxValue="{inputRanges.u.max}"
-                decimalPlaces="{inputRanges.u.decimalPlaces}"
+                field="u"
+                onValueChange="{updateHarmonograph}"
                 inputData="{'left_pendulum_phase'}"
                 hideUnits="{true}"
                 unit="{'degrees'}"
@@ -391,10 +371,8 @@ function cancel() {
 
               <Input
                 value="{currentHarmonograph.v}"
-                onValueChange="{(value) => updateHarmonograph('v', value)}"
-                minValue="{inputRanges.v.min}"
-                maxValue="{inputRanges.v.max}"
-                decimalPlaces="{inputRanges.v.decimalPlaces}"
+                field="v"
+                onValueChange="{updateHarmonograph}"
                 inputData="{'right_pendulum_phase'}"
                 hideUnits="{true}"
                 unit="{'degrees'}"
@@ -410,10 +388,8 @@ function cancel() {
 
             <Input
               value="{currentHarmonograph.d}"
-              onValueChange="{(value) => updateHarmonograph('d', value)}"
-              minValue="{inputRanges.d.min}"
-              maxValue="{inputRanges.d.max}"
-              decimalPlaces="{inputRanges.d.decimalPlaces}"
+              field="d"
+              onValueChange="{updateHarmonograph}"
               inputData="{'distance_between_pendulums'}"
               hideUnits="{true}"
               increment="{inputRanges.d.increment}"
@@ -428,10 +404,8 @@ function cancel() {
 
             <Input
               value="{currentHarmonograph.c}"
-              onValueChange="{(value) => updateHarmonograph('c', value)}"
-              minValue="{inputRanges.c.min}"
-              maxValue="{inputRanges.c.max}"
-              decimalPlaces="{inputRanges.c.decimalPlaces}"
+              field="c"
+              onValueChange="{updateHarmonograph}"
               inputData="{'paper_center'}"
               hideUnits="{true}"
               increment="{inputRanges.c.increment}"
@@ -444,10 +418,8 @@ function cancel() {
 
             <Input
               value="{currentHarmonograph.p}"
-              onValueChange="{(value) => updateHarmonograph('p', value)}"
-              minValue="{inputRanges.p.min}"
-              maxValue="{inputRanges.p.max}"
-              decimalPlaces="{inputRanges.p.decimalPlaces}"
+              field="p"
+              onValueChange="{updateHarmonograph}"
               inputData="{'length_of_pen_arm'}"
               hideUnits="{true}"
               increment="{inputRanges.p.increment}"
@@ -460,10 +432,8 @@ function cancel() {
 
             <Input
               value="{currentHarmonograph.q}"
-              onValueChange="{(value) => updateHarmonograph('q', value)}"
-              minValue="{inputRanges.q.min}"
-              maxValue="{inputRanges.q.max}"
-              decimalPlaces="{inputRanges.q.decimalPlaces}"
+              field="q"
+              onValueChange="{updateHarmonograph}"
               inputData="{'position_of_pen_arm'}"
               hideUnits="{true}"
               increment="{inputRanges.q.increment}"
@@ -476,10 +446,8 @@ function cancel() {
 
             <Input
               value="{currentHarmonograph.r}"
-              onValueChange="{(value) => updateHarmonograph('r', value)}"
-              minValue="{inputRanges.r.min}"
-              maxValue="{inputRanges.r.max}"
-              decimalPlaces="{inputRanges.r.decimalPlaces}"
+              field="r"
+              onValueChange="{updateHarmonograph}"
               inputData="{'paper_radius'}"
               hideUnits="{true}"
               unit="{'degrees'}"
@@ -493,10 +461,8 @@ function cancel() {
 
             <Input
               value="{currentHarmonograph.h}"
-              onValueChange="{(value) => updateHarmonograph('h', value)}"
-              minValue="{inputRanges.h.min}"
-              maxValue="{inputRanges.h.max}"
-              decimalPlaces="{inputRanges.h.decimalPlaces}"
+              field="h"
+              onValueChange="{updateHarmonograph}"
               inputData="{'frequency_of_paper_rotation'}"
               hideUnits="{true}"
               unit="{'Hz'}"
@@ -512,10 +478,8 @@ function cancel() {
 
             <Input
               value="{currentHarmonograph.w}"
-              onValueChange="{(value) => updateHarmonograph('w', value)}"
-              minValue="{inputRanges.w.min}"
-              maxValue="{inputRanges.w.max}"
-              decimalPlaces="{inputRanges.w.decimalPlaces}"
+              field="w"
+              onValueChange="{updateHarmonograph}"
               inputData="{'pen_thickness'}"
               hideUnits="{true}"
               unit="{'degrees'}"
@@ -530,11 +494,11 @@ function cancel() {
             />
 
             <Slider
+              field="steps"
               min="{inputRanges.steps.min}"
               max="{inputRanges.steps.max}"
-              inputFieldMax="{5000}"
+              onValueChange="{updateHarmonograph}"
               value="{currentHarmonograph.steps}"
-              onValueChange="{(value) => updateHarmonograph('steps', value)}"
               increment="{inputRanges.steps.increment}"
             />
           {/if}
@@ -546,11 +510,11 @@ function cancel() {
             />
 
             <Slider
+              field="segments"
               value="{currentHarmonograph.segments}"
               min="{inputRanges.segments.min}"
               max="{inputRanges.segments.max}"
-              inputFieldMax="{inputRanges.segments.max}"
-              onValueChange="{(value) => updateHarmonograph('segments', value)}"
+              onValueChange="{updateHarmonograph}"
               increment="{inputRanges.segments.increment}"
             />
           {/if}
@@ -567,6 +531,10 @@ function cancel() {
     }}"
     onResetClicked="{resetToDefaults}"
     options="{[
+      {
+        text: 'Load from selection',
+        action: loadHarmonograph,
+      },
       {
         text: 'About this plugin',
         action: navigateToAbout,

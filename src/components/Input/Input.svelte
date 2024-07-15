@@ -1,38 +1,62 @@
 <script>
 import { fade } from "svelte/transition";
 
+import { sanatizeValue } from "../../model/Harmonograph";
+
 import "./Input.scss";
 
+export let field;
 export let value;
 export let onValueChange;
-export let minValue = 0;
-export let maxValue = 1;
-export let decimalPlaces = 0;
 export let inputData = "";
 export let labelFieldText = "";
 export let unit = "";
 export let hideUnits = false;
 export let increment = 1;
 
-function randomizeValue() {
-  const range = maxValue - minValue;
-  const randomValue = Math.random() * range + minValue;
-  value = parseFloat(randomValue.toFixed(decimalPlaces));
-  onValueChange(value);
+$: {
+  if (!isNaN(value)) {
+    console.log(`last valid value of ${field}: ${value}`);
+    lastValidValue = value;
+  }
 }
 
-function handleChange(event) {
-  value = event.target.value;
-  onValueChange(value);
+let lastValue;
+let lastValidValue;
+
+function handleRandomize() {
+  value = randomizeValue(field);
+
+  onValueChange(field, value);
+}
+
+function handleLastValue(event) {
+  lastValue = parseFloat(event.target.value);
+}
+
+function handleChange() {
+  const currentValue = parseFloat(value);
+
+  if (lastValue !== currentValue && !isNaN(currentValue)) {
+    onValueChange(field, currentValue);
+  }
 }
 
 function handleBlur() {
-  let newValue = parseFloat(value);
-  if (!isNaN(newValue)) {
-    newValue = Math.min(Math.max(newValue, minValue), maxValue);
-    newValue = parseFloat(newValue.toFixed(decimalPlaces));
-    value = newValue;
-    onValueChange(value);
+  let sanatizedValue = value;
+
+  if (isNaN(sanatizedValue)) {
+    sanatizedValue = lastValidValue;
+  }
+
+  sanatizedValue = sanatizeValue(field, sanatizedValue);
+
+  if (value !== sanatizedValue) {
+    value = sanatizedValue;
+  }
+
+  if (lastValue !== undefined && lastValue !== value) {
+    onValueChange(field, value);
   }
 }
 
@@ -46,11 +70,13 @@ function handleKeyDown(event) {
         : -increment * multiplier;
 
     let newValue = parseFloat(value) + change;
-    newValue = Math.min(Math.max(newValue, minValue), maxValue);
-    newValue = parseFloat(newValue.toFixed(decimalPlaces));
+    newValue = sanatizeValue(field, newValue);
 
-    value = newValue;
-    onValueChange(value);
+    if (newValue !== value) {
+      value = newValue;
+      lastValue = value;
+      onValueChange(field, value, false);
+    }
   }
 }
 </script>
@@ -71,6 +97,7 @@ function handleKeyDown(event) {
       type="text"
       bind:value="{value}"
       on:input="{handleChange}"
+      on:beforeinput="{handleLastValue}"
       on:blur="{handleBlur}"
       on:keydown="{handleKeyDown}"
     />
@@ -84,7 +111,7 @@ function handleKeyDown(event) {
 
     <div
       class="input__svg-container"
-      on:click="{randomizeValue}"
+      on:click="{handleRandomize}"
       tabindex="0"
       role="button"
       on:keydown="{(e) => {

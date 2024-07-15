@@ -83,8 +83,11 @@ export const tooltips = {
 
 export const inputRanges: {
   [key: string]: {
+    name: string;
     min: number;
     max: number;
+    rMin: number;
+    rMax: number;
     decimalPlaces: number;
     default: number;
     increment: number;
@@ -93,40 +96,55 @@ export const inputRanges: {
 } = {
   // Simple mode params
   f: {
-    min: -0.5,
-    max: 0.5,
+    name: "Frequency left",
+    min: -100,
+    max: 100,
+    rMin: -0.5,
+    rMax: 0.5,
     decimalPlaces: 3,
     default: 0.3,
     increment: 0.1,
     mode: Mode.simple,
   },
   g: {
-    min: -0.5,
-    max: 0.5,
+    name: "Frequency right",
+    min: -100,
+    max: 100,
+    rMin: -0.5,
+    rMax: 0.5,
     decimalPlaces: 3,
     default: 0.302,
     increment: 0.1,
     mode: Mode.simple,
   },
   A: {
-    min: 1,
-    max: 50,
+    name: "Amplitude left",
+    min: -180,
+    max: 180,
+    rMin: 1,
+    rMax: 50,
     decimalPlaces: 0,
     default: 10,
     increment: 1,
     mode: Mode.simple,
   },
   B: {
-    min: 1,
-    max: 50,
+    name: "Amplitude right",
+    min: -180,
+    max: 180,
+    rMin: 1,
+    rMax: 50,
     decimalPlaces: 0,
     default: 10,
     increment: 1,
     mode: Mode.simple,
   },
   steps: {
-    min: 0,
+    name: "Steps",
+    min: 1,
     max: 5000,
+    rMin: 400,
+    rMax: 5000,
     decimalPlaces: 0,
     default: 900,
     increment: 100,
@@ -135,102 +153,157 @@ export const inputRanges: {
 
   // Advanced mode params
   R: {
+    name: "Damping left",
     min: 0,
-    max: 0.009,
+    max: 100,
+    rMin: 0,
+    rMax: 0.009,
     decimalPlaces: 3,
     default: 0.001,
     increment: 0.001,
     mode: Mode.advanced,
   },
   S: {
+    name: "Damping right",
     min: 0,
-    max: 0.009,
+    max: 100,
+    rMin: 0,
+    rMax: 0.009,
     decimalPlaces: 3,
     default: 0.001,
     increment: 0.001,
     mode: Mode.advanced,
   },
   u: {
+    name: "Phase left",
     min: 0,
-    max: 0.2,
+    max: 1,
+    rMin: 0,
+    rMax: 0.2,
     decimalPlaces: 2,
     default: 0,
     increment: 0.01,
     mode: Mode.advanced,
   },
   v: {
+    name: "Phase right",
     min: 0,
-    max: 0.2,
+    max: 1,
+    rMin: 0,
+    rMax: 0.2,
     decimalPlaces: 2,
     default: 0,
     increment: 0.01,
     mode: Mode.advanced,
   },
   d: {
-    min: 200,
-    max: 1000,
+    name: "Distance between pendulums",
+    min: 10,
+    max: 10000,
+    rMin: 200,
+    rMax: 1000,
     decimalPlaces: 0,
     default: 900,
     increment: 50,
     mode: Mode.advanced,
   },
   c: {
-    min: 200,
-    max: 1000,
+    name: "Paper center",
+    min: 10,
+    max: 10000,
+    rMin: 200,
+    rMax: 1000,
     decimalPlaces: 0,
     default: 800,
     increment: 50,
     mode: Mode.advanced,
   },
   p: {
-    min: 200,
-    max: 1000,
+    name: "Length of pen arm",
+    min: 10,
+    max: 10000,
+    rMin: 200,
+    rMax: 1000,
     decimalPlaces: 0,
     default: 900,
     increment: 50,
     mode: Mode.advanced,
   },
   q: {
-    min: 200,
-    max: 1000,
+    name: "Position of pen arm",
+    min: 10,
+    max: 10000,
+    rMin: 200,
+    rMax: 1000,
     decimalPlaces: 0,
     default: 700,
     increment: 50,
     mode: Mode.advanced,
   },
   r: {
-    min: 200,
-    max: 900,
+    name: "Paper radius",
+    min: 10,
+    max: 5000,
+    rMin: 200,
+    rMax: 900,
     decimalPlaces: 0,
     default: 300,
     increment: 50,
     mode: Mode.advanced,
   },
   h: {
-    min: 0,
-    max: 0.001,
+    name: "Frequency of paper rotation",
+    min: -100,
+    max: 100,
+    rMin: 0,
+    rMax: 0.001,
     decimalPlaces: 4,
     default: 0.0008,
     increment: 0.0001,
     mode: Mode.advanced,
   },
   w: {
+    name: "Pen thickness",
     min: 0.1,
-    max: 1,
+    max: 10,
+    rMin: 0.1,
+    rMax: 1,
     decimalPlaces: 1,
     default: 0.2,
     increment: 0.1,
     mode: Mode.advanced,
   },
   segments: {
+    name: "Segments per step",
     min: 1,
     max: 50,
+    rMin: 1,
+    rMax: 50,
     decimalPlaces: 0,
     default: 32,
-    increment: 1,
+    increment: 5,
     mode: Mode.advanced,
   },
 };
+
+export function sanatizeValue(key: string, value: number): number {
+  if (isNaN(value)) {
+    return inputRanges[key].default;
+  }
+
+  const field = inputRanges[key];
+  let newValue = Math.min(Math.max(value, field.min), field.max);
+
+  return parseFloat(newValue.toFixed(field.decimalPlaces));
+}
+
+export function randomizeValue(key: string): number {
+  const field = inputRanges[key];
+  const range = field.rMax - field.rMin;
+  const randomValue = Math.random() * range + field.rMin;
+
+  return parseFloat(randomValue.toFixed(field.decimalPlaces));
+}
 
 export function randomizeInputs(
   harmonograph: Harmonograph,
@@ -240,9 +313,10 @@ export function randomizeInputs(
   const defaultValues: Harmonograph = getDefaultHarmonograph();
 
   for (const [key, range] of Object.entries(inputRanges)) {
-    if (range.mode === currentMode || range.mode === "both") {
-      const { min, max, decimalPlaces } = range;
-      randomized[key as keyof Harmonograph] = Math.random() * (max - min) + min;
+    if (range.mode === currentMode || range.mode === Mode.simple) {
+      const { rMin, rMax, decimalPlaces } = range;
+      randomized[key as keyof Harmonograph] =
+        Math.random() * (rMax - rMin) + rMin;
 
       const factor = Math.pow(10, decimalPlaces);
       randomized[key as keyof Harmonograph] =
@@ -255,6 +329,38 @@ export function randomizeInputs(
   }
 
   return randomized;
+}
+
+export function harmonographToString(harmonograph: Harmonograph): string {
+  let output = [];
+  for (const [key] of Object.entries(inputRanges)) {
+    output.push(`${key}=${harmonograph[key as keyof Harmonograph]}`);
+  }
+
+  return output.join(",");
+}
+
+export function stringToHarmonograph(data: string): Harmonograph | null {
+  if (data.length === 0) {
+    return null;
+  }
+
+  const fields = data.split(",");
+
+  let harmonograph = getDefaultHarmonograph();
+
+  fields.forEach((field) => {
+    let values = field.split("=");
+    console.log(`Field: ${field} Values: ${JSON.stringify(values)}`);
+
+    if (values.length === 2) {
+      // TODO should we min/max these?
+      console.log(`Set: ${values[0]} to ${Number(values[1])}`);
+      harmonograph[values[0] as keyof Harmonograph] = Number(values[1]);
+    }
+  });
+
+  return harmonograph;
 }
 
 export function getDefaultHarmonograph(): Harmonograph {

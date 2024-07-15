@@ -59,6 +59,11 @@ function handleOutsideClick(event) {
           <li class="about__instructions-step">
             Once satisfied, add the generated harmonograph to the canvas!
           </li>
+          <li class="about__instructions-step">
+            Still wanting to make changes? Run the plugin again, select a
+            previously generated harmonograph, and select 'Load from selection'
+            from the footer menu.
+          </li>
         </ol>
       </div>
 
@@ -78,6 +83,13 @@ function handleOutsideClick(event) {
           />
 
           <span>for a surprise!</span>
+          <br />
+        </div>
+        <div class="about__tips-description">
+          <span
+            >Or select more than one harmonograph when loading from selection
+            for more fun.</span
+          >
         </div>
       </div>
 
