@@ -1,7 +1,7 @@
 <script>
 import { fade } from "svelte/transition";
 
-import { sanatizeValue } from "../../model/Harmonograph";
+import { sanatizeValue, randomizeValue } from "../../model/Harmonograph";
 
 import "./Input.scss";
 
@@ -16,7 +16,6 @@ export let increment = 1;
 
 $: {
   if (!isNaN(value)) {
-    console.log(`last valid value of ${field}: ${value}`);
     lastValidValue = value;
   }
 }

@@ -21,23 +21,9 @@ addEventListener("message", function handleMessage(msg) {
         : Page.about;
       loadedHarmonograph = msg.data.pluginMessage.harmonograph;
       advancedMode = msg.data.pluginMessage.advancedMode;
-
-      console.log(
-        `
-          Current page: ${currentPage}
-          FTUE Visited?: ${msg.data.pluginMessage.ftueVisited}
-          Advanced mode: ${advancedMode}
-          Harmono: ${JSON.stringify(loadedHarmonograph)}
-        `,
-      );
       break;
     case EventMessages.loadHarmonograph:
       loadedHarmonograph = msg.data.pluginMessage.harmonograph;
-
-      console.log(
-        "harmonograph here? ",
-        JSON.stringify(msg.data.pluginMessage),
-      );
       break;
   }
 });

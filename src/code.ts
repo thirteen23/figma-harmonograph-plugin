@@ -31,13 +31,9 @@ let userSettings = {
 figma.clientStorage
   .getAsync(ClientStorageMessages.userSettings)
   .then((returningUserInfo) => {
-    console.log("Loaded user info: ", JSON.stringify(returningUserInfo));
-
     if (returningUserInfo !== undefined) {
       userSettings = returningUserInfo;
     }
-
-    console.log("User info: ", JSON.stringify(userSettings));
 
     let ftueVisited = userSettings.ftueVisited;
     let height = userSettings.uiHeight;
@@ -53,8 +49,6 @@ figma.clientStorage
     figma.clientStorage
       .getAsync(ClientStorageMessages.lastHarmonograph)
       .then((savedHarmonograph) => {
-        console.log("Loaded last inserted harmonograph: ", savedHarmonograph);
-
         let harmonograph: Harmonograph =
           savedHarmonograph ?? getDefaultHarmonograph();
 
@@ -72,7 +66,6 @@ const notifyUI = (toastMessage: ToastMessage) => {
 };
 
 figma.ui.onmessage = (msg) => {
-  console.log(msg.type);
   switch (msg.type) {
     case PluginMessages.errorMessage:
       figma.notify(msg.message, {
@@ -169,11 +162,6 @@ figma.ui.onmessage = (msg) => {
       nodes.push(svgNode);
 
       figma.currentPage.appendChild(svgNode);
-      figma.currentPage.selection = nodes;
-      figma.viewport.scrollAndZoomIntoView(nodes);
-
-      figma.closePlugin();
-
       break;
     case PluginMessages.saveHarmonograph:
       var harmonograph = msg.harmonograph;
@@ -202,6 +190,7 @@ figma.ui.onmessage = (msg) => {
       break;
     case PluginMessages.FTUEVisited:
       userSettings.ftueVisited = true;
+
       figma.clientStorage.setAsync(
         ClientStorageMessages.userSettings,
         userSettings,
@@ -209,7 +198,7 @@ figma.ui.onmessage = (msg) => {
       break;
     case PluginMessages.updateAdvancedMode:
       let isAdvanced = msg.advancedMode ?? false;
-      console.log("setting advanced mode?: ", msg.advancedMode);
+
       userSettings.advancedMode = isAdvanced;
       figma.clientStorage.setAsync(
         ClientStorageMessages.userSettings,

@@ -61,7 +61,7 @@ function handleOutsideClick(event) {
           </li>
           <li class="about__instructions-step">
             Still wanting to make changes? Run the plugin again, select a
-            previously generated harmonograph, and select 'Load from selection'
+            previously generated harmonograph, and select "Load from selection"
             from the footer menu.
           </li>
         </ol>
@@ -87,8 +87,8 @@ function handleOutsideClick(event) {
         </div>
         <div class="about__tips-description">
           <span
-            >Or select more than one harmonograph when loading from selection
-            for more fun.</span
+            >Or for more fun, select more than one harmonograph when loading
+            from selection.</span
           >
         </div>
       </div>

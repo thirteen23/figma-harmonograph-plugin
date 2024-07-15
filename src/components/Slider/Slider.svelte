@@ -14,7 +14,6 @@ export let increment = 1;
 
 $: {
   if (!isNaN(value)) {
-    console.log(`last valid value of ${field}: ${value}`);
     lastValidValue = value;
   }
 }
@@ -24,13 +23,10 @@ let lastValidValue;
 
 function handleLastValue(event) {
   lastValue = parseFloat(event.target.value);
-  console.log(`updating last known value ${lastValue}`);
 }
 
 function handleSliderInput(event) {
   let newValue = parseFloat(event.target.value);
-
-  console.log(`slider input updated: ${newValue}`);
 
   onValueChange(field, newValue, false);
 }
@@ -72,14 +68,11 @@ function handleKeyDown(event) {
 
 function setValue(newValue) {
   if (isNaN(newValue)) {
-    console.log(`using last known value from ${newValue} to ${lastValidValue}`);
     newValue = lastValidValue;
     value = lastValidValue;
   }
 
   newValue = sanatizeValue(field, newValue);
-
-  console.log(`updating value to: ${newValue} ${lastValue}`);
 
   if (lastValue !== undefined && lastValue !== newValue) {
     onValueChange(field, newValue);

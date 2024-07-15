@@ -101,9 +101,9 @@ export const inputRanges: {
     max: 100,
     rMin: -0.5,
     rMax: 0.5,
-    decimalPlaces: 3,
+    decimalPlaces: 4,
     default: 0.3,
-    increment: 0.1,
+    increment: 0.001,
     mode: Mode.simple,
   },
   g: {
@@ -112,15 +112,15 @@ export const inputRanges: {
     max: 100,
     rMin: -0.5,
     rMax: 0.5,
-    decimalPlaces: 3,
+    decimalPlaces: 4,
     default: 0.302,
-    increment: 0.1,
+    increment: 0.001,
     mode: Mode.simple,
   },
   A: {
     name: "Amplitude left",
-    min: -180,
-    max: 180,
+    min: -360,
+    max: 360,
     rMin: 1,
     rMax: 50,
     decimalPlaces: 0,
@@ -130,10 +130,10 @@ export const inputRanges: {
   },
   B: {
     name: "Amplitude right",
-    min: -180,
-    max: 180,
+    min: -360,
+    max: 360,
     rMin: 1,
-    rMax: 50,
+    rMax: 65,
     decimalPlaces: 0,
     default: 10,
     increment: 1,
@@ -147,7 +147,7 @@ export const inputRanges: {
     rMax: 5000,
     decimalPlaces: 0,
     default: 900,
-    increment: 100,
+    increment: 50,
     mode: Mode.simple,
   },
 
@@ -209,7 +209,7 @@ export const inputRanges: {
   },
   c: {
     name: "Paper center",
-    min: 10,
+    min: 0,
     max: 10000,
     rMin: 200,
     rMax: 1000,
@@ -226,7 +226,7 @@ export const inputRanges: {
     rMax: 1000,
     decimalPlaces: 0,
     default: 900,
-    increment: 50,
+    increment: 10,
     mode: Mode.advanced,
   },
   q: {
@@ -237,7 +237,7 @@ export const inputRanges: {
     rMax: 1000,
     decimalPlaces: 0,
     default: 700,
-    increment: 50,
+    increment: 10,
     mode: Mode.advanced,
   },
   r: {
@@ -276,12 +276,12 @@ export const inputRanges: {
   segments: {
     name: "Segments per step",
     min: 1,
-    max: 50,
-    rMin: 1,
-    rMax: 50,
+    max: 40,
+    rMin: 30,
+    rMax: 32,
     decimalPlaces: 0,
     default: 32,
-    increment: 5,
+    increment: 2,
     mode: Mode.advanced,
   },
 };
@@ -351,11 +351,8 @@ export function stringToHarmonograph(data: string): Harmonograph | null {
 
   fields.forEach((field) => {
     let values = field.split("=");
-    console.log(`Field: ${field} Values: ${JSON.stringify(values)}`);
 
     if (values.length === 2) {
-      // TODO should we min/max these?
-      console.log(`Set: ${values[0]} to ${Number(values[1])}`);
       harmonograph[values[0] as keyof Harmonograph] = Number(values[1]);
     }
   });
@@ -484,7 +481,6 @@ export function centerAndScaleHarmonograph(
   const bbox = calculateBoundingBox(pathData);
 
   if (bbox.width === 0 || bbox.height === 0) {
-    console.warn("Invalid bounding box calculated. Using original path.");
     return { d: pathData, transform: "", strokeWidth };
   }
 

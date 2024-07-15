@@ -57,7 +57,6 @@ function resetToDefaults() {
 }
 
 onMount(() => {
-  console.log("Current harmo: ", JSON.stringify(currentHarmonograph));
   renderCurrentHarmonograph();
 
   document.addEventListener("click", handleOutsideClick);
@@ -412,34 +411,6 @@ function updateHarmonograph(property, value, animated = true) {
             />
 
             <InformationHeader
-              text="{tooltips.penArmLength.header}"
-              info="{tooltips.penArmLength.tooltip}"
-            />
-
-            <Input
-              value="{currentHarmonograph.p}"
-              field="p"
-              onValueChange="{updateHarmonograph}"
-              inputData="{'length_of_pen_arm'}"
-              hideUnits="{true}"
-              increment="{inputRanges.p.increment}"
-            />
-
-            <InformationHeader
-              text="{tooltips.penArmPosition.header}"
-              info="{tooltips.penArmPosition.tooltip}"
-            />
-
-            <Input
-              value="{currentHarmonograph.q}"
-              field="q"
-              onValueChange="{updateHarmonograph}"
-              inputData="{'position_of_pen_arm'}"
-              hideUnits="{true}"
-              increment="{inputRanges.q.increment}"
-            />
-
-            <InformationHeader
               text="{tooltips.paperRadius.header}"
               info="{tooltips.paperRadius.tooltip}"
             />
@@ -472,6 +443,34 @@ function updateHarmonograph(property, value, animated = true) {
 
           {#if activeMode === Mode.advanced && selectedPanel === 2}
             <InformationHeader
+              text="{tooltips.penArmLength.header}"
+              info="{tooltips.penArmLength.tooltip}"
+            />
+
+            <Input
+              value="{currentHarmonograph.p}"
+              field="p"
+              onValueChange="{updateHarmonograph}"
+              inputData="{'length_of_pen_arm'}"
+              hideUnits="{true}"
+              increment="{inputRanges.p.increment}"
+            />
+
+            <InformationHeader
+              text="{tooltips.penArmPosition.header}"
+              info="{tooltips.penArmPosition.tooltip}"
+            />
+
+            <Input
+              value="{currentHarmonograph.q}"
+              field="q"
+              onValueChange="{updateHarmonograph}"
+              inputData="{'position_of_pen_arm'}"
+              hideUnits="{true}"
+              increment="{inputRanges.q.increment}"
+            />
+
+            <InformationHeader
               text="{tooltips.penThickness.header}"
               info="{tooltips.penThickness.tooltip}"
             />
@@ -500,22 +499,6 @@ function updateHarmonograph(property, value, animated = true) {
               onValueChange="{updateHarmonograph}"
               value="{currentHarmonograph.steps}"
               increment="{inputRanges.steps.increment}"
-            />
-          {/if}
-
-          {#if activeMode === Mode.advanced && selectedPanel === 2}
-            <InformationHeader
-              text="{tooltips.segments.header}"
-              info="{tooltips.segments.tooltip}"
-            />
-
-            <Slider
-              field="segments"
-              value="{currentHarmonograph.segments}"
-              min="{inputRanges.segments.min}"
-              max="{inputRanges.segments.max}"
-              onValueChange="{updateHarmonograph}"
-              increment="{inputRanges.segments.increment}"
             />
           {/if}
         </div>
