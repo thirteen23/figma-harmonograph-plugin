@@ -77,7 +77,8 @@ export const tooltips = {
   },
   segments: {
     header: "Segments per step",
-    tooltip: "Number of calculations per drawing cycle",
+    tooltip:
+      "Number of calculations per drawing cycle, helps with aliasing at higher frequencies",
   },
 };
 
@@ -99,8 +100,8 @@ export const inputRanges: {
     name: "Frequency left",
     min: -100,
     max: 100,
-    rMin: -0.5,
-    rMax: 0.5,
+    rMin: 0,
+    rMax: 1.25,
     decimalPlaces: 4,
     default: 0.3,
     increment: 0.001,
@@ -143,8 +144,8 @@ export const inputRanges: {
     name: "Steps",
     min: 1,
     max: 5000,
-    rMin: 400,
-    rMax: 5000,
+    rMin: 750,
+    rMax: 2000,
     decimalPlaces: 0,
     default: 900,
     increment: 50,
@@ -267,7 +268,7 @@ export const inputRanges: {
     min: 0.1,
     max: 10,
     rMin: 0.1,
-    rMax: 1,
+    rMax: 0.6,
     decimalPlaces: 1,
     default: 0.2,
     increment: 0.1,
@@ -276,8 +277,8 @@ export const inputRanges: {
   segments: {
     name: "Segments per step",
     min: 1,
-    max: 40,
-    rMin: 30,
+    max: 50,
+    rMin: 32,
     rMax: 32,
     decimalPlaces: 0,
     default: 32,
@@ -327,6 +328,8 @@ export function randomizeInputs(
         defaultValues[key as keyof Harmonograph];
     }
   }
+
+  randomized.g = sanatizeValue("f", applyRandomRatio(randomized.f));
 
   return randomized;
 }
@@ -499,6 +502,89 @@ export function centerAndScaleHarmonograph(
     transform: `translate(${translateX}, ${translateY}) scale(${scale})`,
     strokeWidth: strokeWidth / scale,
   };
+}
+
+const ratios = [
+  {
+    ratio: 1 / 1,
+    label: "Unison",
+    description: ". The frequencies are in unison",
+  },
+  {
+    ratio: 2 / 1,
+    label: "Octave",
+    description: ". The frequencies are an octave apart",
+  },
+  {
+    ratio: 3 / 2,
+    label: "Perfect Fifth",
+    description: ". The frequencies are a perfect fifth apart",
+  },
+  {
+    ratio: 4 / 3,
+    label: "Perfect Fourth",
+    description: ". The frequencies are a perfect fourth apart",
+  },
+  {
+    ratio: 5 / 4,
+    label: "Major Third",
+    description: ". The frequencies are a major third apart",
+  },
+  {
+    ratio: 6 / 5,
+    label: "Minor Third",
+    description: ". The frequencies are a minor third apart",
+  },
+  {
+    ratio: 5 / 3,
+    label: "Major Sixth",
+    description: ". The frequencies are a major sixth apart",
+  },
+  {
+    ratio: 8 / 5,
+    label: "Minor Sixth",
+    description: ". The frequencies are a minor sixth apart",
+  },
+  {
+    ratio: 9 / 8,
+    label: "Major Second",
+    description: ". The frequencies are a major second apart",
+  },
+  {
+    ratio: 15 / 8,
+    label: "Major Seventh",
+    description: ". The frequencies are a major seventh apart",
+  },
+  {
+    ratio: 16 / 9,
+    label: "Minor Seventh",
+    description: ". The frequencies are a minor seventh apart",
+  },
+];
+
+function applyRandomRatio(frequency: number) {
+  return frequency * ratios[Math.floor(Math.random() * ratios.length)].ratio;
+}
+
+export function checkHarmony(frequencyA: number, frequencyB: number) {
+  const tolerance = 0.001; // Tolerance to handle floating-point precision issues
+
+  // Calculate the ratio of the two values
+  const ratio = frequencyA / frequencyB;
+  const inverseRatio = frequencyB / frequencyA; // Check the inverse as well
+
+  // Check if the ratio or its inverse is close to any of the known ratios
+  let found = ratios.filter(
+    (r) =>
+      Math.abs(ratio - r.ratio) < tolerance ||
+      Math.abs(inverseRatio - r.ratio) < tolerance,
+  );
+
+  if (found.length > 0) {
+    return found[0];
+  }
+
+  return null;
 }
 
 function getXY(harmonograph: Harmonograph, step: number) {

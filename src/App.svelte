@@ -70,8 +70,8 @@ const loadHarmonograph = () => {
   );
 };
 
-function openWebsite() {
-  window.open("https://www.thirteen23.com/", "_blank");
+function openWebsite(url) {
+  window.open(url, "_blank");
 }
 
 onMount(() => {

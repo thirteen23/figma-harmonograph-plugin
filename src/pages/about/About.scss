@@ -31,6 +31,10 @@
     align-items: center;
     gap: 0.4em;
     margin-top: 0.75em;
+
+    & > ul {
+      padding-left: 20px;
+    }
   }
 
   &__harmonograph-information-description,
@@ -94,6 +98,7 @@
   }
 
   &__credits-link {
+    cursor: pointer;
     color: var(--figma-color-bg-inverse);
     text-decoration: underline;
   }

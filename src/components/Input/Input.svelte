@@ -13,6 +13,7 @@ export let labelFieldText = "";
 export let unit = "";
 export let hideUnits = false;
 export let increment = 1;
+export let highlightField = false;
 
 $: {
   if (!isNaN(value)) {
@@ -89,17 +90,20 @@ function handleKeyDown(event) {
   <label class="input__label" for="{inputData}">{labelFieldText}</label>
 
   <div class="input__wrapper">
-    <input
-      class="input__field"
-      id="{inputData}"
-      iconText="°"
-      type="text"
-      bind:value="{value}"
-      on:input="{handleChange}"
-      on:beforeinput="{handleLastValue}"
-      on:blur="{handleBlur}"
-      on:keydown="{handleKeyDown}"
-    />
+    <div
+      class="{`input__border${highlightField ? ' input__border--highlighted' : ''}`}"
+    >
+      <input
+        class="input__field"
+        id="{inputData}"
+        type="text"
+        bind:value="{value}"
+        on:input="{handleChange}"
+        on:beforeinput="{handleLastValue}"
+        on:blur="{handleBlur}"
+        on:keydown="{handleKeyDown}"
+      />
+    </div>
 
     <div
       for="{inputData}"
@@ -109,6 +113,8 @@ function handleKeyDown(event) {
     </div>
 
     <div
+      aria-label="{`Randomize ${labelFieldText}`}"
+      title="{`Randomize ${labelFieldText}`}"
       class="input__svg-container"
       on:click="{handleRandomize}"
       tabindex="0"

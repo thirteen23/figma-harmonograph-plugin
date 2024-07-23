@@ -19,6 +19,7 @@ import {
   Mode,
   tooltips,
   centerAndScaleHarmonograph,
+  checkHarmony,
 } from "../../model/Harmonograph";
 import { PluginMessages } from "../../model/Messages";
 
@@ -29,6 +30,7 @@ export let navigateToAbout = () => console.log("not implemented!");
 export let loadHarmonograph = () => console.log("not implemented!");
 
 export let loadedHarmonograph = undefined;
+let hasHarmony = null;
 let currentHarmonograph = getDefaultHarmonograph();
 
 $: {
@@ -39,6 +41,7 @@ $: {
 let svgRef;
 
 var selectedPanel = 0;
+let isNavigating = false;
 
 export let advancedMode = false;
 
@@ -57,6 +60,7 @@ function resetToDefaults() {
 }
 
 onMount(() => {
+  isNavigating = false;
   renderCurrentHarmonograph();
 
   document.addEventListener("click", handleOutsideClick);
@@ -123,6 +127,8 @@ let stroke_width = 0.2;
 let pathAttributes = { d: "", transform: "", strokeWidth: 0 };
 
 function renderCurrentHarmonograph(animate = true) {
+  hasHarmony = checkHarmony(currentHarmonograph.f, currentHarmonograph.g);
+
   if (animate) {
     renderPath = false;
 
@@ -167,6 +173,8 @@ function updateHarmonograph(property, value, animated = true) {
       xmlns="http://www.w3.org/2000/svg"
       version="1.1"
     >
+      <!-- <title>thirteen23 harmonograph</title>
+    <desc>This was generated with thirteen23 harmonograph, a Figma plugin!</desc> -->
       {#if renderPath}
         <path
           in:draw="{{
@@ -174,7 +182,7 @@ function updateHarmonograph(property, value, animated = true) {
             easing: quintOut,
           }}"
           out:fade="{{
-            duration: 300,
+            duration: isNavigating ? 0 : 300,
           }}"
           d="{pathAttributes.d}"
           transform="{pathAttributes.transform}"
@@ -269,8 +277,10 @@ function updateHarmonograph(property, value, animated = true) {
         <div class="harmono-panel">
           {#if activeMode === Mode.simple || selectedPanel === 0}
             <InformationHeader
-              text="{tooltips.frequency.header}"
-              info="{tooltips.frequency.tooltip}"
+              text="{tooltips.frequency.header +
+                (hasHarmony !== null ? ` (${hasHarmony.label})` : '')}"
+              info="{tooltips.frequency.tooltip +
+                (hasHarmony !== null ? `${hasHarmony.description}` : '')}"
             />
 
             <div class="two-col-layout">
@@ -282,6 +292,7 @@ function updateHarmonograph(property, value, animated = true) {
                 unit="{'Hz'}"
                 labelFieldText="{'Left pendulum'}"
                 increment="{inputRanges.f.increment}"
+                highlightField="{hasHarmony !== null}"
               />
 
               <Input
@@ -292,6 +303,7 @@ function updateHarmonograph(property, value, animated = true) {
                 unit="{'Hz'}"
                 labelFieldText="{'Right pendulum'}"
                 increment="{inputRanges.g.increment}"
+                highlightField="{hasHarmony !== null}"
               />
             </div>
           {/if}
@@ -520,11 +532,16 @@ function updateHarmonograph(property, value, animated = true) {
       },
       {
         text: 'About this plugin',
-        action: navigateToAbout,
+        action: () => {
+          isNavigating = true;
+          navigateToAbout();
+        },
       },
       {
         text: '@thirteen23',
-        action: openWebsite,
+        action: () => {
+          openWebsite('http://www.thirteen23.com/');
+        },
       },
     ]}"
   />

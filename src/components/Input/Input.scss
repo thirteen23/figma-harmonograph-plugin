@@ -12,6 +12,7 @@
 
     display: inline-block;
     margin-top: 1.125em;
+    margin-bottom: 0.375em;
   }
 
   &__wrapper {
@@ -20,15 +21,33 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 0.3em;
+    gap: 0em;
+  }
+
+  &__border {
+    flex-grow: 1;
+    margin-top: 3px;
+    background: var(--figma-color-border);
+    padding: 1px;
+  }
+
+  &__border--highlighted {
+    background: radial-gradient(
+      111.3% 111.3% at 13.98% -1.52%,
+      rgba(242, 72, 34, 0.5) 2.6%,
+      rgba(255, 235, 0, 0.5) 20.12%,
+      rgba(245, 49, 179, 0.5) 39.58%,
+      rgba(123, 97, 255, 0.5) 58.22%,
+      rgba(27, 196, 125, 0.5) 79.69%,
+      rgba(24, 160, 251, 0.5) 94.27%
+    );
   }
 
   &__field {
     @include text-input-font;
 
-    margin-top: 0.375em;
-    outline: 1px solid var(--figma-color-border);
-    border: 2px solid var(--figma-color-bg);
+    outline: 1px solid transparent;
+    border: 2px solid transparent;
     background-color: var(--figma-color-bg);
     padding: 0.75em 1em;
     width: 100%;

@@ -145,21 +145,24 @@ figma.ui.onmessage = (msg) => {
 
       var svgNode = figma.createNodeFromSvg(svgContent);
 
-      const harmonographDate = new Date();
+      if (Math.floor(Math.random() * 10) === 6) {
+        svgNode.name = `harmonograph made with ❤️`;
+      } else {
+        svgNode.name = `harmonograph`;
+      }
 
-      svgNode.name = `harmonograph - ${harmonographDate.toLocaleString(undefined)}`;
       svgNode.x = Math.floor(figma.viewport.center.x - width / 2);
       svgNode.y = Math.floor(figma.viewport.center.y - height / 2);
-      svgNode.setPluginData(
-        ClientStorageMessages.selectedHarmonograph,
-        harmonographDetails,
-      );
+
       svgNode.children[0].setPluginData(
         ClientStorageMessages.selectedHarmonograph,
         harmonographDetails,
       );
 
-      nodes.push(svgNode);
+      svgNode.setPluginData(
+        ClientStorageMessages.selectedHarmonograph,
+        harmonographDetails,
+      );
 
       figma.currentPage.appendChild(svgNode);
       break;

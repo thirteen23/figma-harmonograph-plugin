@@ -10,7 +10,7 @@ import Footer from "../../components/Footer/Footer.svelte";
 
 import "./About.scss";
 
-export let openWebsite = () => console.log("not implemented!");
+export let openWebsite = (url) => console.log("not implemented!");
 export let navigateToHarmonograph = () => console.log("not implemented!");
 
 onMount(() => {
@@ -41,9 +41,9 @@ function handleOutsideClick(event) {
       <div class="about__harmonograph-information">
         <h1 class="about__harmonograph-information-title">Harmonographs</h1>
         <p class="about__harmonograph-information-description">
-          A harmonograph is a device that uses pendulums to draw geometric
-          images. This plugin uses two pendulums in its calculation. One moves a
-          pen back and forth along one axis, while the other moves the drawing
+          A harmonograph is a device that uses pendulums to draw geometric art.
+          This plugin uses two pendulums in its calculation. One moves a pen
+          back and forth along one axis, while the other moves the drawing
           surface back and forth along a perpendicular axis. By varying their
           amplitudes, frequencies and phases, you can create unique patterns.
         </p>
@@ -53,11 +53,16 @@ function handleOutsideClick(event) {
         <h2 class="about__instructions-title">HOW TO USE</h2>
         <ol class="about__instructions-list">
           <li class="about__instructions-step">
-            To begin, enter values for each input field or select a pre-saved
-            harmonograph.
+            To begin, make minor changes to each pendulum's frequency.
           </li>
           <li class="about__instructions-step">
-            Once satisfied, add the generated harmonograph to the canvas!
+            To vary the pattern slightly adjust the phase of the pendulums.
+          </li>
+          <li class="about__instructions-step">
+            Explore the other parameters to create unique patterns.
+          </li>
+          <li class="about__instructions-step">
+            Once satisfied, add the generate harmonograph to the canvas!
           </li>
           <li class="about__instructions-step">
             Still wanting to make changes? Run the plugin again, select a
@@ -91,15 +96,44 @@ function handleOutsideClick(event) {
             from selection.</span
           >
         </div>
+        <div class="about__tips-description">
+          <span
+            >When adjusting the left and right pendulum frequencies, exploring
+            harmonic ratios that are common to music can create visually
+            harmonious patterns.</span
+          >
+        </div>
+        <div class="about__tips-description">
+          <span
+            tabindex="0"
+            role="button"
+            on:keydown="{(e) => {
+              if (e.key !== 'Enter' && e.key !== ' ') return;
+              e.preventDefault();
+              e.target.click();
+            }}"
+            on:click="{openWebsite(
+              'https://www.worldtreesoftware.com/apps/web/harmonograph/intro/',
+            )}"
+            class="about__credits-link"
+            >Read more about harmonographs and harmonic ratios</span
+          >
+        </div>
       </div>
 
       <div class="about__credits">
         <p class="about__credits-text">
           Inspired by
-          <a
-            class="about__credits-link"
-            href="https://ttencate.github.io/harmonograph/"
-            >Harmonograph in JavaScript</a
+          <span
+            tabindex="0"
+            role="button"
+            on:keydown="{(e) => {
+              if (e.key !== 'Enter' && e.key !== ' ') return;
+              e.preventDefault();
+              e.target.click();
+            }}"
+            on:click="{openWebsite('https://ttencate.github.io/harmonograph/')}"
+            class="about__credits-link">Harmonograph in JavaScript</span
           >
         </p>
       </div>
@@ -115,7 +149,9 @@ function handleOutsideClick(event) {
     options="{[
       {
         text: '@thirteen23',
-        action: openWebsite,
+        action: () => {
+          openWebsite('http://www.thirteen23.com');
+        },
       },
     ]}"
   />

@@ -29,6 +29,8 @@ const toggleMenu = () => {
 <footer class="footer">
   <div class="footer__content">
     <button
+      aria-label="{primaryButton.text}"
+      title="{primaryButton.text}"
       on:click="{primaryButton.action}"
       class="{`footer__button footer__button--primary${primaryButton.fullWidth ? '-wide' : ''}`}"
     >
@@ -38,6 +40,7 @@ const toggleMenu = () => {
     <div class="footer__content__right">
       {#if onResetClicked !== undefined}
         <div
+          title="Reset parameters"
           class="svg-container"
           on:click="{onResetClicked}"
           tabindex="0"
@@ -93,7 +96,7 @@ const toggleMenu = () => {
         </div>
       {/if}
 
-      <div class="ellipsis-menu" aria-label="More options">
+      <div class="ellipsis-menu" aria-label="More options" title="More options">
         <div
           class="ellipsis-menu__container"
           on:click|stopPropagation="{toggleMenu}"
