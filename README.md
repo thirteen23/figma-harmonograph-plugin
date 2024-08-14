@@ -54,10 +54,13 @@ You are now able to run the plugin in Figma. Go to: **Plugins / Development / th
 ## Credits
 
 Harmonograph code based on: [ttencate/harmonograph](https://github.com/ttencate/harmonograph)
+
 Built with: [Figma Plugin DS Svelte](https://github.com/thomas-lowry/figma-plugin-ds-svelte)
 
 Inspired by:
 
 [Intro to Harmonographs]([https://www.worldtreesoftware.com/apps/web/harmonograph/intro/)
+
 [Harmonograph: A Visual Guide to the Mathematics of Music](https://www.vhplab.net/IMG/pdf/harmonograph_-_a_visual_guide_to_the_mathematics_of_music.pdf)
+
 [Fran McConville's Harmonograph Page](https://www.fxmtech.com/harmonog.html)
