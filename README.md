@@ -41,7 +41,7 @@ _You can also type "Import plugin from manifest..." in Figma global search to go
 From there you need to link the **manifest.json** file located in the **public** folder in your directory:
 
 ```bash
-/figma-harmonograph/public/manifest.json
+/figma-harmonograph-plugin/public/manifest.json
 ```
 
 You are now able to run the plugin in Figma. Go to: **Plugins / Development / thirteen23-harmonograph**
