@@ -98,9 +98,9 @@ function handleOutsideClick(event) {
         </div>
         <div class="about__tips-description">
           <span
-            >When adjusting the left and right pendulum frequencies, exploring
-            harmonic ratios that are common to music can create visually
-            harmonious patterns.</span
+            >When adjusting the left and right pendulum frequencies, use
+            harmonic ratios that are common to music to create visually
+            harmonious patterns. Give it a try!</span
           >
         </div>
         <div class="about__tips-description">

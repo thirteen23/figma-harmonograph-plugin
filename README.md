@@ -13,7 +13,7 @@
 
 ## Usage
 
-- Navigate to the [thirteen23 harmonograph](https://www.figma.com/community/plugin/1370490188129833310/thirteen23-harmonograph) plugin page, select Open in… and select your desired Figma file.
+- Navigate to the [thirteen23 harmonograph](https://www.figma.com/community/plugin/1403515351214143901/thirteen23-harmonograph) plugin page, select Open in… and select your desired Figma file.
 - Save or Like it to access it later in Figma. Go to **Plugins / Saved / thirteen23 harmonograph**
 
 <picture>
@@ -56,3 +56,11 @@ You are now able to run the plugin in Figma. Go to: **Plugins / Development / th
 Harmonograph code based on: [ttencate/harmonograph](https://github.com/ttencate/harmonograph)
 
 Built with: [Figma Plugin DS Svelte](https://github.com/thomas-lowry/figma-plugin-ds-svelte)
+
+Inspired by:
+
+[Intro to Harmonographs]([https://www.worldtreesoftware.com/apps/web/harmonograph/intro/)
+
+[Harmonograph: A Visual Guide to the Mathematics of Music](https://www.vhplab.net/IMG/pdf/harmonograph_-_a_visual_guide_to_the_mathematics_of_music.pdf)
+
+[Fran McConville's Harmonograph Page](https://www.fxmtech.com/harmonog.html)
